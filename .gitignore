@@ -7,3 +7,7 @@
 .claude/super-board/migrations/
 .claude/super-board/upgrade.json
 .claude/settings.json.bak-*
+
+# .NET build output
+bin/
+obj/
