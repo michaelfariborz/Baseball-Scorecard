@@ -1,0 +1,6 @@
+== mutant: h1 'Baseball Scorecards'
+Expected: "Baseball Scorecard"
+Actual:   "Baseball Scorecards"
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 679 ms - BaseballScorecard.Tests.dll (net10.0)
+== restored
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 747 ms - BaseballScorecard.Tests.dll (net10.0)

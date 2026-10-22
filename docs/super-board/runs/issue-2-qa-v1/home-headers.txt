@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Date: Thu, 22 Oct 2026 01:57:57 GMT
+Server: Kestrel
+Cache-Control: no-cache, no-store
+Pragma: no-cache
+Set-Cookie: .AspNetCore.Antiforgery.0ZX8moALQ8w=CfDJ8JZmwkZb87hMuciCyP97LAwIvIf0rK-l53kAaW5yiuveIeiFfHby_UGmKgS4sTMQc79c7tjYZ128zG0Y8NYCq6DgW6IJbLtd-W36VsmH1-GHY9T-sN3nTNR6wu2cZFCzXFCknjWqURYQ-61uHFE-Rrg; path=/; samesite=strict; httponly
+Transfer-Encoding: chunked
+Content-Security-Policy: frame-ancestors 'self'
+blazor-enhanced-nav: allow
+X-Frame-Options: SAMEORIGIN
+
