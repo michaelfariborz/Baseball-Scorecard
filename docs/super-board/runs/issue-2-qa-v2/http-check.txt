@@ -1,0 +1,14 @@
+## dotnet run --project src/BaseballScorecard (launch profile http, Development)
+## GET /
+status=200
+## h1
+<h1>Baseball Scorecard</h1>
+## assets
+200 /.
+200 /
+200 /app.z4z4fil66m.css
+200 /BaseballScorecard.d1n5k1tpyc.styles.css
+200 /Components/Layout/ReconnectModal.cyz5k529gx.razor.js
+200 /_framework/blazor.web.cd06xom9c5.js
+## GET /nope
+status=404

@@ -1,0 +1,7 @@
+GET / -> 200
+<h1>Baseball Scorecard</h1>
+GET /app.z4z4fil66m.css -> 200
+GET /BaseballScorecard.d1n5k1tpyc.styles.css -> 200
+GET /Components/Layout/ReconnectModal.cyz5k529gx.razor.js -> 200
+GET /_framework/blazor.web.cd06xom9c5.js -> 200
+GET /nope -> 404

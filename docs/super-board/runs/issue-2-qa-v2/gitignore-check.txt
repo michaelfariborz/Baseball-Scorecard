@@ -1,0 +1,18 @@
+## .gitignore R1 recheck (rebuild 1)
+src/BaseballScorecard/bin/x.dll -> .gitignore:12:/src/**/bin/	src/BaseballScorecard/bin/x.dll
+src/BaseballScorecard/obj/x.json -> .gitignore:13:/src/**/obj/	src/BaseballScorecard/obj/x.json
+tests/BaseballScorecard.Tests/bin/x.dll -> .gitignore:14:/tests/**/bin/	tests/BaseballScorecard.Tests/bin/x.dll
+tests/BaseballScorecard.Tests/obj/x.json -> .gitignore:15:/tests/**/obj/	tests/BaseballScorecard.Tests/obj/x.json
+src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll -> .gitignore:12:/src/**/bin/	src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+## must stay tracked
+.claude/bin/new-helper.sh -> not ignored (ok)
+.agents/bin/new-helper.sh -> not ignored (ok)
+bin/x -> not ignored (ok)
+docs/bin/x -> not ignored (ok)
+## tracked bin/obj files in branch
+none
+## real build output after dotnet build
+!! src/BaseballScorecard/bin/
+!! src/BaseballScorecard/obj/
+!! tests/BaseballScorecard.Tests/bin/
+!! tests/BaseballScorecard.Tests/obj/

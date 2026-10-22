@@ -7,3 +7,9 @@
 .claude/super-board/migrations/
 .claude/super-board/upgrade.json
 .claude/settings.json.bak-*
+
+# .NET build output (scoped so .claude/bin/ and .agents/bin/ stay tracked)
+/src/**/bin/
+/src/**/obj/
+/tests/**/bin/
+/tests/**/obj/
