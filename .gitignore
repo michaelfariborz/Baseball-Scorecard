@@ -8,6 +8,8 @@
 .claude/super-board/upgrade.json
 .claude/settings.json.bak-*
 
-# .NET build output
-bin/
-obj/
+# .NET build output (scoped so .claude/bin/ and .agents/bin/ stay tracked)
+/src/**/bin/
+/src/**/obj/
+/tests/**/bin/
+/tests/**/obj/
