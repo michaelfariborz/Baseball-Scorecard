@@ -1,0 +1,48 @@
+{
+  "tag": "wd223",
+  "results": [
+    {
+      "ac": "AC2 year default",
+      "pass": true,
+      "note": "year field = 2026"
+    },
+    {
+      "ac": "AC2 create",
+      "pass": true,
+      "note": "saved and listed after redirect to /rosters"
+    },
+    {
+      "ac": "AC1 list format + order",
+      "pass": true,
+      "note": "[\"2026 · [TEST] Astros wd223\",\"2026 · [TEST] Cubs wd223\",\"2025 · [TEST] Bears wd223\"]"
+    },
+    {
+      "ac": "AC4 blank",
+      "pass": true,
+      "note": "message \"Team Name is required.\", stayed on http://localhost:5199/rosters/new"
+    },
+    {
+      "ac": "AC4 duplicate",
+      "pass": true,
+      "note": "message \"A roster with this Team Name and Year already exists.\""
+    },
+    {
+      "ac": "AC4 saves nothing",
+      "pass": true,
+      "note": "3 → 3 rows for this run"
+    },
+    {
+      "ac": "AC3 edit",
+      "pass": true,
+      "note": "[\"2026 · [TEST] Astros wd223\",\"2025 · [TEST] Bears wd223\",\"2024 · [TEST] Cubbies wd223\"]"
+    },
+    {
+      "ac": "No console/page errors or 5xx",
+      "pass": false,
+      "note": "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "errors": [
+    "console: Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

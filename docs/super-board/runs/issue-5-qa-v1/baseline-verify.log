@@ -1,0 +1,60 @@
+  Determining projects to restore...
+  Restored /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/src/BaseballScorecard/BaseballScorecard.csproj (in 424 ms).
+  Restored /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/tests/BaseballScorecard.Tests/BaseballScorecard.Tests.csproj (in 424 ms).
+  BaseballScorecard -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.43
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.13)
+[xUnit.net 00:00:00.11]   Discovering: BaseballScorecard.Tests
+[xUnit.net 00:00:00.19]   Discovered:  BaseballScorecard.Tests
+[xUnit.net 00:00:00.23]   Starting:    BaseballScorecard.Tests
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-5-qa/src/BaseballScorecard
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.json") [13 ms]
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.Development.json") [1 ms]
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_files_are_found [< 1 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditPageTests.Submitting_a_blank_team_name_shows_a_validation_message [766 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditPageTests.New_roster_year_defaults_to_the_current_year [11 ms]
+  Passed BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string [908 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "") [1 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "   ") [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: null) [< 1 ms]
+  Passed BaseballScorecard.Tests.HomePageTests.Home_shows_the_app_heading [2 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Set_test_db_variable_is_returned [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.App_project_has_a_user_secrets_id [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_uses_Npgsql_with_the_Scorecard_connection_string [8 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_is_also_resolvable_directly_from_a_scope [1 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Missing_connection_string_fails_with_a_message_naming_the_key [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseConnectionTests.Test_database_is_reachable_after_migrations [19 ms]
+  Passed BaseballScorecard.Tests.Rosters.RostersPageTests.Lists_each_roster_as_year_dot_team_name_linking_to_its_edit_page [616 ms]
+[xUnit.net 00:00:02.49]   Finished:    BaseballScorecard.Tests
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "") [14 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ") [4 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_edit [25 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.List_orders_newest_year_first_then_by_name [24 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Edit_saves_a_new_team_name_and_year [40 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Database_unique_index_rejects_a_duplicate_pair [18 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Same_team_name_in_another_year_is_a_separate_roster [9 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Create_saves_the_roster_and_it_is_listed [12 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_create [17 ms]
+
+Test Run Successful.
+Total tests: 26
+     Passed: 26
+ Total time: 3.1307 Seconds
