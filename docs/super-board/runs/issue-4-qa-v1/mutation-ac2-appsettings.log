@@ -1,0 +1,21 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BaseballScorecard -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.46]     BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.json") [FAIL]
+  Failed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.json") [20 ms]
+  Error Message:
+   Assert.DoesNotContain() Failure: Filter matched in collection
+                                        ↓ (pos 2)
+Collection: ["Logging", "AllowedHosts", "ConnectionStrings"]
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(String relativePath) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/Data/AppSettingsSecretsTests.cs:line 41
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     2, Skipped:     0, Total:     3, Duration: 93 ms - BaseballScorecard.Tests.dll (net10.0)

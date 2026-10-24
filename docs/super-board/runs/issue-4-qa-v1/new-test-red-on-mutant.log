@@ -1,0 +1,17 @@
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.73]     BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string [FAIL]
+  Failed BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string [394 ms]
+  Error Message:
+   System.InvalidOperationException : No service for type 'Microsoft.EntityFrameworkCore.IDbContextFactory`1[BaseballScorecard.Data.ScorecardDbContext]' has been registered.
+  Stack Trace:
+     at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService(IServiceProvider provider, Type serviceType)
+   at Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService[T](IServiceProvider provider)
+   at BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/Data/AppStartupDatabaseTests.cs:line 28
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 410 ms - BaseballScorecard.Tests.dll (net10.0)
