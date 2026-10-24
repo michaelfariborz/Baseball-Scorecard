@@ -1,0 +1,35 @@
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (25ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+fail: Microsoft.EntityFrameworkCore.Database.Command[20102]
+      Failed executing DbCommand (4ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20261024210657_AddRosters'.
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20261024213132_AddGames'.
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Applied migration 20261024210657_AddRosters.
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Applied migration 20261024213132_AddGames.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:5199
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...

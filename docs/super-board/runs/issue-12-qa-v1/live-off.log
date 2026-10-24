@@ -1,0 +1,15 @@
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Database:MigrateOnStartup is false; not applying migrations on startup.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:5199
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+public tables after off-run: 0

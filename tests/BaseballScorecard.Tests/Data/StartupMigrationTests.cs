@@ -112,6 +112,27 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
     }
 
     [Fact]
+    public async Task A_failing_later_migration_is_named_and_earlier_ones_stay_applied_and_logged()
+    {
+        await using (var db = ContextOn(_emptyDb))
+        {
+            await db.GetService<IRelationalDatabaseCreator>().CreateAsync();
+            // A table the AddGames migration also creates: AddRosters applies, AddGames fails.
+            await db.Database.ExecuteSqlRawAsync("""CREATE TABLE "Games" ("Id" integer)""");
+        }
+        await using var services = Services(_emptyDb);
+
+        var ex = await Assert.ThrowsAnyAsync<Exception>(() => services.MigrateScorecardDbAsync());
+
+        Assert.Contains("20261024213132_AddGames", ex.Message);
+        Assert.DoesNotContain("20261024210657_AddRosters", ex.Message);
+        await using var check = ContextOn(_emptyDb);
+        Assert.Equal(["20261024210657_AddRosters"], await check.Database.GetAppliedMigrationsAsync());
+        Assert.Contains(_logs.Entries, e => e.Level == LogLevel.Information && e.Message.Contains("20261024210657_AddRosters"));
+        Assert.DoesNotContain(_logs.Entries, e => e.Message.Contains("Applied migration 20261024213132_AddGames"));
+    }
+
+    [Fact]
     public async Task Starting_the_app_host_migrates_an_empty_database()
     {
         using (var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
