@@ -1,0 +1,13 @@
+PASS AC2 add: ["#14 Ernie Banks"]
+PASS AC1 list sorted (cold reload): ["#0 Single Zero","#00 Double Zero","#7 Ryne Sandberg","#14 Ernie Banks","#31 Fergie Jenkins"]
+PASS AC4 invalid "|A|B": msg="Uniform Number, First Name and Last Name are required.", rows=5
+PASS AC4 invalid "12| |B": msg="Uniform Number, First Name and Last Name are required.", rows=5
+PASS AC4 invalid "12|A|": msg="Uniform Number, First Name and Last Name are required.", rows=5
+PASS AC4 invalid "1x|A|B": msg="Uniform Number must be 1 or 2 digits.", rows=5
+PASS AC4 invalid "-1|A|B": msg="Uniform Number must be 1 or 2 digits.", rows=5
+PASS AC4 invalid "14|Dup|Licate": msg="Another player on this roster already wears that Uniform Number.", rows=5
+PASS AC4 3+ digits blocked at input: value="12" maxlength=2
+PASS AC4 same number other roster: ["#14 Paul Konerko"]
+PASS AC3 edit: prefill=7|Ryne|Sandberg list=["#0 Single Zero","#00 Double Zero","#14 Ernie Banks","#23 Ryne Sandberg Jr","#31 Fergie Jenkins"]
+PASS AC3 remove (cold reload): ["#0 Single Zero","#00 Double Zero","#14 Ernie Banks","#23 Ryne Sandberg Jr"]
+FAIL No console/page errors or 4xx/5xx: console: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5199/favicon.ico
