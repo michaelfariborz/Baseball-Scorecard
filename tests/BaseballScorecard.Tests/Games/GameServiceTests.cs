@@ -136,6 +136,22 @@ public class GameServiceTests(PostgresFixture fixture)
     }
 
     [Fact]
+    public async Task One_inning_is_the_smallest_game_that_saves()
+    {
+        var away = await NewRosterAsync("Cubs", 2026);
+        var home = await NewRosterAsync("Sox", 2026);
+        var game = new Game
+        {
+            Year = 2026, Date = new DateOnly(2026, 4, 2),
+            AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 1,
+        };
+
+        Assert.Null(await _games.CreateAsync(game));
+
+        Assert.Equal(1, (await _games.FindAsync(game.Id))!.Innings);
+    }
+
+    [Fact]
     public async Task Rosters_for_year_lists_only_that_year_ordered_by_name()
     {
         var tag = Guid.NewGuid().ToString("N");

@@ -1,0 +1,7 @@
+## mutant: GameService.cs 'game.Innings < 1' -> 'game.Innings <= 1'
+ src/BaseballScorecard/Data/GameService.cs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+[xUnit.net 00:00:02.56]     BaseballScorecard.Tests.Games.GameServiceTests.One_inning_is_the_smallest_game_that_saves [FAIL]
+  Failed BaseballScorecard.Tests.Games.GameServiceTests.One_inning_is_the_smallest_game_that_saves [9 ms]
+     at BaseballScorecard.Tests.Games.GameServiceTests.One_inning_is_the_smallest_game_that_saves() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-6-qa/tests/BaseballScorecard.Tests/Games/GameServiceTests.cs:line 149
+Failed!  - Failed:     1, Passed:    10, Skipped:     0, Total:    11, Duration: 913 ms - BaseballScorecard.Tests.dll (net10.0)
