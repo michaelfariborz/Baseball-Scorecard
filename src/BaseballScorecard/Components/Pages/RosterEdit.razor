@@ -1,0 +1,64 @@
+@page "/rosters/new"
+@page "/rosters/{Id:int}/edit"
+@rendermode InteractiveServer
+@using BaseballScorecard.Data
+@inject RosterService RosterService
+@inject NavigationManager Navigation
+
+<PageTitle>@Title</PageTitle>
+
+<h1>@Title</h1>
+
+@if (model is null)
+{
+    <p>Roster not found. <a href="rosters">Back to rosters</a></p>
+}
+else
+{
+    <EditForm Model="model" OnValidSubmit="SaveAsync" FormName="roster">
+        <DataAnnotationsValidator />
+
+        <p>
+            <label for="team-name">Team Name</label>
+            <InputText id="team-name" @bind-Value="model.TeamName" />
+            <ValidationMessage For="() => model.TeamName" />
+        </p>
+        <p>
+            <label for="year">Year</label>
+            <InputNumber id="year" @bind-Value="model.Year" />
+        </p>
+
+        @if (error is not null)
+        {
+            <p class="validation-message" role="alert">@error</p>
+        }
+
+        <button type="submit">Save</button>
+        <a href="rosters">Cancel</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter] public int? Id { get; set; }
+
+    private Roster? model;
+    private string? error;
+
+    private string Title => Id is null ? "New roster" : "Edit roster";
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = Id is null
+            ? new Roster { Year = DateTime.Today.Year }
+            : await RosterService.FindAsync(Id.Value);
+    }
+
+    private async Task SaveAsync()
+    {
+        error = await RosterService.SaveAsync(model!);
+        if (error is null)
+        {
+            Navigation.NavigateTo("rosters");
+        }
+    }
+}

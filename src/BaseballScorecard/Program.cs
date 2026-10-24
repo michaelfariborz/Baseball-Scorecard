@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddScorecardDb(builder.Configuration);
+builder.Services.AddScoped<RosterService>();
 
 var app = builder.Build();
 

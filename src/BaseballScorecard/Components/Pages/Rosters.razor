@@ -1,0 +1,29 @@
+@page "/rosters"
+@using BaseballScorecard.Data
+@inject RosterService RosterService
+
+<PageTitle>Rosters</PageTitle>
+
+<h1>Rosters</h1>
+
+<p><a href="rosters/new">New roster</a></p>
+
+@if (rosters.Count == 0)
+{
+    <p>No rosters yet.</p>
+}
+else
+{
+    <ul class="rosters">
+        @foreach (var roster in rosters)
+        {
+            <li><a href="rosters/@roster.Id/edit">@roster.Year · @roster.TeamName</a></li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Roster> rosters = [];
+
+    protected override async Task OnInitializedAsync() => rosters = await RosterService.ListAsync();
+}
