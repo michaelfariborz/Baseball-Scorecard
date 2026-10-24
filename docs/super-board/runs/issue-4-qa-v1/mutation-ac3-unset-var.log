@@ -1,0 +1,14 @@
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.24]     BaseballScorecard.Tests.Data.DatabaseConnectionTests.Test_database_is_reachable_after_migrations [FAIL]
+  Failed BaseballScorecard.Tests.Data.DatabaseConnectionTests.Test_database_is_reachable_after_migrations [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 23
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-4-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 32
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 ms - BaseballScorecard.Tests.dll (net10.0)

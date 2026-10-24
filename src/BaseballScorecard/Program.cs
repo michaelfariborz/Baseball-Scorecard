@@ -1,10 +1,12 @@
 using BaseballScorecard.Components;
+using BaseballScorecard.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddScorecardDb(builder.Configuration);
 
 var app = builder.Build();
 
