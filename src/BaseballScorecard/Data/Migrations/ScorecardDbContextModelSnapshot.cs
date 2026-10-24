@@ -57,6 +57,38 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.Player", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UniformNumber")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RosterId", "UniformNumber")
+                        .IsUnique();
+
+                    b.ToTable("Players");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Roster", b =>
                 {
                     b.Property<int>("Id")
@@ -98,6 +130,15 @@ namespace BaseballScorecard.Data.Migrations
                     b.Navigation("AwayRoster");
 
                     b.Navigation("HomeRoster");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.Player", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

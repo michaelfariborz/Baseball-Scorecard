@@ -18,6 +18,7 @@ public class RosterEditFormDbTests : BunitContext
     {
         Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(new FixtureDbFactory(fixture));
         Services.AddScoped<RosterService>();
+        Services.AddScoped<PlayerService>();
         _service = new RosterService(new FixtureDbFactory(fixture));
     }
 

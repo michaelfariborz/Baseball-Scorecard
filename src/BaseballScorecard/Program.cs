@@ -9,6 +9,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScorecardDb(builder.Configuration);
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<PlayerService>();
 
 var app = builder.Build();
 

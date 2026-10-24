@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 @using BaseballScorecard.Data
 @inject RosterService RosterService
+@inject PlayerService PlayerService
 @inject NavigationManager Navigation
 
 <PageTitle>@Title</PageTitle>
@@ -36,6 +37,48 @@ else
         <button type="submit">Save</button>
         <a href="rosters">Cancel</a>
     </EditForm>
+
+    @if (Id is not null)
+    {
+        <h2>Players</h2>
+
+        <ul id="players">
+            @foreach (var p in players)
+            {
+                <li>
+                    <span class="player">#@p.UniformNumber @p.FirstName @p.LastName</span>
+                    <button type="button" class="edit-player" @onclick="() => EditPlayer(p)">Edit</button>
+                    <button type="button" class="remove-player" @onclick="() => RemovePlayerAsync(p)">Remove</button>
+                </li>
+            }
+        </ul>
+
+        <EditForm id="player-form" Model="player" OnSubmit="SavePlayerAsync" FormName="player">
+            <p>
+                <label for="player-number">Uniform Number</label>
+                <InputText id="player-number" @bind-Value="player.UniformNumber" maxlength="2" inputmode="numeric" />
+            </p>
+            <p>
+                <label for="player-first">First Name</label>
+                <InputText id="player-first" @bind-Value="player.FirstName" />
+            </p>
+            <p>
+                <label for="player-last">Last Name</label>
+                <InputText id="player-last" @bind-Value="player.LastName" />
+            </p>
+
+            @if (playerError is not null)
+            {
+                <p id="player-error" class="validation-message" role="alert">@playerError</p>
+            }
+
+            <button type="submit">@(player.Id == 0 ? "Add player" : "Save player")</button>
+            @if (player.Id != 0)
+            {
+                <button type="button" @onclick="ResetPlayer">Cancel</button>
+            }
+        </EditForm>
+    }
 }
 
 @code {
@@ -43,6 +86,9 @@ else
 
     private Roster? model;
     private string? error;
+    private List<Player> players = [];
+    private Player player = new();
+    private string? playerError;
 
     private string Title => Id is null ? "New roster" : "Edit roster";
 
@@ -51,6 +97,10 @@ else
         model = Id is null
             ? new Roster { Year = DateTime.Today.Year }
             : await RosterService.FindAsync(Id.Value);
+        if (model is not null && Id is not null)
+        {
+            players = await PlayerService.ListAsync(model.Id);
+        }
     }
 
     private async Task SaveAsync()
@@ -60,5 +110,41 @@ else
         {
             Navigation.NavigateTo("rosters");
         }
+    }
+
+    private void EditPlayer(Player p)
+    {
+        player = new Player
+        {
+            Id = p.Id, RosterId = p.RosterId, UniformNumber = p.UniformNumber, FirstName = p.FirstName, LastName = p.LastName,
+        };
+        playerError = null;
+    }
+
+    private void ResetPlayer()
+    {
+        player = new Player();
+        playerError = null;
+    }
+
+    private async Task SavePlayerAsync()
+    {
+        player.RosterId = model!.Id;
+        playerError = await PlayerService.SaveAsync(player);
+        if (playerError is null)
+        {
+            ResetPlayer();
+            players = await PlayerService.ListAsync(model.Id);
+        }
+    }
+
+    private async Task RemovePlayerAsync(Player p)
+    {
+        await PlayerService.DeleteAsync(p.Id);
+        if (player.Id == p.Id)
+        {
+            ResetPlayer();
+        }
+        players = await PlayerService.ListAsync(model!.Id);
     }
 }
