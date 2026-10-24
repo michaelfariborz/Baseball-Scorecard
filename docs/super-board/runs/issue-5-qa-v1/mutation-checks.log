@@ -1,0 +1,15 @@
+### mutant: form does not render the save error
+  Failed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Submitting_an_existing_team_name_and_year_shows_the_duplicate_message_and_saves_nothing [1 s]
+Failed!  - Failed:     1, Passed:    16, Skipped:     0, Total:    17, Duration: 2 s - BaseballScorecard.Tests.dll (net10.0)
+### mutant: form does not return to the list after save
+  Failed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Creating_through_the_form_saves_the_roster_and_returns_to_the_list [1 s]
+  Failed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Editing_through_the_form_loads_the_roster_and_saves_the_change [1 s]
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 3 s - BaseballScorecard.Tests.dll (net10.0)
+### mutant: service does not trim the team name
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ") [11 ms]
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate [7 ms]
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 1 s - BaseballScorecard.Tests.dll (net10.0)
+### mutant: edit page does not load the roster
+  Failed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Editing_through_the_form_loads_the_roster_and_saves_the_change [1 s]
+  Failed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Edit_page_for_a_missing_id_says_the_roster_was_not_found [1 s]
+Failed!  - Failed:     2, Passed:    15, Skipped:     0, Total:    17, Duration: 4 s - BaseballScorecard.Tests.dll (net10.0)

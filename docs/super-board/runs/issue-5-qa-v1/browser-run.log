@@ -1,0 +1,8 @@
+PASS AC2 year default: year field = 2026
+PASS AC2 create: saved and listed after redirect to /rosters
+PASS AC1 list format + order: ["2026 · [TEST] Astros wd223","2026 · [TEST] Cubs wd223","2025 · [TEST] Bears wd223"]
+PASS AC4 blank: message "Team Name is required.", stayed on http://localhost:5199/rosters/new
+PASS AC4 duplicate: message "A roster with this Team Name and Year already exists."
+PASS AC4 saves nothing: 3 → 3 rows for this run
+PASS AC3 edit: ["2026 · [TEST] Astros wd223","2025 · [TEST] Bears wd223","2024 · [TEST] Cubbies wd223"]
+FAIL No console/page errors or 5xx: console: Failed to load resource: the server responded with a status of 404 (Not Found)

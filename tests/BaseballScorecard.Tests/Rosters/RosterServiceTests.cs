@@ -84,6 +84,18 @@ public class RosterServiceTests(PostgresFixture fixture)
     }
 
     [Fact]
+    public async Task Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate()
+    {
+        var name = UniqueName("Cubs");
+        Assert.Null(await _service.SaveAsync(new Roster { TeamName = name, Year = 2026 }));
+
+        var error = await _service.SaveAsync(new Roster { TeamName = $"  {name}  ", Year = 2026 });
+
+        Assert.Equal(RosterService.DuplicateMessage, error);
+        Assert.Single(await _service.ListAsync(), r => r.TeamName == name);
+    }
+
+    [Fact]
     public async Task Same_team_name_in_another_year_is_a_separate_roster()
     {
         var name = UniqueName("Cubs");
