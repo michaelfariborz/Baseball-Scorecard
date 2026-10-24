@@ -16,7 +16,11 @@ public class GameServiceRegistrationTests
         {
             host.UseEnvironment("Testing");
             host.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(
-                new Dictionary<string, string?> { ["ConnectionStrings:Scorecard"] = "Host=example;Database=unused" }));
+                new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:Scorecard"] = "Host=example;Database=unused",
+                    ["Database:MigrateOnStartup"] = "false",
+                }));
         });
         using var scope = factory.Services.CreateScope();
 
