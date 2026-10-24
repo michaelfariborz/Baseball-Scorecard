@@ -1,0 +1,5 @@
+# dotnet run --no-build --no-launch-profile (Development, http://localhost:5199, DB = SCORECARD_TEST_DB); warn/fail/startup lines only, EF SQL logs dropped
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+      Now listening on: http://localhost:5199
+      Application started. Press Ctrl+C to shut down.

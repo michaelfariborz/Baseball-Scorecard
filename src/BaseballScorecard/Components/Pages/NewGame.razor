@@ -1,0 +1,82 @@
+@page "/games/new"
+@rendermode InteractiveServer
+@using BaseballScorecard.Data
+@inject GameService GameService
+@inject NavigationManager Navigation
+
+<PageTitle>New game</PageTitle>
+
+<h1>New game</h1>
+
+<EditForm Model="model" OnValidSubmit="SaveAsync" FormName="game">
+    <p>
+        <label for="year">Year</label>
+        <InputNumber id="year" @bind-Value="model.Year" @bind-Value:after="LoadRostersAsync" />
+    </p>
+    <p>
+        <label for="date">Date</label>
+        <InputDate id="date" @bind-Value="model.Date" />
+    </p>
+    <p>
+        <label for="away">Away Team</label>
+        <InputSelect id="away" @bind-Value="model.AwayRosterId">
+            <option value="0">Pick a team</option>
+            @foreach (var roster in rosters)
+            {
+                <option value="@roster.Id">@roster.TeamName</option>
+            }
+        </InputSelect>
+    </p>
+    <p>
+        <label for="home">Home Team</label>
+        <InputSelect id="home" @bind-Value="model.HomeRosterId">
+            <option value="0">Pick a team</option>
+            @foreach (var roster in rosters)
+            {
+                <option value="@roster.Id">@roster.TeamName</option>
+            }
+        </InputSelect>
+    </p>
+    <p>
+        <label for="innings">Innings</label>
+        <InputNumber id="innings" @bind-Value="model.Innings" ParsingErrorMessage="@GameService.InningsMessage" />
+        <ValidationMessage For="() => model.Innings" />
+    </p>
+    <p>
+        <label for="batters">Batters</label>
+        <input id="batters" type="number" value="@Game.FixedBatters" readonly />
+    </p>
+
+    @if (error is not null)
+    {
+        <p class="validation-message" role="alert">@error</p>
+    }
+
+    <button type="submit">Save</button>
+    <a href="">Cancel</a>
+</EditForm>
+
+@code {
+    private readonly Game model = new() { Year = DateTime.Today.Year, Date = DateOnly.FromDateTime(DateTime.Today) };
+    private List<Roster> rosters = [];
+    private string? error;
+
+    protected override Task OnInitializedAsync() => LoadRostersAsync();
+
+    // Lists the selected Year's rosters and drops a picked team that is not one of them.
+    private async Task LoadRostersAsync()
+    {
+        rosters = await GameService.RostersForYearAsync(model.Year);
+        if (rosters.All(r => r.Id != model.AwayRosterId)) model.AwayRosterId = 0;
+        if (rosters.All(r => r.Id != model.HomeRosterId)) model.HomeRosterId = 0;
+    }
+
+    private async Task SaveAsync()
+    {
+        error = await GameService.CreateAsync(model);
+        if (error is null)
+        {
+            Navigation.NavigateTo($"games/{model.Id}");
+        }
+    }
+}

@@ -1,0 +1,9 @@
+PASS AC1 defaults: {"year":"2026","date":"2026-10-24","innings":"9","batters":"9","ro":"","away":1,"home":1}
+PASS AC2 year filter: 2026: away has Cubs+Sox, not Browns=true; 2025: Browns only=true; picked away cleared=true
+PASS AC3 no team: "Pick an Away Team and a Home Team from the selected Year's rosters.", url http://localhost:5199/games/new
+PASS AC3 same team: "Away Team and Home Team must be different.", url http://localhost:5199/games/new
+PASS AC3 innings 0: message shown, url http://localhost:5199/games/new
+PASS AC3 innings 2.5: message shown, url http://localhost:5199/games/new
+PASS AC4 save opens game page: http://localhost:5199/games/55 {"h1":"[TEST] Cubs y912m @ [TEST] Sox y912m","date":"April 2, 2026","innings":"7","batters":"9"}
+PASS AC4 persisted (cold reload): http://localhost:5199/games/55
+FAIL No console/page errors or 4xx/5xx: console: Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:5199/favicon.ico
