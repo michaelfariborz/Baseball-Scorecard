@@ -1,0 +1,40 @@
+@page "/games/{Id:int}"
+@using System.Globalization
+@using BaseballScorecard.Data
+@inject GameService GameService
+
+@if (loaded && game is null)
+{
+    <PageTitle>Game not found</PageTitle>
+    <p>Game not found. <a href="games/new">New game</a></p>
+}
+else if (game is not null)
+{
+    <PageTitle>@Matchup</PageTitle>
+
+    <h1>@Matchup</h1>
+
+    <dl>
+        <dt>Date</dt>
+        <dd id="game-date">@game.Date.ToString("MMMM d, yyyy", CultureInfo.InvariantCulture)</dd>
+        <dt>Innings</dt>
+        <dd id="game-innings">@game.Innings</dd>
+        <dt>Batters</dt>
+        <dd id="game-batters">@game.Batters</dd>
+    </dl>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Game? game;
+    private bool loaded;
+
+    private string Matchup => $"{game!.AwayRoster!.TeamName} @ {game.HomeRoster!.TeamName}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        game = await GameService.FindAsync(Id);
+        loaded = true;
+    }
+}
