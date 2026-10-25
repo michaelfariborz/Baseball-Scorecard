@@ -1,0 +1,108 @@
+@using BaseballScorecard.Data
+@inject LineupService LineupService
+@inject PlayerService PlayerService
+
+@* One team's starting lineup on the game page. Side ("away" / "home") prefixes every element id. *@
+<section id="lineup-@Side">
+    <h2>@TeamName lineup</h2>
+
+    <table>
+        <thead>
+            <tr><th>Bat</th><th>Player</th><th>Position</th></tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < slots.Count; i++)
+            {
+                var slot = slots[i];
+                var n = i + 1;
+                <tr>
+                    <td>@n</td>
+                    <td>
+                        <select id="@Side-slot-@n-player" aria-label="Batting slot @n player" @bind="slot.PlayerId">
+                            <option value="0"></option>
+                            @foreach (var p in players)
+                            {
+                                <option value="@p.Id">@PlayerLabel(p)</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="@Side-slot-@n-position" aria-label="Batting slot @n position" @bind="slot.Position">
+                            <option value="0"></option>
+                            @foreach (var pos in Positions.All)
+                            {
+                                <option value="@pos" disabled="@(HasDh && pos == Position.Pitcher)">@Positions.Label(pos)</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (HasDh)
+    {
+        <p>
+            <label for="@Side-starting-pitcher">Starting pitcher</label>
+            <select id="@Side-starting-pitcher" @bind="startingPitcherId">
+                <option value="0"></option>
+                @foreach (var p in players.Where(p => slots.All(s => s.PlayerId != p.Id)))
+                {
+                    <option value="@p.Id">@PlayerLabel(p)</option>
+                }
+            </select>
+        </p>
+    }
+
+    @if (error is not null)
+    {
+        <p id="@Side-lineup-error" class="validation-message" role="alert">@error</p>
+    }
+    else if (saved)
+    {
+        <p id="@Side-lineup-saved" role="status">Lineup saved.</p>
+    }
+
+    <button type="button" id="@Side-save-lineup" @onclick="SaveAsync">Save lineup</button>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public int GameId { get; set; }
+    [Parameter, EditorRequired] public int RosterId { get; set; }
+    [Parameter, EditorRequired] public string Side { get; set; } = "";
+    [Parameter, EditorRequired] public string TeamName { get; set; } = "";
+
+    private List<Player> players = [];
+    private List<LineupSlot> slots = [];
+    private int startingPitcherId;
+    private string? error;
+    private bool saved;
+
+    private bool HasDh => slots.Any(s => s.Position == Position.DesignatedHitter);
+
+    private static string PlayerLabel(Player p) => $"#{p.UniformNumber} {p.FirstName} {p.LastName}";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        players = await PlayerService.ListAsync(RosterId);
+        var lineup = await LineupService.FindAsync(GameId, RosterId);
+        // A slot whose player was removed from the roster is gone; it shows empty so the scorer re-picks.
+        slots = Enumerable.Range(1, LineupService.SlotCount)
+            .Select(n => lineup?.Slots.FirstOrDefault(s => s.BattingOrder == n) ?? new LineupSlot())
+            .Select(s => new LineupSlot { PlayerId = s.PlayerId, Position = s.Position })
+            .ToList();
+        startingPitcherId = lineup?.StartingPitcherId ?? 0;
+    }
+
+    private async Task SaveAsync()
+    {
+        error = await LineupService.SaveAsync(new Lineup
+        {
+            GameId = GameId,
+            RosterId = RosterId,
+            StartingPitcherId = startingPitcherId == 0 ? null : startingPitcherId,
+            Slots = slots,
+        });
+        saved = error is null;
+    }
+}
