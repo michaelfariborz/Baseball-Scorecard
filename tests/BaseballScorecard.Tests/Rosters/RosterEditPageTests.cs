@@ -11,6 +11,7 @@ public class RosterEditPageTests : BunitContext
     {
         // A blank Team Name and a new roster never reach the database.
         Services.AddScoped(_ => new RosterService(null!));
+        Services.AddScoped(_ => new PlayerService(null!));
     }
 
     [Fact]

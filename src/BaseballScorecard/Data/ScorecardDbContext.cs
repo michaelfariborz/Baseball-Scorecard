@@ -11,10 +11,20 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<Game> Games => Set<Game>();
 
+    public DbSet<Player> Players => Set<Player>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
             .HasIndex(r => new { r.TeamName, r.Year })
+            .IsUnique();
+
+        // A uniform number is unique within one roster; removing a roster removes its players.
+        modelBuilder.Entity<Player>()
+            .HasOne<Roster>().WithMany().HasForeignKey(p => p.RosterId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Player>()
+            .HasIndex(p => new { p.RosterId, p.UniformNumber })
             .IsUnique();
 
         // Restrict: a game keeps its teams; deleting a roster with games fails instead of deleting them.
