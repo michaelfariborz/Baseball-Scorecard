@@ -124,8 +124,11 @@ public class RosterPlayersFormDbTests : BunitContext
         var cut = RenderRoster(rosterId);
 
         cut.Find(".edit-player").Click();
-        Assert.Equal("14", cut.Find("#player-number").GetAttribute("value"));
-        Assert.Equal("Ernie", cut.Find("#player-first").GetAttribute("value"));
+        cut.WaitForAssertion(() =>
+        {
+            Assert.Equal("14", cut.Find("#player-number").GetAttribute("value"));
+            Assert.Equal("Ernie", cut.Find("#player-first").GetAttribute("value"));
+        });
         FillAndSubmit(cut, "31", "Fergie", "Jenkins");
 
         cut.WaitForAssertion(() => Assert.Equal(["#31 Fergie Jenkins"], Listed(cut)));
