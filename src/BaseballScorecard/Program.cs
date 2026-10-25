@@ -10,6 +10,7 @@ builder.Services.AddScorecardDb(builder.Configuration);
 builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<PlayerService>();
+builder.Services.AddScoped<LineupService>();
 
 var app = builder.Build();
 

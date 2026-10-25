@@ -17,6 +17,8 @@ public class GamePageTests : BunitContext
         _fixture = fixture;
         Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(new FixtureDbFactory(fixture));
         Services.AddScoped<GameService>();
+        Services.AddScoped<PlayerService>();
+        Services.AddScoped<LineupService>();
     }
 
     [Fact]

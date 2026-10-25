@@ -57,6 +57,65 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.Lineup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("StartingPitcherId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RosterId");
+
+                    b.HasIndex("StartingPitcherId");
+
+                    b.HasIndex("GameId", "RosterId")
+                        .IsUnique();
+
+                    b.ToTable("Lineups");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.LineupSlot", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BattingOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LineupId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("LineupId", "BattingOrder")
+                        .IsUnique();
+
+                    b.ToTable("LineupSlot");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Player", b =>
                 {
                     b.Property<int>("Id")
@@ -132,6 +191,41 @@ namespace BaseballScorecard.Data.Migrations
                     b.Navigation("HomeRoster");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.Lineup", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Player", null)
+                        .WithMany()
+                        .HasForeignKey("StartingPitcherId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.LineupSlot", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Lineup", null)
+                        .WithMany("Slots")
+                        .HasForeignKey("LineupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Player", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Player", b =>
                 {
                     b.HasOne("BaseballScorecard.Data.Roster", null)
@@ -139,6 +233,11 @@ namespace BaseballScorecard.Data.Migrations
                         .HasForeignKey("RosterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.Lineup", b =>
+                {
+                    b.Navigation("Slots");
                 });
 #pragma warning restore 612, 618
         }

@@ -13,6 +13,8 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<Player> Players => Set<Player>();
 
+    public DbSet<Lineup> Lineups => Set<Lineup>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
@@ -34,5 +36,30 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
         modelBuilder.Entity<Game>()
             .HasOne(g => g.HomeRoster).WithMany().HasForeignKey(g => g.HomeRosterId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // One lineup per team per game, removed with its game.
+        modelBuilder.Entity<Lineup>()
+            .HasOne<Game>().WithMany().HasForeignKey(l => l.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Lineup>()
+            .HasOne<Roster>().WithMany().HasForeignKey(l => l.RosterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<Lineup>()
+            .HasIndex(l => new { l.GameId, l.RosterId })
+            .IsUnique();
+        // Removing a player from the roster clears the pitcher pick and empties their slot, so the scorer re-picks.
+        modelBuilder.Entity<Lineup>()
+            .HasOne<Player>().WithMany().HasForeignKey(l => l.StartingPitcherId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<LineupSlot>()
+            .HasOne<Lineup>().WithMany(l => l.Slots).HasForeignKey(s => s.LineupId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<LineupSlot>()
+            .HasOne<Player>().WithMany().HasForeignKey(s => s.PlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<LineupSlot>()
+            .HasIndex(s => new { s.LineupId, s.BattingOrder })
+            .IsUnique();
     }
 }

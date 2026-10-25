@@ -1,4 +1,5 @@
 @page "/games/{Id:int}"
+@rendermode InteractiveServer
 @using System.Globalization
 @using BaseballScorecard.Data
 @inject GameService GameService
@@ -22,6 +23,9 @@ else if (game is not null)
         <dt>Batters</dt>
         <dd id="game-batters">@game.Batters</dd>
     </dl>
+
+    <LineupEditor GameId="game.Id" RosterId="game.AwayRosterId" Side="away" TeamName="@game.AwayRoster!.TeamName" />
+    <LineupEditor GameId="game.Id" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" />
 }
 
 @code {
