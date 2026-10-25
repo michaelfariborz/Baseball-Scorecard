@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace BaseballScorecard.Data;
 
@@ -14,6 +15,8 @@ public class LineupService(IDbContextFactory<ScorecardDbContext> dbFactory)
     public const string StartingPitcherBattingMessage =
         "The Starting pitcher can't also be in the batting order when the lineup has a Designated Hitter.";
     public const string TeamNotInGameMessage = "This team is not playing in this game.";
+    public const string SavedElsewhereMessage =
+        "Another save of this lineup finished first. Reload the page to see it, then save again.";
 
     public static string EmptySlotMessage(int slot) => $"Batting slot {slot} needs a player and a position.";
 
@@ -121,7 +124,15 @@ public class LineupService(IDbContextFactory<ScorecardDbContext> dbFactory)
             row.PlayerId = slots[i].PlayerId;
             row.Position = slots[i].Position;
         }
-        await db.SaveChangesAsync();
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            // Lost a race with another first save of this lineup; the unique index caught it.
+            return SavedElsewhereMessage;
+        }
 
         lineup.Id = entity.Id;
         lineup.StartingPitcherId = startingPitcherId;

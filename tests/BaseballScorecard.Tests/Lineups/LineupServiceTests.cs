@@ -1,5 +1,7 @@
 using BaseballScorecard.Data;
 using BaseballScorecard.Tests.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace BaseballScorecard.Tests.Lineups;
 
@@ -215,6 +217,34 @@ public class LineupServiceTests(PostgresFixture fixture)
             LineupService.StartingPitcherRequiredMessage,
             await _lineups.SaveAsync(Build(s, WithDh, s.OtherRosterPlayerId)));
         Assert.Null(await _lineups.FindAsync(s.GameId, s.RosterId));
+    }
+
+    [Fact]
+    public async Task First_save_that_loses_a_race_returns_a_message_instead_of_throwing()
+    {
+        var s = await NewGameAsync();
+        var racing = new LineupService(new RacingFactory(fixture, () => _lineups.SaveAsync(Build(s, NoDh))));
+
+        Assert.Equal(LineupService.SavedElsewhereMessage, await racing.SaveAsync(Build(s, NoDh)));
+        Assert.NotNull(await _lineups.FindAsync(s.GameId, s.RosterId));
+    }
+
+    /// <summary>Runs another save just before this context writes, as a second click on Save would.</summary>
+    private sealed class RacingFactory(PostgresFixture fixture, Func<Task<string?>> other)
+        : IDbContextFactory<ScorecardDbContext>
+    {
+        public ScorecardDbContext CreateDbContext() =>
+            new(new DbContextOptionsBuilder<ScorecardDbContext>(fixture.Options).AddInterceptors(new SaveFirst(other)).Options);
+    }
+
+    private sealed class SaveFirst(Func<Task<string?>> other) : SaveChangesInterceptor
+    {
+        public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(
+            DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+        {
+            Assert.Null(await other());
+            return result;
+        }
     }
 
     [Fact]
