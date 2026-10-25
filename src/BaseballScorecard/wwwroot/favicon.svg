@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>Baseball</title>
+  <circle cx="32" cy="32" r="29" fill="#ffffff" stroke="#5b5b5b" stroke-width="3"/>
+  <g fill="none" stroke="#c8102e" stroke-width="3.5" stroke-linecap="round">
+    <path d="M17 11 C 33 23, 33 41, 17 53"/>
+    <path d="M47 11 C 31 23, 31 41, 47 53"/>
+  </g>
+  <g fill="none" stroke="#c8102e" stroke-width="2.5" stroke-linecap="round">
+    <path d="M17 11 l-5 2 M23 18 l-5 3 M27 25 l-5 4 M28 32 l-6 3 M27 39 l-5 4 M23 46 l-5 3"/>
+    <path d="M47 11 l5 2 M41 18 l5 3 M37 25 l5 4 M36 32 l6 3 M37 39 l5 4 M41 46 l5 3"/>
+  </g>
+</svg>
