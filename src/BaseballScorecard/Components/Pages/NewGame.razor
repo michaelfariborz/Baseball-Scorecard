@@ -52,7 +52,7 @@
         <p class="validation-message" role="alert">@error</p>
     }
 
-    <button type="submit">Save</button>
+    <button type="submit" disabled="@saving">Save</button>
     <a href="">Cancel</a>
 </EditForm>
 
@@ -60,6 +60,7 @@
     private readonly Game model = new() { Year = DateTime.Today.Year, Date = DateOnly.FromDateTime(DateTime.Today) };
     private List<Roster> rosters = [];
     private string? error;
+    private bool saving;
 
     protected override Task OnInitializedAsync() => LoadRostersAsync();
 
@@ -71,12 +72,19 @@
         if (rosters.All(r => r.Id != model.HomeRosterId)) model.HomeRosterId = 0;
     }
 
+    // Stays locked after a good save (the page is navigating away); a failed one unlocks so the scorer can retry.
     private async Task SaveAsync()
     {
+        if (saving) return;
+        saving = true;
         error = await GameService.CreateAsync(model);
         if (error is null)
         {
             Navigation.NavigateTo($"games/{model.Id}");
+        }
+        else
+        {
+            saving = false;
         }
     }
 }

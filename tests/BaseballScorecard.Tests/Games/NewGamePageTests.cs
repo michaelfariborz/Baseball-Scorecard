@@ -14,13 +14,29 @@ public class NewGamePageTests : BunitContext
 {
     private readonly PostgresFixture _fixture;
     private readonly RosterService _rosters;
+    private readonly GatedDbFactory _gated;
 
     public NewGamePageTests(PostgresFixture fixture)
     {
         _fixture = fixture;
-        Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(new FixtureDbFactory(fixture));
+        _gated = new GatedDbFactory(fixture);
+        Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(_gated);
         Services.AddScoped<GameService>();
         _rosters = new RosterService(new FixtureDbFactory(fixture));
+    }
+
+    // Holds every async context request until Gate completes, so a save can be left in flight on purpose.
+    private sealed class GatedDbFactory(PostgresFixture fixture) : IDbContextFactory<ScorecardDbContext>
+    {
+        public TaskCompletionSource? Gate { get; set; }
+
+        public ScorecardDbContext CreateDbContext() => fixture.CreateContext();
+
+        public async Task<ScorecardDbContext> CreateDbContextAsync(CancellationToken cancellationToken = default)
+        {
+            if (Gate is { } gate) await gate.Task;
+            return fixture.CreateContext();
+        }
     }
 
     private string CurrentUri => Services.GetRequiredService<NavigationManager>().Uri;
@@ -181,5 +197,63 @@ public class NewGamePageTests : BunitContext
         cut.WaitForAssertion(() => Assert.Contains(GameService.InningsMessage, cut.Markup));
         Assert.Equal(startUri, CurrentUri);
         Assert.Equal(before, await CountGamesAsync());
+    }
+
+    private async Task<(IRenderedComponent<NewGame> Cut, Roster Away, Roster Home)> FilledFormAsync()
+    {
+        var away = await NewRosterAsync("Cubs", 2026);
+        var home = await NewRosterAsync("Sox", 2026);
+        var cut = Render<NewGame>();
+        await Set(cut, "#year", "2026");
+        cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
+        await Set(cut, "#away", away.Id.ToString());
+        await Set(cut, "#home", home.Id.ToString());
+        return (cut, away, home);
+    }
+
+    private async Task<int> CountGamesBetweenAsync(Roster away, Roster home)
+    {
+        await using var db = _fixture.CreateContext();
+        return db.Games.Count(g => g.AwayRosterId == away.Id && g.HomeRosterId == home.Id);
+    }
+
+    [Fact]
+    public async Task Save_is_disabled_while_a_save_is_running()
+    {
+        var (cut, _, _) = await FilledFormAsync();
+        Assert.False(cut.Find("button[type=submit]").HasAttribute("disabled"));
+        var gate = _gated.Gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var save = cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+
+        cut.WaitForAssertion(() => Assert.True(cut.Find("button[type=submit]").HasAttribute("disabled")));
+        gate.SetResult();
+        await save;
+    }
+
+    [Fact]
+    public async Task Submitting_twice_while_the_first_save_is_running_creates_exactly_one_game()
+    {
+        var (cut, away, home) = await FilledFormAsync();
+        var gate = _gated.Gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var first = cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+        var second = cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+        gate.SetResult();
+        await Task.WhenAll(first, second);
+
+        cut.WaitForAssertion(() => Assert.Matches(@"/games/\d+$", CurrentUri));
+        Assert.Equal(1, await CountGamesBetweenAsync(away, home));
+    }
+
+    [Fact]
+    public async Task Save_is_enabled_again_after_a_save_fails_validation()
+    {
+        var cut = Render<NewGame>();
+
+        await cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+
+        cut.WaitForAssertion(() => Assert.Equal(GameService.NoTeamMessage, cut.Find("[role=alert]").TextContent));
+        Assert.False(cut.Find("button[type=submit]").HasAttribute("disabled"));
     }
 }
