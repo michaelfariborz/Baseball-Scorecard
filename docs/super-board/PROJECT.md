@@ -37,11 +37,13 @@ Needs the .NET 10 SDK and a local Postgres.
 
    Anywhere else, set the env var `ConnectionStrings__Scorecard` instead.
 
-3. Point the tests at the throwaway test database. The test fixture applies migrations to it itself and fails with a message naming the variable when it is unset:
+3. Point the tests at the throwaway test database. Each test run creates its own database named off it (for example `baseball_scorecard_test_1a2b3c4d5e6f`), applies migrations there and drops it when the run ends, so two runs at the same time never share rows. The fixture fails with a message naming the variable when it is unset:
 
    ```bash
    export SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>"
    ```
+
+   The test user needs permission to create and drop databases (`ALTER ROLE <you> CREATEDB;`). A run killed part way leaves its database behind; drop it with `dropdb`.
 
 4. Build, test and run from the repo root:
 
@@ -56,7 +58,7 @@ Needs the .NET 10 SDK and a local Postgres.
 |---|---|---|
 | `ConnectionStrings:Scorecard` (user-secrets) | app, dev | app database connection string |
 | `ConnectionStrings__Scorecard` (env var) | app, everywhere else | same |
-| `SCORECARD_TEST_DB` (env var) | tests | `baseball_scorecard_test` connection string |
+| `SCORECARD_TEST_DB` (env var) | tests | `baseball_scorecard_test` connection string; each run makes and drops its own database named off it (needs CREATEDB) |
 | `Database:MigrateOnStartup` / `Database__MigrateOnStartup` | app | `true` by default; `false` skips applying migrations on startup |
 
 Update this file as the app takes shape: purpose, main projects, data storage, how to run it locally.

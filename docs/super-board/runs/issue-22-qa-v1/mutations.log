@@ -1,0 +1,8 @@
+## mutation 1: RunConnectionString returns the shared database
+  Failed BaseballScorecard.Tests.Data.PostgresFixtureIsolationTests.Two_runs_at_the_same_time_each_get_their_own_migrated_database_and_drop_it [1 s]
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 1 s - BaseballScorecard.Tests.dll (net10.0)
+## mutation 2: DisposeAsync no longer drops the database
+  Failed BaseballScorecard.Tests.Data.PostgresFixtureIsolationTests.Two_runs_at_the_same_time_each_get_their_own_migrated_database_and_drop_it [1 s]
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 1 s - BaseballScorecard.Tests.dll (net10.0)
+## restored
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 2 s - BaseballScorecard.Tests.dll (net10.0)

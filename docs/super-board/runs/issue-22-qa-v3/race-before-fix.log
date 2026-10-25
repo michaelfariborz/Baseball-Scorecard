@@ -1,0 +1,14 @@
+Pre-fix failures caught this session at fda6c89 (4 concurrent runs per round).
+
+1) plain test file, round 5 of 5:
+[xUnit.net 00:00:18.18]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it [FAIL]
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it [31 ms]
+  Error Message:
+   System.ArgumentOutOfRangeException : Index was out of range. Must be non-negative and less than the size of the collection. (Parameter 'index')
+  Stack Trace:
+     at System.SZArrayHelper.get_Item[T](Int32 index)
+   at BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it() in tests/BaseballScorecard.Tests/Players/RosterPlayersFormDbTests.cs:line 147
+--- End of stack trace from previous location ---
+
+2) same test with a temporary check before line 147 printing render count and markup, round 3 of 10:
+DIAG renders=1 markup= <h1>Edit roster</h1><form blazor:onsubmit="1"> <p><label for="team-name">Team Name</label> <input id="team-name" name="model.TeamName" class="valid" value="Cubs 65ad76ca53424ccc8c629d71a4d0490d" blazor:onchange="3" blazor:elementReference="c7db288e-195c-4bdd-bbe3-979c60926237"></input> </p> <p><label for="year">Year</label> <input step="any" type="number" id="year" name="model.Year" class="valid" value="2026" blazor:onchange="4" blazor:elementReference="f199ca18-0967-410a-b8e1-726be1a5a478"></input></p><button type="submit">Save</button> <a href="rosters">Cancel</a></form><h2>Players</h2><ul id="players"></ul><form id="player-form" blazor:onsubmit="2"><p><label for="player-number">Uniform Number</label> <input id="player-number" maxlength="2" inputmode="numeric" name="player.UniformNumber" class="valid" value="" blazor:onchange="5" blazor:elementReference="e72368d0-7be0-4b51-aad9-6b2f347e7b3c"></input></p> <p><label for="player-first">First Name</label> <input id="player-first" name="player.FirstName" class="valid" value="" blazor:onchange="6" blazor:elementReference="29af277d-623e-4dcd-aad1-c6682ba39690"></input></p> <p><label for="player-last">Last Name</label> <input id="player-last" name="player.LastName" class="valid" value="" blazor:onchange="7" blazor:elementReference="eeb1c2c0-607f-4175-a400-18ddea55b7fd"></input></p><button type="submit">Add player</button></form>

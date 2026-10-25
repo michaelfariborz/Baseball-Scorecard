@@ -1,0 +1,85 @@
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.30]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Roster_page_lists_its_players_as_number_first_last_sorted_by_number [FAIL]
+[xUnit.net 00:00:00.31]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "", first: "Ernie", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···) [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···) [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "1x", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.") [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "Ernie", last: " ", message: "Uniform Number, First Name and Last Name are requi"···) [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "100", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.") [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Editing_a_player_through_the_form_saves_the_change [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Adding_a_player_through_the_form_saves_it_and_lists_it [FAIL]
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it [FAIL]
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Roster_page_lists_its_players_as_number_first_last_sorted_by_number [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "", first: "Ernie", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "1x", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.") [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "Ernie", last: " ", message: "Uniform Number, First Name and Last Name are requi"···) [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "100", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.") [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Editing_a_player_through_the_form_saves_the_change [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Adding_a_player_through_the_form_saves_it_and_lists_it [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+[xUnit.net 00:00:00.36]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Number_used_on_the_same_roster_shows_the_duplicate_message_and_saves_nothing [FAIL]
+[xUnit.net 00:00:00.36]     BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.New_roster_page_has_no_players_section [FAIL]
+[xUnit.net 00:00:00.36]     [Test Collection Cleanup Failure (Postgres)] System.ArgumentNullException
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Number_used_on_the_same_roster_shows_the_duplicate_message_and_saves_nothing [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.New_roster_page_has_no_players_section [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+
+Failed!  - Failed:    11, Passed:     0, Skipped:     0, Total:    11, Duration: 67 ms - BaseballScorecard.Tests.dll (net10.0)

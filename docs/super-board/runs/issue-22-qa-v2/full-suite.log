@@ -1,0 +1,17 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BaseballScorecard -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:03.11
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   125, Skipped:     0, Total:   125, Duration: 6 s - BaseballScorecard.Tests.dll (net10.0)
