@@ -1,0 +1,4 @@
+# dotnet restore && dotnet build --no-restore && dotnet test --no-build  (head e1e74e8, SCORECARD_TEST_DB)
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    91, Skipped:     0, Total:    91, Duration: 8 s - BaseballScorecard.Tests.dll (net10.0)
