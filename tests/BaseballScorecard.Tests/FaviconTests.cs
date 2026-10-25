@@ -48,4 +48,18 @@ public class FaviconTests
         Assert.Equal("image/svg+xml", svg.Content.Headers.ContentType?.MediaType);
         Assert.Contains("stroke", await svg.Content.ReadAsStringAsync());
     }
+
+    [Fact]
+    public async Task Ico_fallback_link_does_not_claim_any_size_so_browsers_prefer_the_svg()
+    {
+        using var factory = NewFactory();
+        using var client = factory.CreateClient();
+
+        var html = await client.GetStringAsync("/");
+        var match = System.Text.RegularExpressions.Regex.Match(
+            html, "<link[^>]*rel=\"icon\"[^>]*sizes=\"([^\"]+)\"[^>]*href=\"/favicon.ico\"");
+
+        Assert.True(match.Success, "no sized <link rel=\"icon\"> for /favicon.ico in <head>");
+        Assert.NotEqual("any", match.Groups[1].Value);
+    }
 }
