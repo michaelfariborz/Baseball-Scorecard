@@ -10,6 +10,7 @@ public class GameService(IDbContextFactory<ScorecardDbContext> dbFactory)
     public const string NoTeamMessage = "Pick an Away Team and a Home Team from the selected Year's rosters.";
     public const string SameTeamMessage = "Away Team and Home Team must be different.";
     public const string InningsMessage = "Innings must be a whole number of at least 1.";
+    public const string YearMessage = "Enter a Year to pick the teams.";
 
     public async Task<List<Roster>> RostersForYearAsync(int year)
     {
