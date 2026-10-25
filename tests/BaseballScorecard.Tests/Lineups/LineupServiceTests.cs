@@ -220,6 +220,26 @@ public class LineupServiceTests(PostgresFixture fixture)
     }
 
     [Fact]
+    public async Task Lineup_for_a_team_not_in_the_game_is_rejected_and_nothing_is_saved()
+    {
+        var s = await NewGameAsync();
+        var f = new FixtureDbFactory(fixture);
+        var third = new Roster { TeamName = $"Mets {Guid.NewGuid():N}", Year = 2026 };
+        Assert.Null(await new RosterService(f).SaveAsync(third));
+        var thirdPlayers = new List<Player>();
+        for (var i = 1; i <= 9; i++)
+        {
+            var p = new Player { RosterId = third.Id, UniformNumber = $"{i}", FirstName = "Third", LastName = $"Team{i}" };
+            Assert.Null(await new PlayerService(f).SaveAsync(p));
+            thirdPlayers.Add(p);
+        }
+        var lineup = Build(new Setup(s.GameId, third.Id, thirdPlayers, s.OtherRosterPlayerId), NoDh);
+
+        Assert.Equal(LineupService.TeamNotInGameMessage, await _lineups.SaveAsync(lineup));
+        Assert.Null(await _lineups.FindAsync(s.GameId, third.Id));
+    }
+
+    [Fact]
     public async Task First_save_that_loses_a_race_returns_a_message_instead_of_throwing()
     {
         var s = await NewGameAsync();

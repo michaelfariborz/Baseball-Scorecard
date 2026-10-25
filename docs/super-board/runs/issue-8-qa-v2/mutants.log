@@ -1,0 +1,9 @@
+## M1: team-in-game guard disabled (LineupService.cs:89)
+   Assert.Equal() Failure: Strings differ
+Expected: "This team is not playing in this game."
+Actual:   null
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 936 ms - BaseballScorecard.Tests.dll (net10.0)
+## M2: R1 UniqueViolation catch disabled (LineupService.cs:131)
+   Microsoft.EntityFrameworkCore.DbUpdateException : An error occurred while saving the entity changes. See the inner exception for details.
+---- Npgsql.PostgresException : 23505: duplicate key value violates unique constraint "IX_Lineups_GameId_RosterId"
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 945 ms - BaseballScorecard.Tests.dll (net10.0)

@@ -1,0 +1,16 @@
+PASS AC1 away 9 slots + positions: rows=9 positions=["1 · Pitcher","2 · Catcher","3 · First Base","4 · Second Base","5 · Third Base","6 · Shortstop","7 · Left Field","8 · Center Field","9 · Right Field","10 · Designated Hitter"] players=11
+PASS AC1 home 9 slots + positions: rows=9 positions=["1 · Pitcher","2 · Catcher","3 · First Base","4 · Second Base","5 · Third Base","6 · Shortstop","7 · Left Field","8 · Center Field","9 · Right Field","10 · Designated Hitter"] players=10
+PASS AC1 each side lists only its roster: away=11 home=10
+PASS AC2 empty slot: Batting slot 6 needs a player and a position.
+PASS AC2 same player: Batting slot 3 has the same player as slot 2.
+PASS AC2 same position: Batting slot 4 has the same position as slot 1.
+PASS AC2 rejected saves stored nothing (after reload): away slot 1 value=0
+PASS AC3 Pitcher disabled in away slots only: away disabled=true home enabled=true
+PASS AC3 starting pitcher lists only non-batting roster players: ["#10 Away Player10","#11 Away Player11"]
+PASS AC3 starting pitcher required: Pick a Starting pitcher from this roster: the lineup has a Designated Hitter.
+PASS AC3 DH lineup saved: Lineup saved.
+PASS R1 double-click Save on a new lineup does not crash the page: blazor-error-ui=false message=Another save of this lineup finished first. Reload the page to see it, then save again.
+PASS AC4 away lineup + starting pitcher reload in batting order: ["#1 Away Player1","#2 Away Player2","#3 Away Player3","#4 Away Player4","#5 Away Player5","#6 Away Player6","#7 Away Player7","#8 Away Player8","#9 Away Player9"] sp=#11 Away Player11
+PASS AC4 home lineup reloads in batting order: ["#5 Home Player5","#1 Home Player1","#9 Home Player9","#2 Home Player2","#3 Home Player3","#4 Home Player4","#6 Home Player6","#7 Home Player7","#8 Home Player8"]
+INFO console 404s (favicon, tracked in #17): 1
+PASS No page errors, console errors or 4xx/5xx (besides the favicon 404): none
