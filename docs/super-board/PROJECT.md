@@ -50,10 +50,13 @@ Needs the .NET 10 SDK and a local Postgres.
    dotnet run --project src/BaseballScorecard
    ```
 
+   On startup the app applies any pending EF migrations to its database before it takes requests, and logs each one it applies (or that there is nothing to apply). No more `dotnet ef database update` after a pull. If a migration fails, the app stops with an error naming it. To turn this off, set `Database:MigrateOnStartup` to `false` (user-secrets, or the env var `Database__MigrateOnStartup=false`).
+
 | Variable | Used by | Value |
 |---|---|---|
 | `ConnectionStrings:Scorecard` (user-secrets) | app, dev | app database connection string |
 | `ConnectionStrings__Scorecard` (env var) | app, everywhere else | same |
 | `SCORECARD_TEST_DB` (env var) | tests | `baseball_scorecard_test` connection string |
+| `Database:MigrateOnStartup` / `Database__MigrateOnStartup` | app | `true` by default; `false` skips applying migrations on startup |
 
 Update this file as the app takes shape: purpose, main projects, data storage, how to run it locally.
