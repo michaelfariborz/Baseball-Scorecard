@@ -37,10 +37,13 @@ public class RosterPlayersFormDbTests : BunitContext
         return player;
     }
 
-    private IRenderedComponent<RosterEdit> RenderRoster(int rosterId)
+    // The page can render the player form before its player list has loaded (seen under two
+    // concurrent test runs), so wait until the list shows the players the test seeded.
+    private IRenderedComponent<RosterEdit> RenderRoster(int rosterId, params string[] listed)
     {
         var cut = Render<RosterEdit>(p => p.Add(x => x.Id, rosterId));
         cut.WaitForElement("#player-form");
+        cut.WaitForAssertion(() => Assert.Equal(listed, Listed(cut)));
         return cut;
     }
 
@@ -64,7 +67,7 @@ public class RosterPlayersFormDbTests : BunitContext
         await AddAsync(rosterId, "14", "Ernie", "Banks");
         await AddAsync(rosterId, "0", "Single", "Zero");
 
-        var cut = RenderRoster(rosterId);
+        var cut = RenderRoster(rosterId, "#0 Single Zero", "#00 Double Zero", "#14 Ernie Banks", "#31 Fergie Jenkins");
 
         Assert.Equal(["#0 Single Zero", "#00 Double Zero", "#14 Ernie Banks", "#31 Fergie Jenkins"], Listed(cut));
     }
@@ -107,7 +110,7 @@ public class RosterPlayersFormDbTests : BunitContext
     {
         var rosterId = await NewRosterAsync();
         await AddAsync(rosterId, "14", "Ernie", "Banks");
-        var cut = RenderRoster(rosterId);
+        var cut = RenderRoster(rosterId, "#14 Ernie Banks");
 
         FillAndSubmit(cut, "14", "Fergie", "Jenkins");
 
@@ -121,7 +124,7 @@ public class RosterPlayersFormDbTests : BunitContext
     {
         var rosterId = await NewRosterAsync();
         await AddAsync(rosterId, "14", "Ernie", "Banks");
-        var cut = RenderRoster(rosterId);
+        var cut = RenderRoster(rosterId, "#14 Ernie Banks");
 
         cut.Find(".edit-player").Click();
         cut.WaitForAssertion(() =>
@@ -142,7 +145,7 @@ public class RosterPlayersFormDbTests : BunitContext
         var rosterId = await NewRosterAsync();
         await AddAsync(rosterId, "14", "Ernie", "Banks");
         await AddAsync(rosterId, "31", "Fergie", "Jenkins");
-        var cut = RenderRoster(rosterId);
+        var cut = RenderRoster(rosterId, "#14 Ernie Banks", "#31 Fergie Jenkins");
 
         cut.FindAll(".remove-player")[1].Click();
 
