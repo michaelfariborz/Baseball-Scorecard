@@ -1,0 +1,14 @@
+PASS AC1 away 9 slots + positions: rows=9 positions=["1 · Pitcher","2 · Catcher","3 · First Base","4 · Second Base","5 · Third Base","6 · Shortstop","7 · Left Field","8 · Center Field","9 · Right Field","10 · Designated Hitter"] players=11
+PASS AC1 home 9 slots + positions: rows=9 positions=["1 · Pitcher","2 · Catcher","3 · First Base","4 · Second Base","5 · Third Base","6 · Shortstop","7 · Left Field","8 · Center Field","9 · Right Field","10 · Designated Hitter"] players=10
+PASS AC1 each side lists only its roster: away=11 home=10
+PASS AC2 empty slot: Batting slot 6 needs a player and a position.
+PASS AC2 same player: Batting slot 3 has the same player as slot 2.
+PASS AC2 same position: Batting slot 4 has the same position as slot 1.
+PASS AC2 rejected saves stored nothing (after reload): away slot 1 value=0
+PASS AC3 Pitcher disabled in away slots only: away disabled=true home enabled=true
+PASS AC3 starting pitcher lists only non-batting roster players: ["#10 Shota Imanaga","#11 Justin Steele"]
+PASS AC3 starting pitcher required: Pick a Starting pitcher from this roster: the lineup has a Designated Hitter.
+PASS AC3 DH lineup saved: Lineup saved.
+PASS AC4 away lineup + starting pitcher reload in batting order: ["#1 Ian Happ","#2 Nico Hoerner","#3 Seiya Suzuki","#4 Pete Crow","#5 Dansby Swanson","#6 Mike Busch","#7 Carson Kelly","#8 Matt Shaw","#9 Kyle Tucker"] sp=#11 Justin Steele
+PASS AC4 home lineup reloads in batting order: ["#5 Miguel Vargas","#1 Luis Robert","#9 Chase Meidroth","#2 Andrew Benintendi","#3 Andrew Vaughn","#4 Lenyn Sosa","#6 Colson Montgomery","#7 Edgar Quero","#8 Mike Tauchman"]
+FAIL No console/page errors or 4xx/5xx: console: Failed to load resource: the server responded with a status of 404 (Not Found)
