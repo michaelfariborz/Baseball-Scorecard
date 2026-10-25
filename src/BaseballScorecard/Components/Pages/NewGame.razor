@@ -11,7 +11,7 @@
 <EditForm Model="model" OnValidSubmit="SaveAsync" FormName="game">
     <p>
         <label for="year">Year</label>
-        <InputNumber id="year" @bind-Value="model.Year" @bind-Value:after="LoadRostersAsync" />
+        <InputNumber id="year" @bind-Value="year" @bind-Value:after="LoadRostersAsync" />
     </p>
     <p>
         <label for="date">Date</label>
@@ -58,16 +58,17 @@
 
 @code {
     private readonly Game model = new() { Year = DateTime.Today.Year, Date = DateOnly.FromDateTime(DateTime.Today) };
+    private int? year = DateTime.Today.Year;
     private List<Roster> rosters = [];
     private string? error;
     private bool saving;
 
     protected override Task OnInitializedAsync() => LoadRostersAsync();
 
-    // Lists the selected Year's rosters and drops a picked team that is not one of them.
+    // Lists the selected Year's rosters and drops a picked team that is not one of them. A blank Year lists none.
     private async Task LoadRostersAsync()
     {
-        rosters = await GameService.RostersForYearAsync(model.Year);
+        rosters = year is { } y ? await GameService.RostersForYearAsync(y) : [];
         if (rosters.All(r => r.Id != model.AwayRosterId)) model.AwayRosterId = 0;
         if (rosters.All(r => r.Id != model.HomeRosterId)) model.HomeRosterId = 0;
     }
@@ -76,6 +77,12 @@
     private async Task SaveAsync()
     {
         if (saving) return;
+        if (year is not { } y)
+        {
+            error = GameService.YearMessage;
+            return;
+        }
+        model.Year = y;
         saving = true;
         error = await GameService.CreateAsync(model);
         if (error is null)

@@ -117,6 +117,46 @@ public class NewGamePageTests : BunitContext
     }
 
     [Fact]
+    public async Task Clearing_the_year_empties_both_team_lists_and_clears_picked_teams_then_a_new_year_lists_rosters_again()
+    {
+        var away = await NewRosterAsync("Cubs", 2026);
+        var home = await NewRosterAsync("Sox", 2026);
+        var cut = Render<NewGame>();
+        await Set(cut, "#year", "2026");
+        cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
+        await Set(cut, "#away", away.Id.ToString());
+        await Set(cut, "#home", home.Id.ToString());
+
+        await Set(cut, "#year", "");
+
+        cut.WaitForAssertion(() => Assert.Equal(["Pick a team"], Options(cut, "away")));
+        Assert.Equal(["Pick a team"], Options(cut, "home"));
+        Assert.Equal("0", cut.Find("#away").GetAttribute("value"));
+        Assert.Equal("0", cut.Find("#home").GetAttribute("value"));
+
+        await Set(cut, "#year", "2026");
+
+        cut.WaitForAssertion(() => Assert.Contains(away.TeamName, Options(cut, "away")));
+        Assert.Contains(home.TeamName, Options(cut, "home"));
+    }
+
+    [Fact]
+    public async Task Saving_with_a_blank_year_shows_a_message_and_saves_nothing()
+    {
+        var (cut, away, home) = await FilledFormAsync();
+        await Set(cut, "#year", "");
+        var startUri = CurrentUri;
+        var before = await CountGamesAsync();
+
+        await cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+
+        cut.WaitForAssertion(() => Assert.Equal(GameService.YearMessage, cut.Find("[role=alert]").TextContent));
+        Assert.Equal(startUri, CurrentUri);
+        Assert.Equal(before, await CountGamesAsync());
+        Assert.False(cut.Find("button[type=submit]").HasAttribute("disabled"));
+    }
+
+    [Fact]
     public async Task A_valid_save_creates_the_game_and_opens_its_page()
     {
         var away = await NewRosterAsync("Cubs", 2026);
