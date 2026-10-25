@@ -1,0 +1,6 @@
+run databases before: 0
+run A exit=0: Passed!  - Failed:     0, Passed:   125, Skipped:     0, Total:   125, Duration: 11 s - BaseballScorecard.Tests.dll (net10.0)
+run B exit=0: Passed!  - Failed:     0, Passed:   125, Skipped:     0, Total:   125, Duration: 11 s - BaseballScorecard.Tests.dll (net10.0)
+peak new run databases seen at once: 6
+new run databases left after both runs: 0
+RESULT: PASS

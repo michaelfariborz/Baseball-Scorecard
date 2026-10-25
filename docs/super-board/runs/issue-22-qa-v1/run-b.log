@@ -1,0 +1,7 @@
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   125, Skipped:     0, Total:   125, Duration: 11 s - BaseballScorecard.Tests.dll (net10.0)

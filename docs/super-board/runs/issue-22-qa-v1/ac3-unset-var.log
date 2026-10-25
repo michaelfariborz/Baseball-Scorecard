@@ -1,0 +1,78 @@
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.26]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "") [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ") [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_edit [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.List_orders_newest_year_first_then_by_name [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Edit_saves_a_new_team_name_and_year [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Database_unique_index_rejects_a_duplicate_pair [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Same_team_name_in_another_year_is_a_separate_roster [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Create_saves_the_roster_and_it_is_listed [FAIL]
+[xUnit.net 00:00:00.28]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate [FAIL]
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "") [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ") [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_edit [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.List_orders_newest_year_first_then_by_name [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Edit_saves_a_new_team_name_and_year [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Database_unique_index_rejects_a_duplicate_pair [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Same_team_name_in_another_year_is_a_separate_roster [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Create_saves_the_roster_and_it_is_listed [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+[xUnit.net 00:00:00.32]     BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_create [FAIL]
+[xUnit.net 00:00:00.32]     [Test Collection Cleanup Failure (Postgres)] System.ArgumentNullException
+  Failed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_create [1 ms]
+  Error Message:
+   System.InvalidOperationException : SCORECARD_TEST_DB is not set. Point it at a throwaway local Postgres database, e.g. SCORECARD_TEST_DB="Host=localhost;Database=baseball_scorecard_test;Username=<you>".
+  Stack Trace:
+     at BaseballScorecard.Tests.Data.PostgresFixture.ReadConnectionString(Func`2 getEnv) in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 25
+   at BaseballScorecard.Tests.Data.PostgresFixture.InitializeAsync() in /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-22-qa/tests/BaseballScorecard.Tests/Data/PostgresFixture.cs:line 43
+
+Failed!  - Failed:    10, Passed:     0, Skipped:     0, Total:    10, Duration: 63 ms - BaseballScorecard.Tests.dll (net10.0)
