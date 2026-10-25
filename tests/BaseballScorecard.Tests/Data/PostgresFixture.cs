@@ -1,11 +1,13 @@
 using BaseballScorecard.Data;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace BaseballScorecard.Tests.Data;
 
 /// <summary>
-/// Shared real-Postgres fixture. Reads the test database connection string from
-/// SCORECARD_TEST_DB and applies all migrations before any test in the collection runs.
+/// Shared real-Postgres fixture. Reads the test connection string from SCORECARD_TEST_DB, creates
+/// its own database named off it (so overlapping test runs never share rows), applies all
+/// migrations before any test in the collection runs, and drops that database when the run ends.
 /// </summary>
 public sealed class PostgresFixture : IAsyncLifetime
 {
@@ -27,9 +29,18 @@ public sealed class PostgresFixture : IAsyncLifetime
         return value;
     }
 
+    /// <summary>The same connection with a database unique to this run, e.g. baseball_scorecard_test_1a2b3c4d5e6f.</summary>
+    // ponytail: a run killed before DisposeAsync leaves its database behind; drop strays by hand.
+    public static string RunConnectionString(string connectionString)
+    {
+        var builder = new NpgsqlConnectionStringBuilder(connectionString);
+        builder.Database = $"{builder.Database ?? "scorecard_test"}_{Guid.NewGuid().ToString("N")[..12]}";
+        return builder.ConnectionString;
+    }
+
     public async Task InitializeAsync()
     {
-        var connectionString = ReadConnectionString(Environment.GetEnvironmentVariable);
+        var connectionString = RunConnectionString(ReadConnectionString(Environment.GetEnvironmentVariable));
         Options = new DbContextOptionsBuilder<ScorecardDbContext>()
             .UseNpgsql(connectionString)
             .Options;
@@ -38,7 +49,11 @@ public sealed class PostgresFixture : IAsyncLifetime
         await db.Database.MigrateAsync();
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public async Task DisposeAsync()
+    {
+        await using var db = CreateContext();
+        await db.Database.EnsureDeletedAsync();
+    }
 }
 
 [CollectionDefinition(Name)]
