@@ -105,6 +105,21 @@ public class PlayerServiceTests(PostgresFixture fixture)
         Assert.Equal(["#14 Ernie Banks"], await ListedAsync(rosterId));
     }
 
+    [Fact]
+    public async Task Editing_a_player_that_was_removed_returns_a_message_and_saves_nothing()
+    {
+        var rosterId = await NewRosterAsync();
+        var player = NewPlayer(rosterId, "14");
+        Assert.Null(await _service.SaveAsync(player));
+        await _service.DeleteAsync(player.Id);
+
+        player.FirstName = "Ernest";
+        var error = await _service.SaveAsync(player);
+
+        Assert.Equal(PlayerService.PlayerRemovedMessage, error);
+        Assert.Empty(await ListedAsync(rosterId));
+    }
+
     [Theory]
     [InlineData("", "Ernie", "Banks")]
     [InlineData("14", " ", "Banks")]

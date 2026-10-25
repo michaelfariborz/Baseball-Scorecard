@@ -11,6 +11,7 @@ public class PlayerService(IDbContextFactory<ScorecardDbContext> dbFactory)
     public const string BlankFieldMessage = "Uniform Number, First Name and Last Name are required.";
     public const string NumberFormatMessage = "Uniform Number must be 1 or 2 digits.";
     public const string DuplicateNumberMessage = "Another player on this roster already wears that Uniform Number.";
+    public const string PlayerRemovedMessage = "This player was removed, so the change was not saved.";
 
     /// <summary>The roster's players, sorted by uniform number value, then by its text ("0" before "00").</summary>
     public async Task<List<Player>> ListAsync(int rosterId)
@@ -41,8 +42,11 @@ public class PlayerService(IDbContextFactory<ScorecardDbContext> dbFactory)
         await using var db = await dbFactory.CreateDbContextAsync();
         var entity = player.Id == 0
             ? db.Players.Add(new Player { RosterId = player.RosterId }).Entity
-            : await db.Players.FindAsync(player.Id)
-              ?? throw new InvalidOperationException($"Player {player.Id} does not exist.");
+            : await db.Players.FindAsync(player.Id);
+        if (entity is null)
+        {
+            return PlayerRemovedMessage;
+        }
 
         if (await db.Players.AnyAsync(p => p.Id != player.Id && p.RosterId == entity.RosterId && p.UniformNumber == number))
         {
