@@ -13,6 +13,9 @@ builder.Services.AddScoped<PlayerService>();
 
 var app = builder.Build();
 
+// Apply pending EF migrations before taking requests (Database:MigrateOnStartup=false turns it off).
+await app.Services.MigrateScorecardDbAsync();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -29,4 +32,4 @@ app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-app.Run();
+await app.RunAsync();

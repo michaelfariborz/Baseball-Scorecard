@@ -22,6 +22,7 @@ public class AppStartupDatabaseTests
                 new Dictionary<string, string?>
                 {
                     ["ConnectionStrings:Scorecard"] = "Host=example;Database=scorecard_from_app_host",
+                    ["Database:MigrateOnStartup"] = "false",
                 }));
         });
 

@@ -1,0 +1,1 @@
+GET /rosters -> HTTP 200

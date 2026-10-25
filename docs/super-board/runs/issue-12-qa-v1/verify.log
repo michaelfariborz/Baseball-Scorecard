@@ -1,0 +1,189 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  BaseballScorecard -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.82
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.4+50e68bbb8b (64-bit .NET 10.0.13)
+[xUnit.net 00:00:00.12]   Discovering: BaseballScorecard.Tests
+[xUnit.net 00:00:00.19]   Discovered:  BaseballScorecard.Tests
+[xUnit.net 00:00:00.24]   Starting:    BaseballScorecard.Tests
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Database:MigrateOnStartup is false; not applying migrations on startup.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Database:MigrateOnStartup is false; not applying migrations on startup.
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.App_project_has_a_user_secrets_id [4 ms]
+  Passed BaseballScorecard.Tests.HomePageTests.Home_shows_the_app_heading [680 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_uses_Npgsql_with_the_Scorecard_connection_string [830 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_is_also_resolvable_directly_from_a_scope [1 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Missing_connection_string_fails_with_a_message_naming_the_key [1 ms]
+  Passed BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string [844 ms]
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.json") [5 ms]
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.Development.json") [< 1 ms]
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+  Passed BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_files_are_found [< 1 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditPageTests.Submitting_a_blank_team_name_shows_a_validation_message [101 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditPageTests.New_roster_year_defaults_to_the_current_year [7 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "") [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "   ") [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: null) [< 1 ms]
+  Passed BaseballScorecard.Tests.Data.PostgresFixtureTests.Set_test_db_variable_is_returned [< 1 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceRegistrationTests.App_host_registers_GameService [176 ms]
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.Current_database_logs_that_there_is_nothing_to_apply [146 ms]
+fail: Microsoft.EntityFrameworkCore.Database.Connection[20004]
+      An error occurred using the connection to database 'scorecard_migrate_d777b87612754b8bbb518ccf123b52a5' on server '/var/run/postgresql/.s.PGSQL.5432'.
+fail: Microsoft.EntityFrameworkCore.Database.Connection[20004]
+      An error occurred using the connection to database 'scorecard_migrate_d777b87612754b8bbb518ccf123b52a5' on server '/var/run/postgresql/.s.PGSQL.5432'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (36ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE DATABASE scorecard_migrate_d777b87612754b8bbb518ccf123b52a5;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+          "MigrationId" character varying(150) NOT NULL,
+          "ProductVersion" character varying(32) NOT NULL,
+          CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20261024210657_AddRosters'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "Rosters" (
+          "Id" integer GENERATED BY DEFAULT AS IDENTITY,
+          "TeamName" character varying(100) NOT NULL,
+          "Year" integer NOT NULL,
+          CONSTRAINT "PK_Rosters" PRIMARY KEY ("Id")
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE UNIQUE INDEX "IX_Rosters_TeamName_Year" ON "Rosters" ("TeamName", "Year");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+      VALUES ('20261024210657_AddRosters', '10.0.4');
+info: Microsoft.EntityFrameworkCore.Migrations[20402]
+      Applying migration '20261024213132_AddGames'.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE TABLE "Games" (
+          "Id" integer GENERATED BY DEFAULT AS IDENTITY,
+          "Year" integer NOT NULL,
+          "Date" date NOT NULL,
+          "AwayRosterId" integer NOT NULL,
+          "HomeRosterId" integer NOT NULL,
+          "Innings" integer NOT NULL,
+          "Batters" integer NOT NULL,
+          CONSTRAINT "PK_Games" PRIMARY KEY ("Id"),
+          CONSTRAINT "FK_Games_Rosters_AwayRosterId" FOREIGN KEY ("AwayRosterId") REFERENCES "Rosters" ("Id") ON DELETE RESTRICT,
+          CONSTRAINT "FK_Games_Rosters_HomeRosterId" FOREIGN KEY ("HomeRosterId") REFERENCES "Rosters" ("Id") ON DELETE RESTRICT
+      );
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX "IX_Games_AwayRosterId" ON "Games" ("AwayRosterId");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      CREATE INDEX "IX_Games_HomeRosterId" ON "Games" ("HomeRosterId");
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+      VALUES ('20261024213132_AddGames', '10.0.4');
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Applied migration 20261024210657_AddRosters.
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Applied migration 20261024213132_AddGames.
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Testing
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-12-qa/src/BaseballScorecard
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.A_failing_later_migration_is_named_and_earlier_ones_stay_applied_and_logged [167 ms]
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.Empty_database_gets_every_migration_and_each_is_logged [110 ms]
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.A_failing_migration_stops_with_an_error_naming_it [103 ms]
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.MigrateOnStartup_false_applies_nothing [5 ms]
+  Passed BaseballScorecard.Tests.Data.StartupMigrationTests.Starting_the_app_host_migrates_an_empty_database [183 ms]
+  Passed BaseballScorecard.Tests.Data.DatabaseConnectionTests.Test_database_is_reachable_after_migrations [7 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.A_valid_save_creates_the_game_and_opens_its_page [1 s]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "0") [373 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "2.5") [299 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "-3") [309 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "abc") [310 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Shows_the_defaults_and_batters_is_nine_and_read_only [5 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Changing_the_year_clears_a_team_picked_from_the_old_year [204 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Team_dropdowns_list_only_rosters_for_the_selected_year_and_follow_year_changes [174 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.Same_away_and_home_shows_a_message_and_saves_nothing [261 ms]
+  Passed BaseballScorecard.Tests.Games.NewGamePageTests.No_team_picked_shows_a_message_and_saves_nothing [9 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Create_saves_the_game_with_both_teams [18 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Rosters_for_year_lists_only_that_year_ordered_by_name [17 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Team_from_another_year_is_rejected_and_nothing_is_saved [11 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Same_away_and_home_team_is_rejected_and_nothing_is_saved [7 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.One_inning_is_the_smallest_game_that_saves [11 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Innings_below_one_is_rejected_and_nothing_is_saved(innings: -1) [9 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Innings_below_one_is_rejected_and_nothing_is_saved(innings: 0) [12 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: False, pickHome: True) [8 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: True, pickHome: False) [8 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: False, pickHome: False) [8 ms]
+  Passed BaseballScorecard.Tests.Games.GameServiceTests.Batters_is_always_saved_as_nine [12 ms]
+  Passed BaseballScorecard.Tests.Games.GamePageTests.Shows_the_date_away_at_home_innings_and_batters [23 ms]
+  Passed BaseballScorecard.Tests.Games.GamePageTests.Missing_game_says_it_was_not_found [6 ms]
+  Passed BaseballScorecard.Tests.Rosters.RostersPageTests.Lists_each_roster_as_year_dot_team_name_linking_to_its_edit_page [66 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "") [14 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ") [16 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_edit [19 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.List_orders_newest_year_first_then_by_name [20 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Edit_saves_a_new_team_name_and_year [43 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Database_unique_index_rejects_a_duplicate_pair [10 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Same_team_name_in_another_year_is_a_separate_roster [16 ms]
+[xUnit.net 00:00:06.31]   Finished:    BaseballScorecard.Tests
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Create_saves_the_roster_and_it_is_listed [15 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate [13 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_create [16 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Creating_through_the_form_saves_the_roster_and_returns_to_the_list [20 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Submitting_an_existing_team_name_and_year_shows_the_duplicate_message_and_saves_nothing [22 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Editing_through_the_form_loads_the_roster_and_saves_the_change [19 ms]
+  Passed BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Edit_page_for_a_missing_id_says_the_roster_was_not_found [4 ms]
+
+Test Run Successful.
+Total tests: 61
+     Passed: 61
+ Total time: 6.9176 Seconds
