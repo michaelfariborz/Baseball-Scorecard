@@ -116,6 +116,33 @@ public class NewGamePageTests : BunitContext
         cut.WaitForAssertion(() => Assert.Equal("0", cut.Find("#away").GetAttribute("value")));
     }
 
+    // Issue #26 AC2 in its own direction: a 2025 pick survives a date change inside 2025, then clears on 2026.
+    [Fact]
+    public async Task A_date_inside_the_same_year_keeps_the_pick_and_a_date_in_2026_lists_only_2026_and_clears_it()
+    {
+        var old = await NewRosterAsync("Sox", 2025);
+        var next = await NewRosterAsync("Cubs", 2026);
+        var cut = Render<NewGame>();
+        await Set(cut, "#date", "2025-06-01");
+        cut.WaitForAssertion(() => Assert.Contains(old.TeamName, Options(cut, "away")));
+        await Set(cut, "#away", old.Id.ToString());
+        await Set(cut, "#home", old.Id.ToString());
+
+        await Set(cut, "#date", "2025-09-15");
+
+        cut.WaitForAssertion(() => Assert.Equal(old.Id.ToString(), cut.Find("#away").GetAttribute("value")));
+        Assert.Equal(old.Id.ToString(), cut.Find("#home").GetAttribute("value"));
+
+        await Set(cut, "#date", "2026-04-10");
+
+        cut.WaitForAssertion(() => Assert.Contains(next.TeamName, Options(cut, "away")));
+        foreach (var select in new[] { "away", "home" })
+        {
+            Assert.DoesNotContain(old.TeamName, Options(cut, select));
+            Assert.Equal("0", cut.Find($"#{select}").GetAttribute("value"));
+        }
+    }
+
     [Fact]
     public async Task A_valid_save_creates_the_game_and_opens_its_page()
     {
