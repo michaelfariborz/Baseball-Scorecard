@@ -11,6 +11,7 @@ builder.Services.AddScoped<RosterService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<PlayerService>();
 builder.Services.AddScoped<LineupService>();
+builder.Services.AddScoped<LineScoreService>();
 
 var app = builder.Build();
 
