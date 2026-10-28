@@ -1,0 +1,17 @@
+PASS AC1/AC2 desktop /rosters Home link above body: link="Home" linkY=8 h1="Rosters" h1Y=47.4375
+PASS AC3 desktop /rosters content: h1="Rosters" newRosterLinks=1 listItems=2
+PASS AC1/AC2 desktop /rosters/new Home link above body: link="Home" linkY=8 h1="New roster" h1Y=47.4375
+PASS AC3 desktop /rosters/new content: h1="New roster" formControls=4
+PASS AC1/AC2 desktop /games/new Home link above body: link="Home" linkY=8 h1="New game" h1Y=47.4375
+PASS AC3 desktop /games/new content: h1="New game" formControls=8
+PASS AC1/AC2 desktop /games/1 Home link above body: link="Home" linkY=8 h1="Atlanta Braves @ St. Louis Cardinals" h1Y=47.4375
+PASS AC3 desktop /games/1 content: h1="Atlanta Braves @ St. Louis Cardinals" formControls=36
+PASS AC1 desktop click Home from /rosters: url=http://localhost:5191/ h1="Baseball Scorecard"
+PASS desktop no page errors / 4xx: none
+PASS AC1/AC2 tablet /rosters Home link above body: link="Home" linkY=8 h1="Rosters" h1Y=47.4375
+PASS AC3 tablet /rosters content: h1="Rosters" newRosterLinks=1 listItems=2
+PASS tablet no page errors / 4xx: none
+PASS AC1/AC2 mobile /rosters Home link above body: link="Home" linkY=8 h1="Rosters" h1Y=47.4375
+PASS AC3 mobile /rosters content: h1="Rosters" newRosterLinks=1 listItems=2
+PASS mobile no page errors / 4xx: none
+ALL PASS
