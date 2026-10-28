@@ -48,6 +48,40 @@ public class GameServiceTests(PostgresFixture fixture)
     }
 
     [Fact]
+    public async Task Create_sets_Year_from_the_Date_and_ignores_the_passed_Year()
+    {
+        var away = await NewRosterAsync("Cubs", 2025);
+        var home = await NewRosterAsync("Sox", 2025);
+        var game = new Game
+        {
+            Year = 2026, Date = new DateOnly(2025, 6, 1),
+            AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9,
+        };
+
+        Assert.Null(await _games.CreateAsync(game));
+
+        Assert.Equal(2025, game.Year);
+        Assert.Equal(2025, (await _games.FindAsync(game.Id))!.Year);
+    }
+
+    [Fact]
+    public async Task Rosters_are_checked_against_the_Date_year_not_the_passed_Year()
+    {
+        var away = await NewRosterAsync("Cubs", 2026);
+        var home = await NewRosterAsync("Sox", 2026);
+        var before = await CountGamesAsync();
+
+        var error = await _games.CreateAsync(new Game
+        {
+            Year = 2026, Date = new DateOnly(2025, 6, 1),
+            AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9,
+        });
+
+        Assert.Equal(GameService.NoTeamMessage, error);
+        Assert.Equal(before, await CountGamesAsync());
+    }
+
+    [Fact]
     public async Task Batters_is_always_saved_as_nine()
     {
         var away = await NewRosterAsync("Cubs", 2026);
