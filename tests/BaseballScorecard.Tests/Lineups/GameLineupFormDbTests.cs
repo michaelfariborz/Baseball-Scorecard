@@ -27,6 +27,7 @@ public class GameLineupFormDbTests : BunitContext
         Services.AddScoped<GameService>();
         Services.AddScoped<PlayerService>();
         Services.AddScoped<LineupService>();
+        Services.AddScoped<LineScoreService>();
         _lineups = new LineupService(new FixtureDbFactory(fixture));
     }
 

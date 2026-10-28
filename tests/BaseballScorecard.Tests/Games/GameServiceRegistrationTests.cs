@@ -6,11 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseballScorecard.Tests.Games;
 
-// The page tests register GameService and LineupService themselves; this pins that the real app host (Program.cs) does too.
+// The page tests register GameService, LineupService and LineScoreService themselves; this pins that the real app host (Program.cs) does too.
 public class GameServiceRegistrationTests
 {
     [Fact]
-    public void App_host_registers_GameService_and_LineupService()
+    public void App_host_registers_GameService_LineupService_and_LineScoreService()
     {
         using var factory = new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
         {
@@ -26,5 +26,6 @@ public class GameServiceRegistrationTests
 
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<GameService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<LineupService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<LineScoreService>());
     }
 }

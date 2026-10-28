@@ -1,0 +1,96 @@
+@using BaseballScorecard.Data
+@inject LineScoreService LineScoreService
+
+@* The game's line score: runs typed per team per inning, saved on change; Final is their sum. *@
+<section id="line-score">
+    <h2>Line score</h2>
+
+    @if (saved is not null)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    @for (var inning = 1; inning <= Game.Innings; inning++)
+                    {
+                        <th scope="col">@inning</th>
+                    }
+                    <th scope="col">Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (side, rosterId, teamName) in Teams)
+                {
+                    <tr>
+                        <th scope="row">@teamName</th>
+                        @for (var inning = 1; inning <= Game.Innings; inning++)
+                        {
+                            var n = inning;
+                            <td>
+                                <input id="@side-inning-@n-runs" type="text" inputmode="numeric" size="2"
+                                       aria-label="@teamName runs, inning @n"
+                                       value="@Text(rosterId, n)"
+                                       @onchange="e => SaveAsync(rosterId, n, e.Value as string)" />
+                            </td>
+                        }
+                        <td id="@side-final">@Final(rosterId)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    @if (error is not null)
+    {
+        <p id="line-score-error" class="validation-message" role="alert">@error</p>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Game Game { get; set; } = null!;
+
+    // Saved runs, keyed by (RosterId, Inning); null until loaded. A blank inning has no entry.
+    private Dictionary<(int, int), int>? saved;
+    // What a rejected cell shows instead: the text that was typed, so the scorer can fix it.
+    private Dictionary<(int, int), string> typed = [];
+    private string? error;
+
+    private IEnumerable<(string Side, int RosterId, string TeamName)> Teams =>
+    [
+        ("away", Game.AwayRosterId, Game.AwayRoster!.TeamName),
+        ("home", Game.HomeRosterId, Game.HomeRoster!.TeamName),
+    ];
+
+    private string Text(int rosterId, int inning) =>
+        typed.TryGetValue((rosterId, inning), out var t) ? t
+        : saved!.TryGetValue((rosterId, inning), out var runs) ? $"{runs}" : "";
+
+    // The sum of the team's entered runs; blank innings count as 0.
+    private int Final(int rosterId) => saved!.Where(kv => kv.Key.Item1 == rosterId).Sum(kv => kv.Value);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        saved = (await LineScoreService.ListAsync(Game.Id)).ToDictionary(r => (r.RosterId, r.Inning), r => r.Runs);
+        typed = [];
+    }
+
+    private async Task SaveAsync(int rosterId, int inning, string? text)
+    {
+        var key = (rosterId, inning);
+        error = await LineScoreService.SaveAsync(Game.Id, rosterId, inning, text);
+        if (error is not null)
+        {
+            typed[key] = text ?? "";
+            return;
+        }
+        typed.Remove(key);
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            saved!.Remove(key);
+        }
+        else
+        {
+            saved![key] = int.Parse(text.Trim());
+        }
+    }
+}

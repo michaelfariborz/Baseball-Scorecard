@@ -57,6 +57,36 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.InningRuns", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Inning")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Runs")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RosterId");
+
+                    b.HasIndex("GameId", "RosterId", "Inning")
+                        .IsUnique();
+
+                    b.ToTable("InningRuns");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Lineup", b =>
                 {
                     b.Property<int>("Id")
@@ -189,6 +219,21 @@ namespace BaseballScorecard.Data.Migrations
                     b.Navigation("AwayRoster");
 
                     b.Navigation("HomeRoster");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.InningRuns", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BaseballScorecard.Data.Lineup", b =>

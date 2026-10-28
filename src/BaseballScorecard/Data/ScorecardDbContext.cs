@@ -15,6 +15,8 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<Lineup> Lineups => Set<Lineup>();
 
+    public DbSet<InningRuns> InningRuns => Set<InningRuns>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
@@ -60,6 +62,17 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<LineupSlot>()
             .HasIndex(s => new { s.LineupId, s.BattingOrder })
+            .IsUnique();
+
+        // One runs cell per team per inning, removed with its game.
+        modelBuilder.Entity<InningRuns>()
+            .HasOne<Game>().WithMany().HasForeignKey(r => r.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<InningRuns>()
+            .HasOne<Roster>().WithMany().HasForeignKey(r => r.RosterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<InningRuns>()
+            .HasIndex(r => new { r.GameId, r.RosterId, r.Inning })
             .IsUnique();
     }
 }
