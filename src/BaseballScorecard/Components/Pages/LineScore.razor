@@ -65,12 +65,8 @@
         typed.TryGetValue((rosterId, inning), out var t) ? t
         : saved!.TryGetValue((rosterId, inning), out var runs) ? $"{runs}" : "";
 
-    // Blank until the team has any runs entered; blank innings count as 0.
-    private string Final(int rosterId)
-    {
-        var entered = saved!.Where(kv => kv.Key.Item1 == rosterId).Select(kv => kv.Value).ToList();
-        return entered.Count == 0 ? "" : $"{entered.Sum()}";
-    }
+    // The sum of the team's entered runs; blank innings count as 0.
+    private int Final(int rosterId) => saved!.Where(kv => kv.Key.Item1 == rosterId).Sum(kv => kv.Value);
 
     protected override async Task OnParametersSetAsync()
     {

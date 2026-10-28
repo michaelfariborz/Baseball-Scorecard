@@ -101,6 +101,8 @@ public class GameLineScoreFormDbTests : BunitContext
         var cut = RenderGame(g.Id);
 
         Type(cut, "away", 1, "2", awayFinal: "2");
+        // Final starts at 0, so go through 1 to see the 0 save land.
+        Type(cut, "home", 3, "1", homeFinal: "1");
         Type(cut, "home", 3, "0", homeFinal: "0");
 
         Assert.Equal(2, (await _lineScores.ListAsync(g.Id)).Count);
@@ -116,7 +118,8 @@ public class GameLineScoreFormDbTests : BunitContext
     {
         var g = await NewGameAsync();
         var cut = RenderGame(g.Id);
-        Assert.Equal("", cut.Find("#away-final").TextContent.Trim());
+        Assert.Equal("0", cut.Find("#away-final").TextContent.Trim());
+        Assert.Equal("0", cut.Find("#home-final").TextContent.Trim());
 
         Type(cut, "away", 1, "2", awayFinal: "2");
         Type(cut, "away", 4, "3", awayFinal: "5");
