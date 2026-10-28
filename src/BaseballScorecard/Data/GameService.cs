@@ -68,7 +68,7 @@ public class GameService(IDbContextFactory<ScorecardDbContext> dbFactory)
         return names.Order(StringComparer.Ordinal).ToList();
     }
 
-    /// <summary>Validates and inserts a new game, then sets its Id. Batters is always saved as 9.</summary>
+    /// <summary>Validates and inserts a new game, then sets its Id. Year is always the Date's year. Batters is always saved as 9.</summary>
     public async Task<string?> CreateAsync(Game game)
     {
         if (game.AwayRosterId == 0 || game.HomeRosterId == 0)
@@ -84,9 +84,10 @@ public class GameService(IDbContextFactory<ScorecardDbContext> dbFactory)
             return InningsMessage;
         }
 
+        var year = game.Date.Year;
         await using var db = await dbFactory.CreateDbContextAsync();
         var teamsInYear = await db.Rosters.CountAsync(r =>
-            r.Year == game.Year && (r.Id == game.AwayRosterId || r.Id == game.HomeRosterId));
+            r.Year == year && (r.Id == game.AwayRosterId || r.Id == game.HomeRosterId));
         if (teamsInYear != 2)
         {
             return NoTeamMessage;
@@ -94,7 +95,7 @@ public class GameService(IDbContextFactory<ScorecardDbContext> dbFactory)
 
         var entity = new Game
         {
-            Year = game.Year,
+            Year = year,
             Date = game.Date,
             AwayRosterId = game.AwayRosterId,
             HomeRosterId = game.HomeRosterId,
@@ -105,6 +106,7 @@ public class GameService(IDbContextFactory<ScorecardDbContext> dbFactory)
         await db.SaveChangesAsync();
 
         game.Id = entity.Id;
+        game.Year = year;
         game.Batters = Game.FixedBatters;
         return null;
     }
