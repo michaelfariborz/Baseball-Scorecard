@@ -1,0 +1,285 @@
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (24ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT "MigrationId", "ProductVersion"
+      FROM "__EFMigrationsHistory"
+      ORDER BY "MigrationId";
+info: BaseballScorecard.Data.ScorecardDbMigrator[0]
+      Database schema is current; nothing to apply.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5191
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-25-qa/src/BaseballScorecard
+warn: Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware[3]
+      Failed to determine the https port for redirect.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (14ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (4ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (3ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@year='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      WHERE r."Year" = @year
+      ORDER BY r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@year='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      WHERE r."Year" = @year
+      ORDER BY r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@id='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT g."Id", g."AwayRosterId", g."Batters", g."Date", g."HomeRosterId", g."Innings", g."Year", r."Id", r."TeamName", r."Year", r0."Id", r0."TeamName", r0."Year"
+      FROM "Games" AS g
+      INNER JOIN "Rosters" AS r ON g."AwayRosterId" = r."Id"
+      INNER JOIN "Rosters" AS r0 ON g."HomeRosterId" = r0."Id"
+      WHERE g."Id" = @id
+      LIMIT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT p."Id", p."FirstName", p."LastName", p."RosterId", p."UniformNumber"
+      FROM "Players" AS p
+      WHERE p."RosterId" = @rosterId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[@gameId='?' (DbType = Int32), @rosterId='?' (DbType = Int32)], CommandType='Text', CommandTimeout='30']
+      SELECT l1."Id", l1."GameId", l1."RosterId", l1."StartingPitcherId", l0."Id", l0."BattingOrder", l0."LineupId", l0."PlayerId", l0."Position"
+      FROM (
+          SELECT l."Id", l."GameId", l."RosterId", l."StartingPitcherId"
+          FROM "Lineups" AS l
+          WHERE l."GameId" = @gameId AND l."RosterId" = @rosterId
+          LIMIT 1
+      ) AS l1
+      LEFT JOIN "LineupSlot" AS l0 ON l1."Id" = l0."LineupId"
+      ORDER BY l1."Id", l0."BattingOrder"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT r."Id", r."TeamName", r."Year"
+      FROM "Rosters" AS r
+      ORDER BY r."Year" DESC, r."TeamName"
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...

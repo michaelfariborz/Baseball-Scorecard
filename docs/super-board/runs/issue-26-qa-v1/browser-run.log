@@ -1,0 +1,12 @@
+PASS Home has a New game link: count=1
+PASS AC1 no Year field: labels=["Date","Away Team","Home Team","Innings","Batters"]
+PASS AC2 Date 2025-06-01 lists only 2025: away=["Pick a team","Cubs 2025","Sox 2025"] home=["Pick a team","Cubs 2025","Sox 2025"]
+PASS AC2 Date 2026-04-10 lists only 2026 and clears 2025 picks: away=["Pick a team","Cubs 2026","Mets 2026"] awayValue=0 homeValue=0
+PASS AC4 no team message: Pick an Away Team and a Home Team from the rosters for the Date's year.
+PASS AC4 same team message: Away Team and Home Team must be different.
+PASS AC4 innings < 1 message: Innings must be a whole number of at least 1.
+PASS AC4 rejected saves stay on /games/new: http://localhost:5226/games/new
+PASS AC3 save opened the game page: http://localhost:5226/games/1
+GAME_ID=1
+PASS No page errors, console errors or 4xx/5xx: none
+SUMMARY 10/10 passed

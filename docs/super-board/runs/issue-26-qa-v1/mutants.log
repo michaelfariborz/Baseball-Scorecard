@@ -1,0 +1,7 @@
+mutant 1 (always clear picks on Date change) -> new same-year test:
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 2 s - BaseballScorecard.Tests.dll (net10.0)
+mutant 2 (never clear picks) -> new same-year test:
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - BaseballScorecard.Tests.dll (net10.0)
+mutant 3 (Year = DateTime.Today.Year) -> Saving_with_a_date_in_2025_stores_year_2025:
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 2 s - BaseballScorecard.Tests.dll (net10.0)
+All mutants restored; NewGamePageTests 15/15 green after restore.
