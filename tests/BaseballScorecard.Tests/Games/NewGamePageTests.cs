@@ -66,7 +66,7 @@ public class NewGamePageTests : BunitContext
     {
         var cut = Render<NewGame>();
 
-        Assert.Equal(DateTime.Today.Year.ToString(), cut.Find("#year").GetAttribute("value"));
+        Assert.Empty(cut.FindAll("#year"));
         Assert.Equal(DateTime.Today.ToString("yyyy-MM-dd"), cut.Find("#date").GetAttribute("value"));
         Assert.Equal("9", cut.Find("#innings").GetAttribute("value"));
         var batters = cut.Find("#batters");
@@ -77,13 +77,13 @@ public class NewGamePageTests : BunitContext
     }
 
     [Fact]
-    public async Task Team_dropdowns_list_only_rosters_for_the_selected_year_and_follow_year_changes()
+    public async Task Team_dropdowns_list_only_rosters_for_the_dates_year_and_follow_date_changes()
     {
         var thisYear = await NewRosterAsync("Cubs", 2026);
         var lastYear = await NewRosterAsync("Sox", 2025);
 
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
 
         cut.WaitForAssertion(() => Assert.Contains(thisYear.TeamName, Options(cut, "away")));
         foreach (var select in new[] { "away", "home" })
@@ -92,7 +92,7 @@ public class NewGamePageTests : BunitContext
             Assert.DoesNotContain(lastYear.TeamName, Options(cut, select));
         }
 
-        await Set(cut, "#year", "2025");
+        await Set(cut, "#date", "2025-06-01");
 
         cut.WaitForAssertion(() => Assert.Contains(lastYear.TeamName, Options(cut, "away")));
         foreach (var select in new[] { "away", "home" })
@@ -103,57 +103,17 @@ public class NewGamePageTests : BunitContext
     }
 
     [Fact]
-    public async Task Changing_the_year_clears_a_team_picked_from_the_old_year()
+    public async Task Changing_the_date_to_another_year_clears_a_team_picked_from_the_old_year()
     {
         var away = await NewRosterAsync("Cubs", 2026);
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
         cut.WaitForAssertion(() => Assert.Contains(away.TeamName, Options(cut, "away")));
         await Set(cut, "#away", away.Id.ToString());
 
-        await Set(cut, "#year", "2025");
+        await Set(cut, "#date", "2025-06-01");
 
         cut.WaitForAssertion(() => Assert.Equal("0", cut.Find("#away").GetAttribute("value")));
-    }
-
-    [Fact]
-    public async Task Clearing_the_year_empties_both_team_lists_and_clears_picked_teams_then_a_new_year_lists_rosters_again()
-    {
-        var away = await NewRosterAsync("Cubs", 2026);
-        var home = await NewRosterAsync("Sox", 2026);
-        var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
-        cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
-        await Set(cut, "#away", away.Id.ToString());
-        await Set(cut, "#home", home.Id.ToString());
-
-        await Set(cut, "#year", "");
-
-        cut.WaitForAssertion(() => Assert.Equal(["Pick a team"], Options(cut, "away")));
-        Assert.Equal(["Pick a team"], Options(cut, "home"));
-        Assert.Equal("0", cut.Find("#away").GetAttribute("value"));
-        Assert.Equal("0", cut.Find("#home").GetAttribute("value"));
-
-        await Set(cut, "#year", "2026");
-
-        cut.WaitForAssertion(() => Assert.Contains(away.TeamName, Options(cut, "away")));
-        Assert.Contains(home.TeamName, Options(cut, "home"));
-    }
-
-    [Fact]
-    public async Task Saving_with_a_blank_year_shows_a_message_and_saves_nothing()
-    {
-        var (cut, away, home) = await FilledFormAsync();
-        await Set(cut, "#year", "");
-        var startUri = CurrentUri;
-        var before = await CountGamesAsync();
-
-        await cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
-
-        cut.WaitForAssertion(() => Assert.Equal(GameService.YearMessage, cut.Find("[role=alert]").TextContent));
-        Assert.Equal(startUri, CurrentUri);
-        Assert.Equal(before, await CountGamesAsync());
-        Assert.False(cut.Find("button[type=submit]").HasAttribute("disabled"));
     }
 
     [Fact]
@@ -162,7 +122,7 @@ public class NewGamePageTests : BunitContext
         var away = await NewRosterAsync("Cubs", 2026);
         var home = await NewRosterAsync("Sox", 2026);
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
         cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
 
         await Set(cut, "#date", "2026-04-02");
@@ -175,6 +135,7 @@ public class NewGamePageTests : BunitContext
         var id = int.Parse(CurrentUri[(CurrentUri.LastIndexOf('/') + 1)..]);
         var saved = await new GameService(new FixtureDbFactory(_fixture)).FindAsync(id);
         Assert.Equal(new DateOnly(2026, 4, 2), saved!.Date);
+        Assert.Equal(2026, saved.Year);
         Assert.Equal(away.Id, saved.AwayRosterId);
         Assert.Equal(home.Id, saved.HomeRosterId);
         Assert.Equal(7, saved.Innings);
@@ -182,11 +143,31 @@ public class NewGamePageTests : BunitContext
     }
 
     [Fact]
+    public async Task Saving_with_a_date_in_2025_stores_year_2025()
+    {
+        var away = await NewRosterAsync("Cubs", 2025);
+        var home = await NewRosterAsync("Sox", 2025);
+        var cut = Render<NewGame>();
+        await Set(cut, "#date", "2025-06-01");
+        cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
+        await Set(cut, "#away", away.Id.ToString());
+        await Set(cut, "#home", home.Id.ToString());
+
+        await cut.InvokeAsync(() => cut.Find("form").SubmitAsync());
+
+        cut.WaitForAssertion(() => Assert.Matches(@"/games/\d+$", CurrentUri));
+        var id = int.Parse(CurrentUri[(CurrentUri.LastIndexOf('/') + 1)..]);
+        var saved = await new GameService(new FixtureDbFactory(_fixture)).FindAsync(id);
+        Assert.Equal(2025, saved!.Year);
+        Assert.Equal(new DateOnly(2025, 6, 1), saved.Date);
+    }
+
+    [Fact]
     public async Task Same_away_and_home_shows_a_message_and_saves_nothing()
     {
         var team = await NewRosterAsync("Cubs", 2026);
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
         cut.WaitForAssertion(() => Assert.Contains(team.TeamName, Options(cut, "away")));
         var startUri = CurrentUri;
         var before = await CountGamesAsync();
@@ -224,7 +205,7 @@ public class NewGamePageTests : BunitContext
         var away = await NewRosterAsync("Cubs", 2026);
         var home = await NewRosterAsync("Sox", 2026);
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
         cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
         var startUri = CurrentUri;
         var before = await CountGamesAsync();
@@ -244,7 +225,7 @@ public class NewGamePageTests : BunitContext
         var away = await NewRosterAsync("Cubs", 2026);
         var home = await NewRosterAsync("Sox", 2026);
         var cut = Render<NewGame>();
-        await Set(cut, "#year", "2026");
+        await Set(cut, "#date", "2026-04-10");
         cut.WaitForAssertion(() => Assert.Contains(home.TeamName, Options(cut, "home")));
         await Set(cut, "#away", away.Id.ToString());
         await Set(cut, "#home", home.Id.ToString());
