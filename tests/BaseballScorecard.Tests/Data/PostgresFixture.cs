@@ -15,6 +15,9 @@ public sealed class PostgresFixture : IAsyncLifetime
 
     public DbContextOptions<ScorecardDbContext> Options { get; private set; } = null!;
 
+    /// <summary>This run's database, for an app host under test.</summary>
+    public string ConnectionString { get; private set; } = null!;
+
     public ScorecardDbContext CreateContext() => new(Options);
 
     public static string ReadConnectionString(Func<string, string?> getEnv)
@@ -40,9 +43,9 @@ public sealed class PostgresFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        var connectionString = RunConnectionString(ReadConnectionString(Environment.GetEnvironmentVariable));
+        ConnectionString = RunConnectionString(ReadConnectionString(Environment.GetEnvironmentVariable));
         Options = new DbContextOptionsBuilder<ScorecardDbContext>()
-            .UseNpgsql(connectionString)
+            .UseNpgsql(ConnectionString)
             .Options;
 
         await using var db = CreateContext();

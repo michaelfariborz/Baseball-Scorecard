@@ -1,4 +1,8 @@
 @page "/"
+@rendermode InteractiveServer
+@using System.Globalization
+@using BaseballScorecard.Data
+@inject GameService GameService
 
 <PageTitle>Baseball Scorecard</PageTitle>
 
@@ -6,3 +10,62 @@
 
 <p><a href="rosters">Rosters</a></p>
 <p><a href="games/new">New game</a></p>
+
+<h2>Games</h2>
+
+<p>
+    <label for="year-filter">Year</label>
+    <select id="year-filter" @bind="yearFilter" @bind:after="LoadGamesAsync">
+        <option value="">All</option>
+        @foreach (var year in years)
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+    <label for="team-filter">Team</label>
+    <select id="team-filter" @bind="teamFilter" @bind:after="LoadGamesAsync">
+        <option value="">All</option>
+        @foreach (var team in teams)
+        {
+            <option value="@team">@team</option>
+        }
+    </select>
+</p>
+
+@if (games.Count == 0)
+{
+    <p class="no-games">No games yet.</p>
+}
+else
+{
+    <ul class="games">
+        @foreach (var game in games)
+        {
+            <li><a href="games/@game.Id">@Row(game)</a></li>
+        }
+    </ul>
+}
+
+@code {
+    private List<int> years = [];
+    private List<string> teams = [];
+    private List<Game> games = [];
+    // "" is "All" for both filters.
+    private string yearFilter = "";
+    private string teamFilter = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        years = await GameService.GameYearsAsync();
+        teams = await GameService.GameTeamNamesAsync();
+        await LoadGamesAsync();
+    }
+
+    private async Task LoadGamesAsync() =>
+        games = await GameService.ListAsync(
+            int.TryParse(yearFilter, out var year) ? year : null,
+            teamFilter == "" ? null : teamFilter);
+
+    private static string Row(Game game) =>
+        $"{game.Date.ToString("MMMM d, yyyy", CultureInfo.InvariantCulture)} · {game.AwayRoster!.TeamName} @ {game.HomeRoster!.TeamName}";
+}

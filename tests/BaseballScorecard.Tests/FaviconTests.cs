@@ -1,19 +1,22 @@
+using BaseballScorecard.Tests.Data;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 
 namespace BaseballScorecard.Tests;
 
-public class FaviconTests
+// Home ("/") lists saved games, so the app host reads the real run database here.
+[Collection(PostgresCollection.Name)]
+public class FaviconTests(PostgresFixture fixture)
 {
-    private static WebApplicationFactory<Program> NewFactory() =>
+    private WebApplicationFactory<Program> NewFactory() =>
         new WebApplicationFactory<Program>().WithWebHostBuilder(host =>
         {
             host.UseEnvironment("Testing");
             host.ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(
                 new Dictionary<string, string?>
                 {
-                    ["ConnectionStrings:Scorecard"] = "Host=example;Database=favicon_tests",
+                    ["ConnectionStrings:Scorecard"] = fixture.ConnectionString,
                     ["Database:MigrateOnStartup"] = "false",
                 }));
         });

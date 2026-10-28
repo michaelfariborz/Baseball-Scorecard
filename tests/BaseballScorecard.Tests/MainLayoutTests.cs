@@ -2,13 +2,25 @@ using System.Reflection;
 using BaseballScorecard.Components;
 using BaseballScorecard.Components.Layout;
 using BaseballScorecard.Components.Pages;
+using BaseballScorecard.Data;
+using BaseballScorecard.Tests.Data;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseballScorecard.Tests;
 
+// Home, the routed page here, reads games on load, so it needs the run database.
+[Collection(PostgresCollection.Name)]
 public class MainLayoutTests : BunitContext
 {
+    public MainLayoutTests(PostgresFixture fixture)
+    {
+        Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(new FixtureDbFactory(fixture));
+        Services.AddScoped<GameService>();
+    }
+
     [Fact]
     public void Layout_shows_a_Home_link_to_root_above_the_page_body()
     {
