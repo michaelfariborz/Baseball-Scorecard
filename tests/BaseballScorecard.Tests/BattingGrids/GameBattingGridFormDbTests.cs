@@ -77,8 +77,7 @@ public class GameBattingGridFormDbTests : BunitContext
     private IRenderedComponent<GamePage> RenderGame(int gameId)
     {
         var cut = Render<GamePage>(p => p.Add(x => x.Id, gameId));
-        // Each team's lineup picker has loaded once it shows its 9th slot, and its grid
-        // (rows together with their saved cells) once it shows a table or the no-lineup message.
+        // Loaded: each lineup picker shows slot 9, and each grid a table or the no-lineup message.
         cut.WaitForAssertion(() =>
         {
             foreach (var side in new[] { "away", "home" })
