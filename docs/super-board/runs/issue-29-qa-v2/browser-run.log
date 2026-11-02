@@ -1,0 +1,20 @@
+PASS AC1 header Number,Name,Position,1..9 :: Number,Name,Position,1,2,3,4,5,6,7,8,9
+PASS AC1 9 rows in batting order :: 8|Ian Happ|7 · Left Field ; 7|Dansby Swanson|6 · Shortstop ; 4|Kyle Tucker|9 · Right Field ; 24|Seiya Suzuki|1 · Pitcher ; 27|Michael Busch|3 · First Base ; 6|Pete Crow|8 · Center Field ; 9|Matt Shaw|5 · Third Base ; 5|Nico Hoerner|4 · Second Base ; 34|Carson Kelly|2 · Catcher
+PASS AC4 home message :: Save a lineup to start scoring.
+PASS AC4 home has no table
+PASS AC2 maxlength=20
+PASS AC3 HITS + LOB box per inning :: 9/9
+PASS AC2 6-3 survives reload
+PASS AC2 K survives reload
+PASS AC2 20-char note survives reload
+PASS AC3 hits/lob survive reload
+PASS AC2 cleared note gone after reload
+PASS AC3 bad HITS "-1" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad HITS "two" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad HITS "1.5" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad entry not saved (HITS still 1)
+PASS R2 refused LOB shows message and keeps typed text
+PASS R2 good save elsewhere puts refused box back to saved (blank) and clears message :: lob3=""
+PASS R3 slot 1 now Dansby Swanson and note 6-3 stayed on slot 1 :: slot1=Dansby Swanson
+INFO mobile scrollWidth=747 (viewport 375)
+INFO console errors: none
