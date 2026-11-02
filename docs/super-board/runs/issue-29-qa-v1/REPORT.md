@@ -6,6 +6,7 @@ Verdict: ✅ pass, 4/4 AC.
 - Suite: `dotnet restore && dotnet build --no-restore && dotnet test --no-build`. 186/186 passed, 0 failed.
 - Live app: `dotnet run` against a throwaway Postgres DB (`baseball_scorecard_qa29`, dropped after the run). Startup migrations applied `AddBattingGrid` cleanly. Seed: Cubs @ Sox, 9 innings, only the Cubs lineup saved.
 - Browser: headless Chrome via playwright-core, script `qa29.browser.js`, output `browser-run.log`.
+- `browser-run.log` line "FAIL AC1 9 rows in batting order" is a script bug, not an app bug: the script expected `LF`, and the app labels positions `7 · Left Field`. The same line shows all 9 rows in the saved order.
 - Before shots: `origin/staging` @ `33a06ba` on the same DB, with no batting grid.
 
 ## AC results
