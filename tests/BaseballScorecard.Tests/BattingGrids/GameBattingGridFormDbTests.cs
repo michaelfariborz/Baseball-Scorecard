@@ -77,26 +77,17 @@ public class GameBattingGridFormDbTests : BunitContext
     private IRenderedComponent<GamePage> RenderGame(int gameId)
     {
         var cut = Render<GamePage>(p => p.Add(x => x.Id, gameId));
-        // Each team's grid has loaded once it shows a table or the no-lineup message.
+        // Each team's lineup picker has loaded once it shows its 9th slot, and its grid
+        // (rows together with their saved cells) once it shows a table or the no-lineup message.
         cut.WaitForAssertion(() =>
         {
             foreach (var side in new[] { "away", "home" })
             {
+                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position"));
                 Assert.NotEmpty(cut.FindAll($"#{side}-batting-grid table, #{side}-batting-grid-empty"));
             }
         });
         return cut;
-    }
-
-    /// <summary>Polls the database until the check holds: a save has no on-page signal to wait on.</summary>
-    private static async Task EventuallyAsync(Func<Task<bool>> check)
-    {
-        for (var i = 0; i < 100; i++)
-        {
-            if (await check()) return;
-            await Task.Delay(20);
-        }
-        Assert.Fail("The save never reached the database.");
     }
 
     private static string Value(IRenderedComponent<GamePage> cut, string id) =>
@@ -172,10 +163,10 @@ public class GameBattingGridFormDbTests : BunitContext
         var cut = RenderGame(s.Game.Id);
 
         cut.Find("#away-slot-3-inning-2-note").Change("6-3");
-        await EventuallyAsync(async () => (await _grid.ListNotesAsync(s.Game.Id)).Count == 1);
-        // The last save re-renders the grid; retry on the fresh element.
-        cut.WaitForAssertion(() => cut.Find("#away-slot-4-inning-2-note").Change("K"));
-        await EventuallyAsync(async () => (await _grid.ListNotesAsync(s.Game.Id)).Count == 2);
+        cut.WaitForAssertion(() => Assert.Equal("6-3", Value(cut, "away-slot-3-inning-2-note")));
+        cut.Find("#away-slot-4-inning-2-note").Change("K");
+        cut.WaitForAssertion(() => Assert.Equal("K", Value(cut, "away-slot-4-inning-2-note")));
+        Assert.Equal(2, (await _grid.ListNotesAsync(s.Game.Id)).Count);
 
         var reloaded = RenderGame(s.Game.Id);
         Assert.Equal("6-3", Value(reloaded, "away-slot-3-inning-2-note"));
@@ -184,7 +175,8 @@ public class GameBattingGridFormDbTests : BunitContext
         Assert.Equal("20", reloaded.Find("#away-slot-3-inning-2-note").GetAttribute("maxlength"));
 
         reloaded.Find("#away-slot-3-inning-2-note").Change("");
-        await EventuallyAsync(async () => (await _grid.ListNotesAsync(s.Game.Id)).Count == 1);
+        reloaded.WaitForAssertion(() => Assert.Equal("", Value(reloaded, "away-slot-3-inning-2-note")));
+        Assert.Single(await _grid.ListNotesAsync(s.Game.Id));
         Assert.Equal("", Value(RenderGame(s.Game.Id), "away-slot-3-inning-2-note"));
     }
 
@@ -199,9 +191,10 @@ public class GameBattingGridFormDbTests : BunitContext
         Assert.Equal(7, totals.QuerySelectorAll("input[id$='-lob']").Length);
 
         cut.Find("#away-inning-1-hits").Change("2");
-        await EventuallyAsync(async () => (await _grid.ListHitsLobAsync(s.Game.Id)) is [{ Hits: 2 }]);
-        cut.WaitForAssertion(() => cut.Find("#away-inning-1-lob").Change("0"));
-        await EventuallyAsync(async () => (await _grid.ListHitsLobAsync(s.Game.Id)) is [{ Hits: 2, Lob: 0 }]);
+        cut.WaitForAssertion(() => Assert.Equal("2", Value(cut, "away-inning-1-hits")));
+        cut.Find("#away-inning-1-lob").Change("0");
+        cut.WaitForAssertion(() => Assert.Equal("0", Value(cut, "away-inning-1-lob")));
+        Assert.True(await _grid.ListHitsLobAsync(s.Game.Id) is [{ Hits: 2, Lob: 0 }]);
 
         var reloaded = RenderGame(s.Game.Id);
         Assert.Equal("2", Value(reloaded, "away-inning-1-hits"));
@@ -217,10 +210,9 @@ public class GameBattingGridFormDbTests : BunitContext
         var s = await NewGameAsync();
         var cut = RenderGame(s.Game.Id);
         cut.Find($"#away-inning-1-{box}").Change("3");
-        await EventuallyAsync(async () => (await _grid.ListHitsLobAsync(s.Game.Id)).Count == 1);
+        cut.WaitForAssertion(() => Assert.Equal("3", Value(cut, $"away-inning-1-{box}")));
 
-        // The last save re-renders the grid; retry on the fresh element.
-        cut.WaitForAssertion(() => cut.Find($"#away-inning-1-{box}").Change(bad));
+        cut.Find($"#away-inning-1-{box}").Change(bad);
 
         cut.WaitForAssertion(() => Assert.Equal("HITS and LOB must be whole numbers of 0 or more.",
             cut.Find("#away-batting-grid-error").TextContent.Trim()));
@@ -228,8 +220,23 @@ public class GameBattingGridFormDbTests : BunitContext
         var row = Assert.Single(await _grid.ListHitsLobAsync(s.Game.Id));
         Assert.Equal(3, box == "hits" ? row.Hits : row.Lob);
 
-        // The last save re-renders the grid; retry on the fresh element.
-        cut.WaitForAssertion(() => cut.Find($"#away-inning-1-{box}").Change("4"));
-        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#away-batting-grid-error")));
+        cut.Find($"#away-inning-1-{box}").Change("4");
+        cut.WaitForAssertion(() => Assert.Equal("4", Value(cut, $"away-inning-1-{box}")));
+        Assert.Empty(cut.FindAll("#away-batting-grid-error"));
+    }
+
+    [Fact]
+    public async Task A_good_save_elsewhere_clears_the_message_and_shows_what_is_saved_in_the_refused_box()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        cut.Find("#away-inning-1-hits").Change("-1");
+        cut.WaitForAssertion(() => Assert.NotEmpty(cut.FindAll("#away-batting-grid-error")));
+
+        cut.Find("#away-inning-2-lob").Change("1");
+
+        cut.WaitForAssertion(() => Assert.Equal("1", Value(cut, "away-inning-2-lob")));
+        Assert.Empty(cut.FindAll("#away-batting-grid-error"));
+        Assert.Equal("", Value(cut, "away-inning-1-hits"));
     }
 }

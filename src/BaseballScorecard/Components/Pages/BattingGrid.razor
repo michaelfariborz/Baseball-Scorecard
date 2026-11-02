@@ -100,18 +100,16 @@
     private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
 
     // Runs on first render and again whenever the game page re-renders (a lineup was saved).
+    // The rows go on screen only together with their saved cells, so a box never shows blank before it loads.
     protected override async Task OnParametersSetAsync()
     {
         var lineup = await LineupService.FindAsync(Game.Id, RosterId);
-        if (lineup is null)
-        {
-            rows = null;
-        }
-        else
+        List<BatterRow>? newRows = null;
+        if (lineup is not null)
         {
             var players = (await PlayerService.ListAsync(RosterId)).ToDictionary(p => p.Id);
             // A slot whose player was removed from the roster shows blank; its notes stay with the slot.
-            rows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
+            newRows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
             {
                 var s = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n);
                 return s is not null && players.TryGetValue(s.PlayerId, out var p)
@@ -119,8 +117,9 @@
                     : new BatterRow(n, "", "", "");
             }).ToList();
         }
-        typed = [];
         await LoadCellsAsync();
+        rows = newRows;
+        typed = [];
         loaded = true;
     }
 
@@ -138,7 +137,8 @@
     private Task SaveCountAsync(string id, int inning, string? text, Func<int, int, int, string?, Task<string?>> save) =>
         AfterSaveAsync(id, text, save(Game.Id, RosterId, inning, text));
 
-    // A rejected save keeps the typed text on screen with the message; an accepted one shows what was saved.
+    // A rejected save keeps the typed text on screen with the message. An accepted one clears the message,
+    // so every box goes back to what is saved: no refused text is left looking saved.
     private async Task AfterSaveAsync(string id, string? text, Task<string?> save)
     {
         error = await save;
@@ -147,7 +147,7 @@
             typed[id] = text ?? "";
             return;
         }
-        typed.Remove(id);
+        typed.Clear();
         await LoadCellsAsync();
     }
 }
