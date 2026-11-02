@@ -17,6 +17,10 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<InningRuns> InningRuns => Set<InningRuns>();
 
+    public DbSet<BattingNote> BattingNotes => Set<BattingNote>();
+
+    public DbSet<InningHitsLob> InningHitsLob => Set<InningHitsLob>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
@@ -73,6 +77,26 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<InningRuns>()
             .HasIndex(r => new { r.GameId, r.RosterId, r.Inning })
+            .IsUnique();
+
+        // One note per batting slot per inning, and one HITS / LOB pair per team per inning; removed with the game.
+        modelBuilder.Entity<BattingNote>()
+            .HasOne<Game>().WithMany().HasForeignKey(n => n.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<BattingNote>()
+            .HasOne<Roster>().WithMany().HasForeignKey(n => n.RosterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BattingNote>()
+            .HasIndex(n => new { n.GameId, n.RosterId, n.BattingOrder, n.Inning })
+            .IsUnique();
+        modelBuilder.Entity<InningHitsLob>()
+            .HasOne<Game>().WithMany().HasForeignKey(t => t.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<InningHitsLob>()
+            .HasOne<Roster>().WithMany().HasForeignKey(t => t.RosterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<InningHitsLob>()
+            .HasIndex(t => new { t.GameId, t.RosterId, t.Inning })
             .IsUnique();
     }
 }

@@ -1,0 +1,153 @@
+@using BaseballScorecard.Data
+@inject BattingGridService BattingGridService
+@inject LineupService LineupService
+@inject PlayerService PlayerService
+
+@* One team's batting grid: a free-text note per batting slot per inning, then HITS and LOB per inning,
+   all typed by the scorer and saved on change. Side ("away" / "home") prefixes every element id. *@
+<section id="@Side-batting-grid">
+    <h2>@TeamName batting</h2>
+
+    @if (loaded && rows is null)
+    {
+        <p id="@Side-batting-grid-empty">Save a lineup to start scoring.</p>
+    }
+    else if (rows is not null)
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Number</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Position</th>
+                    @for (var inning = 1; inning <= Game.Innings; inning++)
+                    {
+                        <th scope="col">@inning</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in rows)
+                {
+                    var slot = row.Slot;
+                    <tr class="batter">
+                        <td>@row.Number</td>
+                        <td>@row.Name</td>
+                        <td>@row.Position</td>
+                        @for (var inning = 1; inning <= Game.Innings; inning++)
+                        {
+                            var n = inning;
+                            var id = $"{Side}-slot-{slot}-inning-{n}-note";
+                            <td>
+                                <input id="@id" type="text" size="4" maxlength="@BattingGridService.NoteMaxLength"
+                                       aria-label="Batting slot @slot, inning @n"
+                                       value="@Text(id, Note(slot, n))"
+                                       @onchange="e => SaveNoteAsync(id, slot, n, e.Value as string)" />
+                            </td>
+                        }
+                    </tr>
+                }
+                <tr class="totals">
+                    <th scope="row" colspan="3">HITS / LOB</th>
+                    @for (var inning = 1; inning <= Game.Innings; inning++)
+                    {
+                        var n = inning;
+                        var hitsId = $"{Side}-inning-{n}-hits";
+                        var lobId = $"{Side}-inning-{n}-lob";
+                        saved.TryGetValue(n, out var t);
+                        <td>
+                            <input id="@hitsId" type="text" inputmode="numeric" size="2"
+                                   aria-label="@TeamName HITS, inning @n"
+                                   value="@Text(hitsId, t?.Hits?.ToString())"
+                                   @onchange="e => SaveCountAsync(hitsId, n, e.Value as string, BattingGridService.SaveHitsAsync)" />
+                            <input id="@lobId" type="text" inputmode="numeric" size="2"
+                                   aria-label="@TeamName LOB, inning @n"
+                                   value="@Text(lobId, t?.Lob?.ToString())"
+                                   @onchange="e => SaveCountAsync(lobId, n, e.Value as string, BattingGridService.SaveLobAsync)" />
+                        </td>
+                    }
+                </tr>
+            </tbody>
+        </table>
+    }
+
+    @if (error is not null)
+    {
+        <p id="@Side-batting-grid-error" class="validation-message" role="alert">@error</p>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public Game Game { get; set; } = null!;
+    [Parameter, EditorRequired] public int RosterId { get; set; }
+    [Parameter, EditorRequired] public string Side { get; set; } = "";
+    [Parameter, EditorRequired] public string TeamName { get; set; } = "";
+
+    private sealed record BatterRow(int Slot, string Number, string Name, string Position);
+
+    // The 9 batting slots of the saved lineup; null when the team has no saved lineup.
+    private List<BatterRow>? rows;
+    private bool loaded;
+    // Saved notes keyed by (slot, inning); saved HITS / LOB keyed by inning.
+    private Dictionary<(int, int), string> notes = [];
+    private Dictionary<int, InningHitsLob> saved = [];
+    // What a rejected input shows instead, keyed by element id: the text that was typed, so the scorer can fix it.
+    private Dictionary<string, string> typed = [];
+    private string? error;
+
+    private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note : "";
+
+    private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
+
+    // Runs on first render and again whenever the game page re-renders (a lineup was saved).
+    protected override async Task OnParametersSetAsync()
+    {
+        var lineup = await LineupService.FindAsync(Game.Id, RosterId);
+        if (lineup is null)
+        {
+            rows = null;
+        }
+        else
+        {
+            var players = (await PlayerService.ListAsync(RosterId)).ToDictionary(p => p.Id);
+            // A slot whose player was removed from the roster shows blank; its notes stay with the slot.
+            rows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
+            {
+                var s = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n);
+                return s is not null && players.TryGetValue(s.PlayerId, out var p)
+                    ? new BatterRow(n, p.UniformNumber, $"{p.FirstName} {p.LastName}", Positions.Label(s.Position))
+                    : new BatterRow(n, "", "", "");
+            }).ToList();
+        }
+        typed = [];
+        await LoadCellsAsync();
+        loaded = true;
+    }
+
+    private async Task LoadCellsAsync()
+    {
+        notes = (await BattingGridService.ListNotesAsync(Game.Id))
+            .Where(x => x.RosterId == RosterId).ToDictionary(x => (x.BattingOrder, x.Inning), x => x.Note);
+        saved = (await BattingGridService.ListHitsLobAsync(Game.Id))
+            .Where(x => x.RosterId == RosterId).ToDictionary(x => x.Inning);
+    }
+
+    private Task SaveNoteAsync(string id, int slot, int inning, string? text) =>
+        AfterSaveAsync(id, text, BattingGridService.SaveNoteAsync(Game.Id, RosterId, slot, inning, text));
+
+    private Task SaveCountAsync(string id, int inning, string? text, Func<int, int, int, string?, Task<string?>> save) =>
+        AfterSaveAsync(id, text, save(Game.Id, RosterId, inning, text));
+
+    // A rejected save keeps the typed text on screen with the message; an accepted one shows what was saved.
+    private async Task AfterSaveAsync(string id, string? text, Task<string?> save)
+    {
+        error = await save;
+        if (error is not null)
+        {
+            typed[id] = text ?? "";
+            return;
+        }
+        typed.Remove(id);
+        await LoadCellsAsync();
+    }
+}
