@@ -180,6 +180,27 @@ public class GameBattingGridFormDbTests : BunitContext
     }
 
     [Fact]
+    public async Task A_note_stays_with_its_batting_slot_when_the_lineup_changes()
+    {
+        var s = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(s.Game.Id, s.Game.AwayRosterId, 1, 2, "6-3"));
+        var newOrder = Enumerable.Reverse(s.Away).ToList();
+        Assert.Null(await new LineupService(new FixtureDbFactory(_fixture)).SaveAsync(new Lineup
+        {
+            GameId = s.Game.Id,
+            RosterId = s.Game.AwayRosterId,
+            Slots = newOrder.Select((p, i) => new LineupSlot { PlayerId = p.Id, Position = Positions9[i] }).ToList(),
+        }));
+
+        var cut = RenderGame(s.Game.Id);
+
+        var slot1 = cut.FindAll("#away-batting-grid tbody tr.batter")[0];
+        Assert.Equal($"First {newOrder[0].LastName}", slot1.QuerySelectorAll("td")[1].TextContent.Trim());
+        Assert.Equal("6-3", Value(cut, "away-slot-1-inning-2-note"));
+        Assert.Equal("", Value(cut, "away-slot-9-inning-2-note"));
+    }
+
+    [Fact]
     public async Task Hits_and_lob_boxes_per_inning_save_and_reload()
     {
         var s = await NewGameAsync(innings: 7);
