@@ -19,6 +19,7 @@ public class GamePageTests : BunitContext
         Services.AddScoped<GameService>();
         Services.AddScoped<PlayerService>();
         Services.AddScoped<LineupService>();
+        Services.AddScoped<LineScoreService>();
     }
 
     [Fact]

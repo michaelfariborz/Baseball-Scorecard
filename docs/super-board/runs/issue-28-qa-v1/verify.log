@@ -1,0 +1,18 @@
+  Determining projects to restore...
+  Restored /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-28-qa/src/BaseballScorecard/BaseballScorecard.csproj (in 512 ms).
+  Restored /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-28-qa/tests/BaseballScorecard.Tests/BaseballScorecard.Tests.csproj (in 512 ms).
+  BaseballScorecard -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-28-qa/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-28-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:04.86
+Test run for /home/mfariborz/mff/repos/Baseball-Scorecard/.claude/worktrees/issue-28-qa/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:   151, Skipped:     0, Total:   151, Duration: 8 s - BaseballScorecard.Tests.dll (net10.0)

@@ -26,6 +26,8 @@ else if (game is not null)
 
     <LineupEditor GameId="game.Id" RosterId="game.AwayRosterId" Side="away" TeamName="@game.AwayRoster!.TeamName" />
     <LineupEditor GameId="game.Id" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" />
+
+    <LineScore Game="game" />
 }
 
 @code {
