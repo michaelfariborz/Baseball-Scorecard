@@ -38,7 +38,8 @@
     </table>
 
     <p>
-        <select id="@Side-add-pitcher" aria-label="Add @TeamName pitcher" value="0" @onchange="AddAsync">
+        <select id="@Side-add-pitcher" aria-label="Add @TeamName pitcher"
+                @bind="pickedPlayerId" @bind:after="AddAsync">
             <option value="0">Add pitcher</option>
             @foreach (var p in players)
             {
@@ -62,6 +63,7 @@
     private List<Player> players = [];
     private List<GamePitcher> pitchers = [];
     private string? error;
+    private int pickedPlayerId;
 
     private static string PlayerLabel(Player p) => $"#{p.UniformNumber} {p.FirstName} {p.LastName}";
 
@@ -76,9 +78,13 @@
     private async Task LoadAsync() =>
         pitchers = (await PitchingService.ListAsync(GameId)).Where(p => p.RosterId == RosterId).ToList();
 
-    private async Task AddAsync(ChangeEventArgs e)
+    private async Task AddAsync()
     {
-        if (!int.TryParse(e.Value as string, out var playerId) || playerId == 0)
+        // Back to "Add pitcher": a bound value the render really changes, so the browser shows it
+        // and picking a removed pitcher again fires a change.
+        var playerId = pickedPlayerId;
+        pickedPlayerId = 0;
+        if (playerId == 0)
         {
             return;
         }

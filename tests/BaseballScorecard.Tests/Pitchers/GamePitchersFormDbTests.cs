@@ -76,6 +76,8 @@ public class GamePitchersFormDbTests : BunitContext
     {
         cut.Find($"#{side}-add-pitcher").Change($"{p.Id}");
         cut.WaitForAssertion(() => Assert.Equal(rowsAfter, cut.FindAll($"#{side}-pitchers tbody tr").Count));
+        // The picker goes back to "Add pitcher", so picking the same name later is a real change.
+        Assert.Equal("0", cut.Find($"#{side}-add-pitcher").GetAttribute("value"));
     }
 
     [Fact]
@@ -110,7 +112,6 @@ public class GamePitchersFormDbTests : BunitContext
 
         string[] awayNames = ["#3 First Cub3", "#1 First Cub1"];
         Assert.Equal(awayNames, PitcherNames(cut, "away"));
-        Assert.Equal("0", cut.Find("#away-add-pitcher").GetAttribute("value"));
         var reloaded = RenderGame(s.Game.Id);
         Assert.Equal(awayNames, PitcherNames(reloaded, "away"));
         Assert.Equal(["#2 First Sox2"], PitcherNames(reloaded, "home"));
@@ -158,6 +159,23 @@ public class GamePitchersFormDbTests : BunitContext
         cut.WaitForAssertion(() => Assert.Equal(["#2 First Sox2"], PitcherNames(cut, "home")));
         Assert.False(cut.Find($"#home-add-pitcher option[value='{s.Home[0].Id}']").HasAttribute("disabled"));
         Assert.Equal(["#2 First Sox2"], PitcherNames(RenderGame(s.Game.Id), "home"));
+    }
+
+    [Fact]
+    public async Task A_removed_pitcher_can_be_picked_again_and_the_picker_resets_each_time()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        AddPitcher(cut, "away", s.Away[0], 1);
+
+        cut.Find($"#away-pitcher-{s.Away[0].Id}-remove").Click();
+        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#away-pitchers tbody tr")));
+        Assert.Equal("0", cut.Find("#away-add-pitcher").GetAttribute("value"));
+
+        AddPitcher(cut, "away", s.Away[0], 1);
+
+        Assert.Equal(["#1 First Cub1"], PitcherNames(cut, "away"));
+        Assert.Equal(["#1 First Cub1"], PitcherNames(RenderGame(s.Game.Id), "away"));
     }
 
     [Fact]
