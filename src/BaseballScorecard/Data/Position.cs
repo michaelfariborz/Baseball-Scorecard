@@ -15,15 +15,35 @@ public enum Position
     CenterField = 8,
     RightField = 9,
     DesignatedHitter = 10,
+    PinchRunner = 11,
+    PinchHitter = 12,
 }
 
 public static class Positions
 {
-    /// <summary>Every position, in number order 1–10.</summary>
+    /// <summary>Every position, in number order 1–12.</summary>
     public static IReadOnlyList<Position> All { get; } = Enum.GetValues<Position>();
 
-    /// <summary>"1 · Pitcher" … "10 · Designated Hitter".</summary>
+    /// <summary>"1 · Pitcher" … "12 · Pinch Hitter".</summary>
     public static string Label(Position position) => $"{(int)position} · {Name(position)}";
+
+    /// <summary>The short scorecard code: "P", "1B", "SS", "PR".</summary>
+    public static string Abbreviation(Position position) => position switch
+    {
+        Position.Pitcher => "P",
+        Position.Catcher => "C",
+        Position.FirstBase => "1B",
+        Position.SecondBase => "2B",
+        Position.ThirdBase => "3B",
+        Position.Shortstop => "SS",
+        Position.LeftField => "LF",
+        Position.CenterField => "CF",
+        Position.RightField => "RF",
+        Position.DesignatedHitter => "DH",
+        Position.PinchRunner => "PR",
+        Position.PinchHitter => "PH",
+        _ => position.ToString(),
+    };
 
     private static string Name(Position position) => position switch
     {
@@ -34,6 +54,8 @@ public static class Positions
         Position.CenterField => "Center Field",
         Position.RightField => "Right Field",
         Position.DesignatedHitter => "Designated Hitter",
+        Position.PinchRunner => "Pinch Runner",
+        Position.PinchHitter => "Pinch Hitter",
         _ => position.ToString(),
     };
 }

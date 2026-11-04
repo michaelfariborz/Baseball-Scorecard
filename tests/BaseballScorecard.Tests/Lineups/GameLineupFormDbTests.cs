@@ -101,7 +101,8 @@ public class GameLineupFormDbTests : BunitContext
             Assert.Equal(9, cut.FindAll($"#lineup-{side} tbody tr").Count);
             Assert.Equal(
                 ["1 · Pitcher", "2 · Catcher", "3 · First Base", "4 · Second Base", "5 · Third Base", "6 · Shortstop",
-                 "7 · Left Field", "8 · Center Field", "9 · Right Field", "10 · Designated Hitter"],
+                 "7 · Left Field", "8 · Center Field", "9 · Right Field", "10 · Designated Hitter",
+                 "11 · Pinch Runner", "12 · Pinch Hitter"],
                 OptionTexts(cut, $"#{side}-slot-5-position"));
         }
         Assert.Equal(s.Away.Select(p => $"#{p.UniformNumber} {p.FirstName} {p.LastName}"), OptionTexts(cut, "#away-slot-1-player"));

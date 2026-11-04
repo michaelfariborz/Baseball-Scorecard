@@ -113,7 +113,7 @@
             {
                 var s = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n);
                 return s is not null && players.TryGetValue(s.PlayerId, out var p)
-                    ? new BatterRow(n, p.UniformNumber, $"{p.FirstName} {p.LastName}", Positions.Label(s.Position))
+                    ? new BatterRow(n, p.UniformNumber, $"{p.FirstName} {p.LastName}", Positions.Abbreviation(s.Position))
                     : new BatterRow(n, "", "", "");
             }).ToList();
         }
