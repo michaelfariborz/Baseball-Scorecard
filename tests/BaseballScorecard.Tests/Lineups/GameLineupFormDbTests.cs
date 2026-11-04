@@ -28,6 +28,7 @@ public class GameLineupFormDbTests : BunitContext
         Services.AddScoped<PlayerService>();
         Services.AddScoped<LineupService>();
         Services.AddScoped<LineScoreService>();
+        Services.AddScoped<BattingGridService>();
         _lineups = new LineupService(new FixtureDbFactory(fixture));
     }
 
@@ -62,8 +63,16 @@ public class GameLineupFormDbTests : BunitContext
     private IRenderedComponent<GamePage> RenderGame(int gameId)
     {
         var cut = Render<GamePage>(p => p.Add(x => x.Id, gameId));
-        cut.WaitForElement("#away-slot-9-position");
-        cut.WaitForElement("#home-slot-9-position");
+        // Loaded: each lineup shows slot 9, and each batting grid a table or the no-lineup message,
+        // so no grid load is still re-rendering the page when the test starts picking.
+        cut.WaitForAssertion(() =>
+        {
+            foreach (var side in new[] { "away", "home" })
+            {
+                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position"));
+                Assert.NotEmpty(cut.FindAll($"#{side}-batting-grid table, #{side}-batting-grid-empty"));
+            }
+        });
         return cut;
     }
 

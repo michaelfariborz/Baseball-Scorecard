@@ -1,0 +1,18 @@
+PASS AC1 header Number,Name,Position,1..9 :: Number,Name,Position,1,2,3,4,5,6,7,8,9
+FAIL AC1 9 rows in batting order :: 8|Ian Happ|7 · Left Field ; 7|Dansby Swanson|6 · Shortstop ; 4|Kyle Tucker|9 · Right Field ; 24|Seiya Suzuki|10 · Designated Hitter ; 27|Michael Busch|3 · First Base ; 6|Pete Crow|8 · Center Field ; 9|Matt Shaw|5 · Third Base ; 5|Nico Hoerner|4 · Second Base ; 34|Carson Kelly|2 · Catcher
+PASS AC4 home message :: Save a lineup to start scoring.
+PASS AC4 home has no table
+PASS AC2 maxlength=20
+PASS AC3 HITS + LOB box per inning :: 9/9
+PASS AC2 6-3 survives reload
+PASS AC2 K survives reload
+PASS AC2 20-char note survives reload
+PASS AC3 hits/lob survive reload :: inning1 1/2 inning2 0/0
+PASS AC2 cleared note gone after reload
+PASS AC3 bad HITS "-1" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad HITS "two" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad HITS "1.5" shows message :: HITS and LOB must be whole numbers of 0 or more.
+PASS AC3 bad entry not saved (HITS still 1)
+EDGE bad LOB "x" then a good note save: LOB box shows "x", message shown=false
+INFO mobile scrollWidth=758 (viewport 375)
+INFO console errors: none

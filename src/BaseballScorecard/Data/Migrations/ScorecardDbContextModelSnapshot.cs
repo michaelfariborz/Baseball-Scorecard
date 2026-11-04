@@ -22,6 +22,41 @@ namespace BaseballScorecard.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BaseballScorecard.Data.BattingNote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BattingOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Inning")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RosterId");
+
+                    b.HasIndex("GameId", "RosterId", "BattingOrder", "Inning")
+                        .IsUnique();
+
+                    b.ToTable("BattingNotes");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Game", b =>
                 {
                     b.Property<int>("Id")
@@ -55,6 +90,39 @@ namespace BaseballScorecard.Data.Migrations
                     b.HasIndex("HomeRosterId");
 
                     b.ToTable("Games");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.InningHitsLob", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Hits")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Inning")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Lob")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RosterId");
+
+                    b.HasIndex("GameId", "RosterId", "Inning")
+                        .IsUnique();
+
+                    b.ToTable("InningHitsLob");
                 });
 
             modelBuilder.Entity("BaseballScorecard.Data.InningRuns", b =>
@@ -202,6 +270,21 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Rosters");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.BattingNote", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Game", b =>
                 {
                     b.HasOne("BaseballScorecard.Data.Roster", "AwayRoster")
@@ -219,6 +302,21 @@ namespace BaseballScorecard.Data.Migrations
                     b.Navigation("AwayRoster");
 
                     b.Navigation("HomeRoster");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.InningHitsLob", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BaseballScorecard.Data.InningRuns", b =>

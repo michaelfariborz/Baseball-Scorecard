@@ -71,6 +71,8 @@
     [Parameter, EditorRequired] public int RosterId { get; set; }
     [Parameter, EditorRequired] public string Side { get; set; } = "";
     [Parameter, EditorRequired] public string TeamName { get; set; } = "";
+    /// <summary>Called after a successful save, so the game page can refresh what depends on the lineup.</summary>
+    [Parameter] public EventCallback OnSaved { get; set; }
 
     private List<Player> players = [];
     private List<LineupSlot> slots = [];
@@ -104,5 +106,9 @@
             Slots = slots,
         });
         saved = error is null;
+        if (saved)
+        {
+            await OnSaved.InvokeAsync();
+        }
     }
 }
