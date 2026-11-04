@@ -1,0 +1,92 @@
+[
+  {
+    "name": "AC1 away table headers",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"\"]"
+  },
+  {
+    "name": "AC1 away picker lists roster",
+    "ok": true,
+    "detail": "[\"Add pitcher\",\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\",\"#47 Shota Imanaga\"]"
+  },
+  {
+    "name": "AC1 home table headers",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"\"]"
+  },
+  {
+    "name": "AC1 home picker lists roster",
+    "ok": true,
+    "detail": "[\"Add pitcher\",\"#45 Garrett Crochet\",\"#48 Jordan Leasure\",\"#51 Liam Hendriks\"]"
+  },
+  {
+    "name": "AC1 picker returns to placeholder after a pick (browser DOM)",
+    "ok": false,
+    "detail": "value=1"
+  },
+  {
+    "name": "AC1 order of adding",
+    "ok": true,
+    "detail": "[\"#46 Craig Kimbrel\",\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC3 decision options blank W L H S",
+    "ok": true,
+    "detail": "[\"\",\"W\",\"L\",\"H\",\"S\"]"
+  },
+  {
+    "name": "AC2 added pitchers disabled in picker",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\"]"
+  },
+  {
+    "name": "AC1 order after reload",
+    "ok": true,
+    "detail": "[\"#46 Craig Kimbrel\",\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC3 decisions after reload (S, W, L)",
+    "ok": true,
+    "detail": "[\"S\",\"W\",\"L\"]"
+  },
+  {
+    "name": "AC2 still disabled after reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\"]"
+  },
+  {
+    "name": "AC2 remove drops the row",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC2 removed row stays gone after reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC2 a removed pitcher can be picked again without a reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#47 Shota Imanaga\"]"
+  },
+  {
+    "name": "mobile no horizontal page scroll from pitchers",
+    "ok": true,
+    "detail": "scrollWidth=494 (info)"
+  },
+  {
+    "name": "no console errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no page errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no 5xx",
+    "ok": true,
+    "detail": "[]"
+  }
+]
