@@ -166,18 +166,18 @@ public class GameBattingGridFormDbTests : BunitContext
     {
         var s = await NewGameAsync(saveAway: false);
         var cut = RenderGame(s.Game.Id);
-        cut.Find("#away-slot-1-player").Change($"{s.Away[0].Id}");
+        cut.Find("#home-slot-1-player").Change($"{s.Home[0].Id}");
 
         for (var i = 0; i < 9; i++)
         {
-            cut.Find($"#home-slot-{i + 1}-player").Change($"{s.Home[i].Id}");
-            cut.Find($"#home-slot-{i + 1}-position").Change($"{Positions9[i]}");
+            cut.Find($"#away-slot-{i + 1}-player").Change($"{s.Away[i].Id}");
+            cut.Find($"#away-slot-{i + 1}-position").Change($"{Positions9[i]}");
         }
-        cut.Find("#home-save-lineup").Click();
+        cut.Find("#away-save-lineup").Click();
 
-        cut.WaitForElement("#home-edit-lineup");
-        Assert.Empty(cut.FindAll("#lineup-home"));
-        Assert.Equal($"{s.Away[0].Id}", cut.Find("#away-slot-1-player").GetAttribute("value"));
+        cut.WaitForElement("#away-edit-lineup");
+        Assert.Empty(cut.FindAll("#lineup-away"));
+        Assert.Equal($"{s.Home[0].Id}", cut.Find("#home-slot-1-player").GetAttribute("value"));
     }
 
     [Fact]
