@@ -1,0 +1,13 @@
+PASS AC1 both pickers render 
+PASS AC1 no Edit lineup button 
+PASS AC2 away picker gone 
+PASS AC2 Edit lineup shows for away 
+PASS AC2 home picker still renders 
+PASS AC5 away batting grid shows 9 saved rows while picker hidden rows=9
+PASS AC3 no pickers on a game with both saved 
+PASS AC3 two Edit lineup buttons 
+PASS AC4 picker shows saved players and positions 
+PASS AC4 home stays hidden while away edits 
+PASS AC4 saving hides the picker again 
+PASS AC5 grid rows still shown after re-save 
+PASS ALL no console or page errors 

@@ -1,0 +1,83 @@
+{
+  "results": [
+    {
+      "ac": "AC1",
+      "name": "both pickers render",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC1",
+      "name": "no Edit lineup button",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC2",
+      "name": "away picker gone",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC2",
+      "name": "Edit lineup shows for away",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC2",
+      "name": "home picker still renders",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC5",
+      "name": "away batting grid shows 9 saved rows while picker hidden",
+      "ok": true,
+      "detail": "rows=9"
+    },
+    {
+      "ac": "AC3",
+      "name": "no pickers on a game with both saved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC3",
+      "name": "two Edit lineup buttons",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC4",
+      "name": "picker shows saved players and positions",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC4",
+      "name": "home stays hidden while away edits",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC4",
+      "name": "saving hides the picker again",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC5",
+      "name": "grid rows still shown after re-save",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "ALL",
+      "name": "no console or page errors",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "consoleErrors": []
+}
