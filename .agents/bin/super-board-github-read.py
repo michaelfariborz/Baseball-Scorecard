@@ -42,6 +42,8 @@ FORMS = {
     'metadata': 'pr view <N> --json files,labels,body,additions,deletions,changedFiles',
     'state': 'issue view <N> --json state --jq .state',
 }
+# gh rejects --slurp with --jq/--template; refuse it here so it is not counted as an outage.
+SLURP_FORM = 'api <endpoint> --paginate --slurp (drop --jq/--template, or drop --slurp and keep --jq)'
 
 
 def halt_path():
@@ -295,6 +297,9 @@ def validate(text, kind, meta=None):
 def read(args, kind='json', meta=None, recovering=False):
     if not read_only(args):
         raise ValueError('retry helper accepts read-only GitHub commands only')
+    if '--slurp' in args and any(a in ('--jq', '-q', '--template', '-t') or a.startswith(('--jq=', '--template='))
+                                 for a in args):
+        raise ValueError(f'gh does not support --slurp with --jq or --template. Valid form: {SLURP_FORM}')
     if not recovering:
         check_halt()
     operation = {'args': args, 'kind': kind, 'meta': meta}
