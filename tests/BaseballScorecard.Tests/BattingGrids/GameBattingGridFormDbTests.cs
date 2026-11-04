@@ -35,8 +35,8 @@ public class GameBattingGridFormDbTests : BunitContext
 
     private sealed record Setup(Game Game, List<Player> Away, List<Player> Home);
 
-    /// <summary>A game with 9 players on each roster; only the away lineup is saved, in reverse roster order.</summary>
-    private async Task<Setup> NewGameAsync(int innings = 9)
+    /// <summary>A game with 9 players on each roster; only the away lineup is saved (unless <paramref name="saveAway"/> is false), in reverse roster order.</summary>
+    private async Task<Setup> NewGameAsync(int innings = 9, bool saveAway = true)
     {
         var f = new FixtureDbFactory(_fixture);
         var away = new Roster { TeamName = $"Cubs {Guid.NewGuid():N}", Year = 2026 };
@@ -66,6 +66,10 @@ public class GameBattingGridFormDbTests : BunitContext
         var awayPlayers = await AddAsync(away.Id, "Cub");
         var homePlayers = await AddAsync(home.Id, "Sox");
         var batting = Enumerable.Reverse(awayPlayers).ToList();
+        if (!saveAway)
+        {
+            return new Setup(game, batting, homePlayers);
+        }
         Assert.Null(await new LineupService(f).SaveAsync(new Lineup
         {
             GameId = game.Id,
@@ -155,6 +159,25 @@ public class GameBattingGridFormDbTests : BunitContext
 
         cut.WaitForElement("#away-lineup-saved");
         Assert.Equal($"{s.Home[0].Id}", cut.Find("#home-slot-1-player").GetAttribute("value"));
+    }
+
+    [Fact]
+    public async Task First_save_of_one_lineup_keeps_the_other_teams_unsaved_picks()
+    {
+        var s = await NewGameAsync(saveAway: false);
+        var cut = RenderGame(s.Game.Id);
+        cut.Find("#away-slot-1-player").Change($"{s.Away[0].Id}");
+
+        for (var i = 0; i < 9; i++)
+        {
+            cut.Find($"#home-slot-{i + 1}-player").Change($"{s.Home[i].Id}");
+            cut.Find($"#home-slot-{i + 1}-position").Change($"{Positions9[i]}");
+        }
+        cut.Find("#home-save-lineup").Click();
+
+        cut.WaitForElement("#home-edit-lineup");
+        Assert.Empty(cut.FindAll("#lineup-home"));
+        Assert.Equal($"{s.Away[0].Id}", cut.Find("#away-slot-1-player").GetAttribute("value"));
     }
 
     [Fact]
