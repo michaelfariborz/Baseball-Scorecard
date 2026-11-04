@@ -15,14 +15,40 @@ public class HomePageTests : BunitContext
 {
     private readonly GameService _games;
     private readonly RosterService _rosters;
+    private readonly HoldingDbFactory _holding;
 
     public HomePageTests(PostgresFixture fixture)
     {
         var factory = new FixtureDbFactory(fixture);
-        Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(factory);
+        _holding = new HoldingDbFactory(fixture);
+        Services.AddSingleton<IDbContextFactory<ScorecardDbContext>>(_holding);
         Services.AddScoped<GameService>();
         _games = new GameService(factory);
         _rosters = new RosterService(factory);
+    }
+
+    // Holds the page's Nth async context request (1 = first) until Release, so one load can be left in flight on purpose.
+    private sealed class HoldingDbFactory(PostgresFixture fixture) : IDbContextFactory<ScorecardDbContext>
+    {
+        private readonly TaskCompletionSource _gate = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        private int _calls;
+
+        public int HoldCall { get; set; }
+        public TaskCompletionSource Reached { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public void Release() => _gate.SetResult();
+
+        public ScorecardDbContext CreateDbContext() => fixture.CreateContext();
+
+        public async Task<ScorecardDbContext> CreateDbContextAsync(CancellationToken cancellationToken = default)
+        {
+            if (HoldCall != 0 && Interlocked.Increment(ref _calls) == HoldCall)
+            {
+                Reached.SetResult();
+                await _gate.Task;
+            }
+            return fixture.CreateContext();
+        }
     }
 
     private async Task<Roster> NewRosterAsync(string name, int year)
@@ -132,6 +158,31 @@ public class HomePageTests : BunitContext
 
         cut.WaitForAssertion(() => Assert.Contains($"games/{in2026.Id}", GameLinks(cut)));
         Assert.Contains($"games/{in2025.Id}", GameLinks(cut));
+    }
+
+    // Issue #40: the first load (All years) is still running when the scorer picks a year.
+    // If it finishes last, its games must not replace the ones for the picked year.
+    [Fact]
+    public async Task A_slow_first_load_that_finishes_after_a_year_pick_does_not_replace_the_picked_years_games()
+    {
+        var cubs25 = await NewRosterAsync(Unique("Cubs"), 2025);
+        var sox25 = await NewRosterAsync(Unique("Sox"), 2025);
+        var cubs26 = await NewRosterAsync(Unique("Cubs"), 2026);
+        var sox26 = await NewRosterAsync(Unique("Sox"), 2026);
+        var in2025 = await NewGameAsync(cubs25, sox25, new DateOnly(2025, 5, 1));
+        var in2026 = await NewGameAsync(cubs26, sox26, new DateOnly(2026, 5, 1));
+        _holding.HoldCall = 3; // years, teams, then the games list
+        var cut = Render<Home>();
+        await _holding.Reached.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
+        await Set(cut, "#year-filter", "2025");
+        cut.WaitForAssertion(() => Assert.Contains($"games/{in2025.Id}", GameLinks(cut)));
+        var renders = cut.RenderCount;
+        _holding.Release();
+        cut.WaitForState(() => cut.RenderCount > renders);
+
+        Assert.Contains($"games/{in2025.Id}", GameLinks(cut));
+        Assert.DoesNotContain($"games/{in2026.Id}", GameLinks(cut));
     }
 
     [Fact]

@@ -53,6 +53,7 @@ else
     // "" is "All" for both filters.
     private string yearFilter = "";
     private string teamFilter = "";
+    private int loadNumber;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,10 +62,16 @@ else
         await LoadGamesAsync();
     }
 
-    private async Task LoadGamesAsync() =>
-        games = await GameService.ListAsync(
+    // A load that finishes after a newer one started is stale (an older filter) and is thrown away.
+    private async Task LoadGamesAsync()
+    {
+        var load = ++loadNumber;
+        var loaded = await GameService.ListAsync(
             int.TryParse(yearFilter, out var year) ? year : null,
             teamFilter == "" ? null : teamFilter);
+        if (load != loadNumber) return;
+        games = loaded;
+    }
 
     private static string Row(Game game) =>
         $"{game.Date.ToString("MMMM d, yyyy", CultureInfo.InvariantCulture)} · {game.AwayRoster!.TeamName} @ {game.HomeRoster!.TeamName}";
