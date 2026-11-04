@@ -1,0 +1,34 @@
+== mutant: min >= threshold -> >
+not ok 8 - a minimum equal to the threshold is at or above it; one below is below
+# pass 12
+# fail 1
+== mutant: ignore gate threshold
+not ok 9 - the threshold comes from the gate (config), 70 only when it gave none
+# pass 12
+# fail 1
+== mutant: drop PR check
+not ok 10 - a gate that fires without a PR number starts no truth agents and gives no score
+# pass 12
+# fail 1
+== mutant: accept any confidence
+not ok 11 - a non-integer confidence counts as no independent score
+# pass 12
+# fail 1
+== mutant: ignore halted gate
+not ok 12 - a halted gate halts the run before any truth agent or Review
+# pass 12
+# fail 1
+== mutant: reword gate rule
+not ok 13 - the gate agent gets the truth_gate rule and writes nothing
+# pass 12
+# fail 1
+== mutant: max instead of min
+not ok 2 - the Reviewer gets the minimum score, the threshold and the agents that gave it
+not ok 8 - a minimum equal to the threshold is at or above it; one below is below
+not ok 9 - the threshold comes from the gate (config), 70 only when it gave none
+# pass 10
+# fail 3
+== mutant: reword brief line (builder test 1)
+not ok 1 - gate fires: Code-grounder and Historian run as two agents with the verbatim brief
+# pass 12
+# fail 1
