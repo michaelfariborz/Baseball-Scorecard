@@ -92,6 +92,38 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.GamePitcher", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Decision")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("RosterId");
+
+                    b.HasIndex("GameId", "PlayerId")
+                        .IsUnique();
+
+                    b.ToTable("GamePitchers");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.InningHitsLob", b =>
                 {
                     b.Property<int>("Id")
@@ -302,6 +334,27 @@ namespace BaseballScorecard.Data.Migrations
                     b.Navigation("AwayRoster");
 
                     b.Navigation("HomeRoster");
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.GamePitcher", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Game", null)
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Player", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Roster", null)
+                        .WithMany()
+                        .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BaseballScorecard.Data.InningHitsLob", b =>
