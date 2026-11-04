@@ -3,6 +3,19 @@
 @inject PlayerService PlayerService
 
 @* One team's starting lineup on the game page. Side ("away" / "home") prefixes every element id. *@
+@if (hasSaved && !editing)
+{
+    <section id="lineup-@Side-summary">
+        <h2>@TeamName lineup</h2>
+        @if (saved)
+        {
+            <p id="@Side-lineup-saved" role="status">Lineup saved.</p>
+        }
+        <button type="button" id="@Side-edit-lineup" @onclick="StartEdit">Edit lineup</button>
+    </section>
+    return;
+}
+
 <section id="lineup-@Side">
     <h2>@TeamName lineup</h2>
 
@@ -58,10 +71,6 @@
     {
         <p id="@Side-lineup-error" class="validation-message" role="alert">@error</p>
     }
-    else if (saved)
-    {
-        <p id="@Side-lineup-saved" role="status">Lineup saved.</p>
-    }
 
     <button type="button" id="@Side-save-lineup" @onclick="SaveAsync">Save lineup</button>
 </section>
@@ -79,6 +88,8 @@
     private int startingPitcherId;
     private string? error;
     private bool saved;
+    private bool hasSaved;
+    private bool editing;
 
     private bool HasDh => slots.Any(s => s.Position == Position.DesignatedHitter);
 
@@ -94,6 +105,13 @@
             .Select(s => new LineupSlot { PlayerId = s.PlayerId, Position = s.Position })
             .ToList();
         startingPitcherId = lineup?.StartingPitcherId ?? 0;
+        hasSaved = lineup is not null;
+    }
+
+    private void StartEdit()
+    {
+        saved = false;
+        editing = true;
     }
 
     private async Task SaveAsync()
@@ -108,6 +126,8 @@
         saved = error is null;
         if (saved)
         {
+            hasSaved = true;
+            editing = false;
             await OnSaved.InvokeAsync();
         }
     }

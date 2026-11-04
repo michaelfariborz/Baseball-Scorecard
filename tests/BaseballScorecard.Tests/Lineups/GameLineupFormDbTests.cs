@@ -64,13 +64,13 @@ public class GameLineupFormDbTests : BunitContext
     private IRenderedComponent<GamePage> RenderGame(int gameId)
     {
         var cut = Render<GamePage>(p => p.Add(x => x.Id, gameId));
-        // Loaded: each lineup shows slot 9, and each batting grid a table or the no-lineup message,
+        // Loaded: each lineup shows slot 9 (or its Edit lineup button once saved), and each batting grid a table or the no-lineup message,
         // so no grid load is still re-rendering the page when the test starts picking.
         cut.WaitForAssertion(() =>
         {
             foreach (var side in new[] { "away", "home" })
             {
-                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position"));
+                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position, #{side}-edit-lineup"));
                 Assert.NotEmpty(cut.FindAll($"#{side}-batting-grid table, #{side}-batting-grid-empty"));
             }
         });
@@ -124,6 +124,7 @@ public class GameLineupFormDbTests : BunitContext
         Assert.Equal(order.Select(p => p.Id), (await _lineups.FindAsync(s.GameId, s.AwayId))!.Slots.Select(x => x.PlayerId));
 
         var reloaded = RenderGame(s.GameId);
+        reloaded.Find("#away-edit-lineup").Click();
         reloaded.WaitForAssertion(() =>
             Assert.Equal($"{order[0].Id}", reloaded.Find("#away-slot-1-player").GetAttribute("value")));
         for (var i = 0; i < 9; i++)
@@ -197,7 +198,87 @@ public class GameLineupFormDbTests : BunitContext
         Assert.Equal(s.Away[10].Id, (await _lineups.FindAsync(s.GameId, s.AwayId))!.StartingPitcherId);
 
         var reloaded = RenderGame(s.GameId);
+        reloaded.Find("#away-edit-lineup").Click();
         reloaded.WaitForAssertion(() =>
             Assert.Equal($"{s.Away[10].Id}", reloaded.Find("#away-starting-pitcher").GetAttribute("value")));
     }
+
+    [Fact]
+    public async Task Game_with_no_saved_lineups_shows_both_pickers_and_no_edit_button()
+    {
+        var s = await NewGameAsync();
+
+        var cut = RenderGame(s.GameId);
+
+        Assert.NotEmpty(cut.FindAll("#lineup-away"));
+        Assert.NotEmpty(cut.FindAll("#lineup-home"));
+        Assert.Empty(cut.FindAll("#away-edit-lineup"));
+        Assert.Empty(cut.FindAll("#home-edit-lineup"));
+    }
+
+    [Fact]
+    public async Task Saving_a_lineup_hides_that_teams_picker_and_shows_Edit_lineup_while_the_other_stays()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.GameId);
+
+        Fill(cut, s.Away, NoDh);
+        cut.Find("#away-save-lineup").Click();
+
+        cut.WaitForAssertion(() => Assert.NotEmpty(cut.FindAll("#away-edit-lineup")));
+        Assert.Empty(cut.FindAll("#lineup-away"));
+        Assert.Equal("Edit lineup", cut.Find("#away-edit-lineup").TextContent);
+        Assert.NotEmpty(cut.FindAll("#lineup-home"));
+        Assert.Empty(cut.FindAll("#home-edit-lineup"));
+        // The batting grid still shows the saved rows while the picker is hidden.
+        cut.WaitForAssertion(() => Assert.NotEmpty(cut.FindAll("#away-batting-grid table tbody tr")));
+    }
+
+    [Fact]
+    public async Task Game_with_both_lineups_saved_opens_with_only_the_two_Edit_lineup_buttons()
+    {
+        var s = await NewGameAsync();
+        var home = s.Home.ToList();
+        Assert.Null(await _lineups.SaveAsync(NewLineup(s.GameId, s.AwayId, s.Away)));
+        Assert.Null(await _lineups.SaveAsync(NewLineup(s.GameId, home[0].RosterId, home)));
+
+        var cut = RenderGame(s.GameId);
+
+        Assert.Empty(cut.FindAll("#lineup-away"));
+        Assert.Empty(cut.FindAll("#lineup-home"));
+        Assert.NotEmpty(cut.FindAll("#away-edit-lineup"));
+        Assert.NotEmpty(cut.FindAll("#home-edit-lineup"));
+    }
+
+    [Fact]
+    public async Task Edit_lineup_brings_back_the_picker_with_saved_values_and_saving_hides_it_again()
+    {
+        var s = await NewGameAsync();
+        Assert.Null(await _lineups.SaveAsync(NewLineup(s.GameId, s.AwayId, s.Away)));
+        var cut = RenderGame(s.GameId);
+
+        cut.Find("#away-edit-lineup").Click();
+
+        cut.WaitForAssertion(() => Assert.NotEmpty(cut.FindAll("#lineup-away")));
+        Assert.Empty(cut.FindAll("#away-edit-lineup"));
+        for (var i = 0; i < 9; i++)
+        {
+            Assert.Equal($"{s.Away[i].Id}", cut.Find($"#away-slot-{i + 1}-player").GetAttribute("value"));
+            Assert.Equal(NoDh[i], cut.Find($"#away-slot-{i + 1}-position").GetAttribute("value"));
+        }
+
+        cut.Find("#away-save-lineup").Click();
+
+        cut.WaitForAssertion(() => Assert.NotEmpty(cut.FindAll("#away-edit-lineup")));
+        Assert.Empty(cut.FindAll("#lineup-away"));
+    }
+
+    private static Lineup NewLineup(int gameId, int rosterId, List<Player> players) => new()
+    {
+        GameId = gameId,
+        RosterId = rosterId,
+        Slots = players.Take(9)
+            .Select((p, i) => new LineupSlot { PlayerId = p.Id, Position = Enum.Parse<Position>(NoDh[i]) })
+            .ToList(),
+    };
 }
