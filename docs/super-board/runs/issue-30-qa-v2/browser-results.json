@@ -1,0 +1,142 @@
+[
+  {
+    "name": "AC1 away table headers",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"\"]"
+  },
+  {
+    "name": "AC1 away picker lists roster",
+    "ok": true,
+    "detail": "[\"Add pitcher\",\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\",\"#47 Shota Imanaga\"]"
+  },
+  {
+    "name": "AC1 home table headers",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"\"]"
+  },
+  {
+    "name": "AC1 home picker lists roster",
+    "ok": true,
+    "detail": "[\"Add pitcher\",\"#45 Garrett Crochet\",\"#48 Jordan Leasure\",\"#51 Liam Hendriks\"]"
+  },
+  {
+    "name": "R1 away picker shows \"Add pitcher\" after picking #46 Craig Kimbrel",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "R1 away picker shows \"Add pitcher\" after picking #34 Kyle Hendricks",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "R1 home picker shows \"Add pitcher\" after picking #48 Jordan Leasure",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "AC1 picker returns to placeholder after a pick (browser DOM)",
+    "ok": true,
+    "detail": "value=0"
+  },
+  {
+    "name": "AC1 order of adding",
+    "ok": true,
+    "detail": "[\"#46 Craig Kimbrel\",\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC3 decision options blank W L H S",
+    "ok": true,
+    "detail": "[\"\",\"W\",\"L\",\"H\",\"S\"]"
+  },
+  {
+    "name": "AC2 added pitchers disabled in picker",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\"]"
+  },
+  {
+    "name": "AC1 order after reload",
+    "ok": true,
+    "detail": "[\"#46 Craig Kimbrel\",\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC3 decisions after reload (S, W, L)",
+    "ok": true,
+    "detail": "[\"S\",\"W\",\"L\"]"
+  },
+  {
+    "name": "AC2 still disabled after reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#46 Craig Kimbrel\"]"
+  },
+  {
+    "name": "AC2 remove drops the row",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "AC2 removed row stays gone after reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\"]"
+  },
+  {
+    "name": "R1 away picker shows \"Add pitcher\" after picking #47 Shota Imanaga",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "R1 away picker shows \"Add pitcher\" after picking #47 Shota Imanaga",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "AC2 a removed pitcher can be picked again without a reload",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#47 Shota Imanaga\"]"
+  },
+  {
+    "name": "R1 home picker shows \"Add pitcher\" after picking #45 Garrett Crochet",
+    "ok": true,
+    "detail": "{\"v\":\"0\",\"t\":\"Add pitcher\"}"
+  },
+  {
+    "name": "R1 picker shows \"Add pitcher\" after a remove",
+    "ok": true,
+    "detail": "Add pitcher"
+  },
+  {
+    "name": "R1 re-pick of the removed #45 Crochet adds the row",
+    "ok": true,
+    "detail": "[\"#48 Jordan Leasure\",\"#45 Garrett Crochet\"]"
+  },
+  {
+    "name": "AC1 home order after reload (Leasure, Crochet)",
+    "ok": true,
+    "detail": "[\"#48 Jordan Leasure\",\"#45 Garrett Crochet\"]"
+  },
+  {
+    "name": "AC2 away rows after reload (Hendricks, Imanaga)",
+    "ok": true,
+    "detail": "[\"#34 Kyle Hendricks\",\"#47 Shota Imanaga\"]"
+  },
+  {
+    "name": "mobile pitchers table fits 375 px",
+    "ok": true,
+    "detail": "table right=274.28125 page scrollWidth=500 (page scroll is the line score, Low, v1)"
+  },
+  {
+    "name": "no console errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no page errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no 5xx",
+    "ok": true,
+    "detail": "[]"
+  }
+]
