@@ -2,14 +2,21 @@
 @inject PitchingService PitchingService
 @inject PlayerService PlayerService
 
-@* One team's pitchers, in the order the scorer added them, each with a typed-in decision.
-   Side ("away" / "home") prefixes every element id. *@
+@* One team's pitchers, in the order the scorer added them, each with a typed-in decision and
+   pitching line (IP, BF, BB, SO, H, R, ER), saved on change. Side ("away" / "home") prefixes every element id. *@
 <section id="@Side-pitchers">
     <h2>@TeamName pitchers</h2>
 
     <table>
         <thead>
-            <tr><th scope="col">Pitcher</th><th scope="col">Decision</th><th scope="col"></th></tr>
+            <tr>
+                <th scope="col">Pitcher</th><th scope="col">Decision</th>
+                @foreach (var stat in PitchingStats.All)
+                {
+                    <th scope="col">@PitchingStats.Label(stat)</th>
+                }
+                <th scope="col"></th>
+            </tr>
         </thead>
         <tbody>
             @foreach (var row in pitchers)
@@ -28,6 +35,17 @@
                             }
                         </select>
                     </td>
+                    @foreach (var s in PitchingStats.All)
+                    {
+                        var stat = s;
+                        var label = PitchingStats.Label(stat);
+                        <td>
+                            <input id="@id-@label.ToLowerInvariant()" type="text" inputmode="decimal" size="3"
+                                   aria-label="@Name(pitcher.PlayerId) @label"
+                                   value="@Text(pitcher, stat)"
+                                   @onchange="e => SetStatAsync(pitcher, stat, e.Value as string)" />
+                        </td>
+                    }
                     <td>
                         <button type="button" id="@id-remove" aria-label="Remove @Name(pitcher.PlayerId)"
                                 @onclick="() => RemoveAsync(pitcher)">Remove</button>
@@ -64,6 +82,8 @@
     private List<GamePitcher> pitchers = [];
     private string? error;
     private int pickedPlayerId;
+    // What a rejected box shows instead of its saved value: the text that was typed, so the scorer can fix it.
+    private Dictionary<(int PitcherId, PitchingStat Stat), string> typed = [];
 
     private static string PlayerLabel(Player p) => $"#{p.UniformNumber} {p.FirstName} {p.LastName}";
 
@@ -77,6 +97,23 @@
 
     private async Task LoadAsync() =>
         pitchers = (await PitchingService.ListAsync(GameId)).Where(p => p.RosterId == RosterId).ToList();
+
+    private string Text(GamePitcher pitcher, PitchingStat stat) =>
+        typed.TryGetValue((pitcher.Id, stat), out var t) ? t : PitchingStats.Text(pitcher, stat);
+
+    private async Task SetStatAsync(GamePitcher pitcher, PitchingStat stat, string? value)
+    {
+        error = await PitchingService.SetStatAsync(GameId, pitcher.Id, stat, value);
+        if (error is null)
+        {
+            typed.Remove((pitcher.Id, stat));
+        }
+        else
+        {
+            typed[(pitcher.Id, stat)] = value ?? "";
+        }
+        await LoadAsync();
+    }
 
     private async Task AddAsync()
     {

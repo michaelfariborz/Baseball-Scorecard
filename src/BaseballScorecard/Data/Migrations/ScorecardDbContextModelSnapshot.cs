@@ -100,16 +100,37 @@ namespace BaseballScorecard.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("BattersFaced")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Decision")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("EarnedRuns")
+                        .HasColumnType("integer");
+
                     b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Hits")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("InningsPitchedOuts")
                         .HasColumnType("integer");
 
                     b.Property<int>("PlayerId")
                         .HasColumnType("integer");
 
                     b.Property<int>("RosterId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Runs")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Strikeouts")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Walks")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
