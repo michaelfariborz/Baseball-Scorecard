@@ -1,0 +1,122 @@
+[
+  {
+    "name": "AC1 away headers IP..ER after Decision",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"IP\",\"BF\",\"BB\",\"SO\",\"H\",\"R\",\"ER\",\"\"]"
+  },
+  {
+    "name": "AC1 home headers IP..ER after Decision",
+    "ok": true,
+    "detail": "[\"Pitcher\",\"Decision\",\"IP\",\"BF\",\"BB\",\"SO\",\"H\",\"R\",\"ER\",\"\"]"
+  },
+  {
+    "name": "AC1 row boxes sit after Decision in order",
+    "ok": true,
+    "detail": "[\"away-pitcher-1-decision\",\"away-pitcher-1-ip\",\"away-pitcher-1-bf\",\"away-pitcher-1-bb\",\"away-pitcher-1-so\",\"away-pitcher-1-h\",\"away-pitcher-1-r\",\"away-pitcher-1-er\"]"
+  },
+  {
+    "name": "AC4 new pitcher away-pitcher-1 starts with every box empty",
+    "ok": true,
+    "detail": "[\"\",\"\",\"\",\"\",\"\",\"\",\"\"]"
+  },
+  {
+    "name": "AC4 new pitcher away-pitcher-2 starts with every box empty",
+    "ok": true,
+    "detail": "[\"\",\"\",\"\",\"\",\"\",\"\",\"\"]"
+  },
+  {
+    "name": "AC4 new pitcher home-pitcher-3 starts with every box empty",
+    "ok": true,
+    "detail": "[\"\",\"\",\"\",\"\",\"\",\"\",\"\"]"
+  },
+  {
+    "name": "AC2/AC3 no error after good values",
+    "ok": true,
+    "detail": "|"
+  },
+  {
+    "name": "AC2 IP \"6.3\" shows message",
+    "ok": true,
+    "detail": "IP must be whole innings, or .1 or .2 for outs."
+  },
+  {
+    "name": "AC2 IP \"-1\" shows message",
+    "ok": true,
+    "detail": "IP must be whole innings, or .1 or .2 for outs."
+  },
+  {
+    "name": "AC3 BB \"-2\" shows message",
+    "ok": true,
+    "detail": "Pitching stats must be whole numbers of 0 or more."
+  },
+  {
+    "name": "AC3 BB \"1.5\" shows message",
+    "ok": true,
+    "detail": "Pitching stats must be whole numbers of 0 or more."
+  },
+  {
+    "name": "AC3 BB \"x\" shows message",
+    "ok": true,
+    "detail": "Pitching stats must be whole numbers of 0 or more."
+  },
+  {
+    "name": "AC4 cleared ER box shows empty",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "AC2/AC3 away row 1 line after reload",
+    "ok": true,
+    "detail": "[\"6.2\",\"27\",\"3\",\"8\",\"5\",\"2\",\"\"]"
+  },
+  {
+    "name": "AC2 bad IP not saved (2.1 kept) after reload",
+    "ok": true,
+    "detail": "2.1"
+  },
+  {
+    "name": "AC3 SO 0 saved after reload",
+    "ok": true,
+    "detail": "0"
+  },
+  {
+    "name": "AC3 bad BB not saved (empty) after reload",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "AC2/AC3 home row after reload",
+    "ok": true,
+    "detail": "[\"6\",\"24\",\"\",\"\",\"\",\"\",\"\"]"
+  },
+  {
+    "name": "AC4 untouched and cleared boxes empty after reload",
+    "ok": true,
+    "detail": "[\"2.1\",\"\",\"\",\"0\",\"\",\"\",\"\"]"
+  },
+  {
+    "name": "GAP-M1 (info) rejected SO still shows \"-2\" with no message after H saves",
+    "ok": true,
+    "detail": "so=\"-2\" message=\"\""
+  },
+  {
+    "name": "(info) mobile pitchers table width at 375 px",
+    "ok": true,
+    "detail": "table right=582.171875"
+  },
+  {
+    "name": "no console errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no page errors",
+    "ok": true,
+    "detail": "[]"
+  },
+  {
+    "name": "no 5xx",
+    "ok": true,
+    "detail": "[]"
+  }
+]

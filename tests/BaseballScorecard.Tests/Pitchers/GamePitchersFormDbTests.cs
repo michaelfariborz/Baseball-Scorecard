@@ -89,7 +89,7 @@ public class GamePitchersFormDbTests : BunitContext
 
         foreach (var (side, players) in new[] { ("away", s.Away), ("home", s.Home) })
         {
-            Assert.Equal(["Pitcher", "Decision", ""],
+            Assert.Equal(["Pitcher", "Decision", "IP", "BF", "BB", "SO", "H", "R", "ER", ""],
                 cut.FindAll($"#{side}-pitchers thead th").Select(th => th.TextContent.Trim()));
             Assert.Empty(cut.FindAll($"#{side}-pitchers tbody tr"));
             var options = cut.FindAll($"#{side}-add-pitcher option");
@@ -202,5 +202,108 @@ public class GamePitchersFormDbTests : BunitContext
         reloaded.WaitForAssertion(() => Assert.Equal($"{PitcherDecision.None}", reloaded.Find(id).GetAttribute("value")));
         Assert.Equal(PitcherDecision.None, (await _pitching.ListAsync(s.Game.Id))[0].Decision);
         Assert.Equal($"{PitcherDecision.None}", RenderGame(s.Game.Id).Find(id).GetAttribute("value"));
+    }
+
+    // Pitching lines (#39).
+
+    private static readonly string[] StatIds = ["ip", "bf", "bb", "so", "h", "r", "er"];
+
+    private static string BoxValue(IRenderedComponent<GamePage> cut, string box) =>
+        cut.Find(box).GetAttribute("value") ?? "";
+
+    [Fact]
+    public async Task A_new_pitcher_row_has_empty_IP_BF_BB_SO_H_R_ER_boxes_after_Decision()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+
+        AddPitcher(cut, "home", s.Home[0], 1);
+
+        var cells = cut.FindAll("#home-pitchers tbody tr td");
+        var ids = cells.Skip(1).Take(8).Select(td => td.QuerySelector("select, input")!.Id).ToList();
+        var prefix = $"home-pitcher-{s.Home[0].Id}";
+        Assert.Equal(new[] { "decision" }.Concat(StatIds).Select(x => $"{prefix}-{x}"), ids);
+        Assert.All(StatIds, x => Assert.Equal("", BoxValue(cut, $"#{prefix}-{x}")));
+        Assert.Equal("#1 First Sox1 IP", cut.Find($"#{prefix}-ip").GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public async Task Typed_stats_save_and_are_still_there_after_a_reload()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        AddPitcher(cut, "away", s.Away[0], 1);
+        AddPitcher(cut, "away", s.Away[1], 2);
+        var prefix = $"#away-pitcher-{s.Away[0].Id}";
+        string[] typed = ["6.2", "27", "3", "8", "5", "2", "1"];
+
+        foreach (var (stat, value) in StatIds.Zip(typed))
+        {
+            cut.Find($"{prefix}-{stat}").Change(value);
+            cut.WaitForAssertion(() => Assert.Equal(value, BoxValue(cut, $"{prefix}-{stat}")));
+        }
+
+        Assert.Empty(cut.FindAll("#away-pitchers-error"));
+        var reloaded = RenderGame(s.Game.Id);
+        Assert.Equal(typed, StatIds.Select(x => BoxValue(reloaded, $"{prefix}-{x}")));
+        Assert.All(StatIds, x => Assert.Equal("", BoxValue(reloaded, $"#away-pitcher-{s.Away[1].Id}-{x}")));
+    }
+
+    [Theory]
+    [InlineData("6.3")]
+    [InlineData("-1")]
+    public async Task A_bad_IP_is_not_saved_and_shows_the_message(string bad)
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        AddPitcher(cut, "away", s.Away[0], 1);
+        var box = $"#away-pitcher-{s.Away[0].Id}-ip";
+        cut.Find(box).Change("6.1");
+        cut.WaitForAssertion(() => Assert.Equal("6.1", BoxValue(cut, box)));
+
+        cut.Find(box).Change(bad);
+
+        cut.WaitForAssertion(() => Assert.Equal("IP must be whole innings, or .1 or .2 for outs.",
+            cut.Find("#away-pitchers-error").TextContent.Trim()));
+        Assert.Equal(bad, BoxValue(cut, box));
+        Assert.Equal("6.1", BoxValue(RenderGame(s.Game.Id), box));
+    }
+
+    [Fact]
+    public async Task A_bad_count_is_not_saved_and_shows_the_message_until_a_good_save()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        AddPitcher(cut, "home", s.Home[0], 1);
+        var box = $"#home-pitcher-{s.Home[0].Id}-so";
+
+        cut.Find(box).Change("-2");
+
+        cut.WaitForAssertion(() => Assert.Equal("Pitching stats must be whole numbers of 0 or more.",
+            cut.Find("#home-pitchers-error").TextContent.Trim()));
+        Assert.Equal("-2", BoxValue(cut, box));
+        Assert.Equal("", BoxValue(RenderGame(s.Game.Id), box));
+
+        cut.Find(box).Change("4");
+        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#home-pitchers-error")));
+        Assert.Equal("4", BoxValue(RenderGame(s.Game.Id), box));
+    }
+
+    [Fact]
+    public async Task Clearing_a_box_saves_it_as_empty()
+    {
+        var s = await NewGameAsync();
+        var cut = RenderGame(s.Game.Id);
+        AddPitcher(cut, "away", s.Away[2], 1);
+        var box = $"#away-pitcher-{s.Away[2].Id}-er";
+        cut.Find(box).Change("3");
+        cut.WaitForAssertion(() => Assert.Equal("3", BoxValue(cut, box)));
+
+        cut.Find(box).Change("");
+
+        cut.WaitForAssertion(() => Assert.Equal("", BoxValue(cut, box)));
+        Assert.Empty(cut.FindAll("#away-pitchers-error"));
+        Assert.Equal("", BoxValue(RenderGame(s.Game.Id), box));
+        Assert.Null(Assert.Single(await _pitching.ListAsync(s.Game.Id)).EarnedRuns);
     }
 }

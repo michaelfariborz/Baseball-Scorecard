@@ -147,4 +147,131 @@ public class PitchingServiceTests(PostgresFixture fixture)
     [InlineData(PitcherDecision.Save, "S")]
     public void Decision_labels_are_the_scorecard_letters(PitcherDecision decision, string label) =>
         Assert.Equal(label, PitcherDecisions.Label(decision));
+
+    // Pitching lines (#39): every stat is typed in, saved per pitcher row, blank allowed.
+
+    private async Task<(Setup S, GamePitcher Row)> NewPitcherAsync()
+    {
+        var s = await NewGameAsync();
+        Assert.Null(await _pitching.AddAsync(s.Game.Id, s.Game.AwayRosterId, s.Away[0].Id));
+        return (s, Assert.Single(await _pitching.ListAsync(s.Game.Id)));
+    }
+
+    private async Task<string> StatTextAsync(int gameId, PitchingStat stat) =>
+        PitchingStats.Text(Assert.Single(await _pitching.ListAsync(gameId)), stat);
+
+    [Fact]
+    public async Task A_new_pitcher_starts_with_every_stat_empty()
+    {
+        var (s, row) = await NewPitcherAsync();
+
+        Assert.All(PitchingStats.All, stat => Assert.Equal("", PitchingStats.Text(row, stat)));
+        Assert.Null(row.InningsPitchedOuts);
+        Assert.Null(row.EarnedRuns);
+    }
+
+    [Theory]
+    [InlineData("6", "6", 18)]
+    [InlineData("6.1", "6.1", 19)]
+    [InlineData("6.2", "6.2", 20)]
+    [InlineData("0", "0", 0)]
+    [InlineData("0.1", "0.1", 1)]
+    [InlineData(" 7 ", "7", 21)]
+    public async Task IP_takes_whole_innings_or_thirds_and_reloads(string typed, string shown, int outs)
+    {
+        var (s, row) = await NewPitcherAsync();
+
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, PitchingStat.InningsPitched, typed));
+
+        var reloaded = Assert.Single(await _pitching.ListAsync(s.Game.Id));
+        Assert.Equal(outs, reloaded.InningsPitchedOuts);
+        Assert.Equal(shown, PitchingStats.Text(reloaded, PitchingStat.InningsPitched));
+    }
+
+    [Theory]
+    [InlineData("6.3")]
+    [InlineData("-1")]
+    [InlineData("-0.1")]
+    [InlineData("6.5")]
+    [InlineData("6.12")]
+    [InlineData("6.")]
+    [InlineData(".1")]
+    [InlineData("six")]
+    [InlineData("99999999999")]
+    public async Task A_bad_IP_is_not_saved_and_shows_the_message(string typed)
+    {
+        var (s, row) = await NewPitcherAsync();
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, PitchingStat.InningsPitched, "5.2"));
+
+        Assert.Equal(PitchingService.InningsPitchedMessage,
+            await _pitching.SetStatAsync(s.Game.Id, row.Id, PitchingStat.InningsPitched, typed));
+
+        Assert.Equal("5.2", await StatTextAsync(s.Game.Id, PitchingStat.InningsPitched));
+    }
+
+    public static TheoryData<PitchingStat> CountStats => new(PitchingStats.All.Where(x => x != PitchingStat.InningsPitched));
+
+    [Theory]
+    [MemberData(nameof(CountStats))]
+    public async Task Each_count_takes_a_whole_number_of_0_or_more_and_reloads(PitchingStat stat)
+    {
+        var (s, row) = await NewPitcherAsync();
+
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, "0"));
+        Assert.Equal("0", await StatTextAsync(s.Game.Id, stat));
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, "27"));
+        Assert.Equal("27", await StatTextAsync(s.Game.Id, stat));
+
+        // Only this stat changed.
+        var others = PitchingStats.All.Where(x => x != stat);
+        var reloaded = Assert.Single(await _pitching.ListAsync(s.Game.Id));
+        Assert.All(others, x => Assert.Equal("", PitchingStats.Text(reloaded, x)));
+    }
+
+    [Theory]
+    [MemberData(nameof(CountStats))]
+    public async Task A_bad_count_is_not_saved_and_shows_the_message(PitchingStat stat)
+    {
+        var (s, row) = await NewPitcherAsync();
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, "4"));
+
+        foreach (var typed in new[] { "-1", "1.5", "+3", "x", "99999999999" })
+        {
+            Assert.Equal(PitchingService.CountMessage, await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, typed));
+        }
+
+        Assert.Equal("4", await StatTextAsync(s.Game.Id, stat));
+    }
+
+    public static TheoryData<PitchingStat> AllStats => new(PitchingStats.All);
+
+    [Theory]
+    [MemberData(nameof(AllStats))]
+    public async Task A_blank_box_is_saved_as_empty(PitchingStat stat)
+    {
+        var (s, row) = await NewPitcherAsync();
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, "3"));
+
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, "  "));
+        Assert.Equal("", await StatTextAsync(s.Game.Id, stat));
+        Assert.Null(await _pitching.SetStatAsync(s.Game.Id, row.Id, stat, null));
+        Assert.Equal("", await StatTextAsync(s.Game.Id, stat));
+    }
+
+    [Fact]
+    public async Task A_stat_for_a_removed_row_or_another_game_is_refused()
+    {
+        var (s, row) = await NewPitcherAsync();
+        var other = await NewGameAsync();
+
+        Assert.Equal(PitchingService.PitcherRemovedMessage,
+            await _pitching.SetStatAsync(other.Game.Id, row.Id, PitchingStat.Strikeouts, "5"));
+        await _pitching.RemoveAsync(s.Game.Id, row.Id);
+        Assert.Equal(PitchingService.PitcherRemovedMessage,
+            await _pitching.SetStatAsync(s.Game.Id, row.Id, PitchingStat.Strikeouts, "5"));
+    }
+
+    [Fact]
+    public void Stats_are_labelled_in_scorecard_order() =>
+        Assert.Equal(["IP", "BF", "BB", "SO", "H", "R", "ER"], PitchingStats.All.Select(PitchingStats.Label));
 }
