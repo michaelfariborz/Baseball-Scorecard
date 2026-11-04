@@ -511,6 +511,13 @@ Builder's reasoning.
    (QA → Ready) with the list (witness, expected, rung, target file). Medium and Low go
    in the handoff under `Test gaps (not written)` and never block.
 
+   **A reproduced defect is not a test gap.** When your own run (browser, API or test) shows
+   a defect in the card's own feature — a wrong result, a control that does nothing, a value
+   that never resets — that is a **Fail**, whatever rank the scale above would give it:
+   bounce to Builder (QA → Ready) with the defect listed (steps, expected, actual, target
+   file). Never record it as a Medium or Low gap. Gaps where no defect was seen stay Medium
+   or Low and do not block.
+
 
 ## Skill dependencies
 
