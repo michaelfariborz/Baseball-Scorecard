@@ -103,3 +103,50 @@ test('a halted truth agent halts the run before Review', async () => {
   assert.equal(review, undefined)
   assert.equal(out.halted, true)
 })
+
+// QA gap tests (#48 test-gap check): threshold boundary, gate edge cases.
+const ok = (confidence) => ({ status: 'ok', confidence, findings: [] })
+
+test('a minimum equal to the threshold is at or above it; one below is below', async () => {
+  const at = (await wave({ grounder: ok(70), historian: ok(95) })).review
+  assert.ok(at.includes('combined (minimum) 70/100 vs truth_threshold 70: at or above'))
+  const below = (await wave({ grounder: ok(69), historian: ok(95) })).review
+  assert.ok(below.includes('combined (minimum) 69/100 vs truth_threshold 70: below'))
+})
+
+test('the threshold comes from the gate (config), 70 only when it gave none', async () => {
+  const strict = (await wave({ gate: { ...FIRES, threshold: 80 }, grounder: ok(75), historian: ok(90) })).review
+  assert.ok(strict.includes('combined (minimum) 75/100 vs truth_threshold 80: below'))
+  const { threshold, ...noThreshold } = FIRES
+  const dflt = (await wave({ gate: noThreshold, grounder: ok(75), historian: ok(90) })).review
+  assert.ok(dflt.includes('combined (minimum) 75/100 vs truth_threshold 70: at or above'))
+})
+
+test('a gate that fires without a PR number starts no truth agents and gives no score', async () => {
+  const { pr, ...noPr } = FIRES
+  const { labels, review } = await wave({ gate: noPr })
+  assert.ok(!labels.some((l) => l.startsWith('truth:')))
+  assert.ok(review.includes('NO independent truth score'))
+  assert.ok(review.includes('truth-gate agent gave no PR'))
+})
+
+test('a non-integer confidence counts as no independent score', async () => {
+  const { review } = await wave({ grounder: { status: 'ok', confidence: '90', findings: [] } })
+  assert.ok(review.includes('NO independent truth score'))
+  assert.ok(review.includes('truth:code-grounder:#40 gave no score'))
+  assert.ok(!review.includes('combined (minimum)'))
+})
+
+test('a halted gate halts the run before any truth agent or Review', async () => {
+  const { labels, review, out } = await wave({ gate: { status: 'halted', detail: 'exit 79' } })
+  assert.ok(!labels.some((l) => l.startsWith('truth:')))
+  assert.equal(review, undefined)
+  assert.equal(out.halted, true)
+})
+
+test('the gate agent gets the truth_gate rule and writes nothing', async () => {
+  const { calls } = await wave({ gate: { status: 'skip', detail: 'trivial' } })
+  const gate = calls.find((c) => c.label === 'truth-gate:#40').prompt
+  assert.ok(gate.includes('off → skip · always → fires · non-trivial (default) → fires when changed lines ≥ 10 or a label is security, migration, payments or auth; otherwise skip.'))
+  assert.ok(gate.includes('You write nothing'))
+})
