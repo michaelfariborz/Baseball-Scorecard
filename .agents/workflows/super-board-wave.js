@@ -154,7 +154,8 @@ const lanePrompt = (lane, card) => [
   BOARD_IO(),
   `Commits, PR title, PR body blocks, comments: .claude/skills/super-board/references/writing-standard.md. Rewrite only your own PR body blocks, with .claude/bin/super-board-pr-body.sh.`,
   ...(lane === 'review' ? REVIEW_MEMORY : []),
-  ...(lane === 'qa' && card.status === 'Ready'
+  // Label, not status: `card.status` is the status when the wave started, so a card built earlier in this wave still reads Ready.
+  ...(lane === 'qa' && card.status === 'Ready' && labelsOf(card).includes('qa')
     ? [`This card is labelled qa: it skips Building. Move it Ready → QA yourself, create the issue branch from the base branch, and test what is already there (run.md → "qa cards").`]
     : []),
   ``,
