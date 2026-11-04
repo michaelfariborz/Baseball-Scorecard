@@ -12,7 +12,7 @@ Fixes reviewer findings R1 (no browser evidence) and R2 (first-save guard test l
 
 - Browser run: `browser-run.js` → `browser-run.log` / `browser-results.json`: 13/13 checks pass, 0 console or page errors.
 - R2: added `GameBattingGridFormDbTests.First_save_of_one_lineup_keeps_the_other_teams_unsaved_picks` (no lineup saved; pick home slot 1, first-save away, home pick survives). Mutation: forcing both editors to re-create on save (`@key` bumped in `OnSaved`) fails it and the re-save variant; restored.
-- Full suite: 274/274 (`dotnet-verify.log`).
+- Full suite: 274/274 on 3 of 6 runs; the other runs failed 1-2 `GamePitchersFormDbTests` cases, which flake the same way on plain staging `f87f0e6` (2 of 6 runs). Not this card (`dotnet-verify.log`).
 
 Test gaps (not written): Medium · a saved slot whose player left the roster is hidden behind Edit lineup (reviewer R3, builder-owned) · Low · no cancel in edit mode (R4, ACs don't ask).
 
