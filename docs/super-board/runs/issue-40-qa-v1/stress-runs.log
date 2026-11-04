@@ -1,0 +1,21 @@
+load: 4 busy-loop burners on 4 cores, head 4604249
+run 1 rc=0 load=12.01 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 32 s - BaseballScorecard.Tests.dll (net10.0) 
+run 2 rc=0 load=14.19 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 32 s - BaseballScorecard.Tests.dll (net10.0) 
+run 3 rc=0 load=13.97 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 29 s - BaseballScorecard.Tests.dll (net10.0) 
+run 4 rc=0 load=15.36 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 27 s - BaseballScorecard.Tests.dll (net10.0) 
+run 5 rc=0 load=15.13 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 6 rc=0 load=13.72 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 25 s - BaseballScorecard.Tests.dll (net10.0) 
+run 7 rc=0 load=12.93 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 25 s - BaseballScorecard.Tests.dll (net10.0) 
+run 8 rc=0 load=12.15 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 9 rc=0 load=12.45 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 25 s - BaseballScorecard.Tests.dll (net10.0) 
+run 10 rc=0 load=17.18 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 37 s - BaseballScorecard.Tests.dll (net10.0) 
+run 11 rc=0 load=15.67 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 27 s - BaseballScorecard.Tests.dll (net10.0) 
+run 12 rc=0 load=14.44 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 27 s - BaseballScorecard.Tests.dll (net10.0) 
+run 13 rc=0 load=12.87 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 14 rc=1 load=11.38 | Failed!  - Failed:     1, Passed:   162, Skipped:     0, Total:   163, Duration: 36 s - BaseballScorecard.Tests.dll (net10.0)   Failed BaseballScorecard.Tests.HomePageTests.Year_filter_shows_only_that_year_and_all_shows_every_year [10 s] 
+run 15 rc=0 load=11.23 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 16 rc=0 load=11.25 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 17 rc=0 load=10.95 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 25 s - BaseballScorecard.Tests.dll (net10.0) 
+run 18 rc=0 load=10.80 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 26 s - BaseballScorecard.Tests.dll (net10.0) 
+run 19 rc=0 load=10.65 | Passed!  - Failed:     0, Passed:   163, Skipped:     0, Total:   163, Duration: 25 s - BaseballScorecard.Tests.dll (net10.0) 
+run 20 rc=1 load=10.41 | Failed!  - Failed:     1, Passed:   162, Skipped:     0, Total:   163, Duration: 34 s - BaseballScorecard.Tests.dll (net10.0)   Failed BaseballScorecard.Tests.HomePageTests.Year_filter_shows_only_that_year_and_all_shows_every_year [10 s] 
