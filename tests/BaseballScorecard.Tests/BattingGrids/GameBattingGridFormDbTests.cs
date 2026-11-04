@@ -107,7 +107,7 @@ public class GameBattingGridFormDbTests : BunitContext
         for (var i = 0; i < 9; i++)
         {
             var cells = rows[i].QuerySelectorAll("td, th").Select(c => c.TextContent.Trim()).Take(3).ToList();
-            Assert.Equal([s.Away[i].UniformNumber, $"First {s.Away[i].LastName}", Positions.Label(Positions9[i])], cells);
+            Assert.Equal([s.Away[i].UniformNumber, $"First {s.Away[i].LastName}", Positions.Abbreviation(Positions9[i])], cells);
             Assert.Equal(7, rows[i].QuerySelectorAll("input").Length);
         }
         Assert.NotNull(cut.Find("#away-slot-9-inning-7-note"));
@@ -179,6 +179,26 @@ public class GameBattingGridFormDbTests : BunitContext
         reloaded.WaitForAssertion(() => Assert.Equal("", Value(reloaded, "away-slot-3-inning-2-note")));
         Assert.Single(await _grid.ListNotesAsync(s.Game.Id));
         Assert.Equal("", Value(RenderGame(s.Game.Id), "away-slot-3-inning-2-note"));
+    }
+
+    [Fact]
+    public async Task Grid_shows_abbreviations_including_a_pinch_runner_saved_in_the_lineup()
+    {
+        var s = await NewGameAsync();
+        var positions = Positions9.ToArray();
+        positions[8] = Position.PinchRunner;
+        Assert.Null(await new LineupService(new FixtureDbFactory(_fixture)).SaveAsync(new Lineup
+        {
+            GameId = s.Game.Id,
+            RosterId = s.Game.AwayRosterId,
+            Slots = s.Away.Select((p, i) => new LineupSlot { PlayerId = p.Id, Position = positions[i] }).ToList(),
+        }));
+
+        var cut = RenderGame(s.Game.Id);
+
+        var rows = cut.FindAll("#away-batting-grid tbody tr.batter");
+        Assert.Equal("SS", rows[1].QuerySelectorAll("td")[2].TextContent.Trim());
+        Assert.Equal("PR", rows[8].QuerySelectorAll("td")[2].TextContent.Trim());
     }
 
     [Fact]
