@@ -25,7 +25,7 @@ public class GamePageTests : BunitContext
     }
 
     [Fact]
-    public async Task Shows_the_date_away_at_home_innings_and_batters()
+    public async Task Shows_the_matchup_and_puts_the_date_in_the_line_score_corner()
     {
         var rosters = new RosterService(new FixtureDbFactory(_fixture));
         var away = new Roster { TeamName = $"Cubs {Guid.NewGuid():N}", Year = 2026 };
@@ -42,9 +42,9 @@ public class GamePageTests : BunitContext
         var cut = Render<GamePage>(p => p.Add(x => x.Id, game.Id));
 
         cut.WaitForAssertion(() => Assert.Equal($"{away.TeamName} @ {home.TeamName}", cut.Find("h1").TextContent));
-        Assert.Equal("April 2, 2026", cut.Find("#game-date").TextContent);
-        Assert.Equal("7", cut.Find("#game-innings").TextContent);
-        Assert.Equal("9", cut.Find("#game-batters").TextContent);
+        cut.WaitForAssertion(() => Assert.Equal("April 2, 2026", cut.Find("#line-score thead th").TextContent));
+        Assert.Equal(7 + 2, cut.FindAll("#line-score thead th").Count);
+        Assert.Empty(cut.FindAll("#game-date, #game-innings, #game-batters"));
     }
 
     [Fact]
