@@ -1,0 +1,26 @@
+  Failed BaseballScorecard.Tests.HomePageTests.Year_filter_shows_only_that_year_and_all_shows_every_year [10 s]
+  Error Message:
+   Bunit.Extensions.WaitForHelpers.WaitForFailedException : The assertion did not pass within the timeout period.
+
+If this test does not fail consistently, the reason may be that
+the wait timeout is too short, and the runtime did not have enough
+time to complete the necessary number of renders of the component under test.
+This can happen on highly utilized or slower hardware, for example.
+
+To determine if this is the cause, compare the check and render count(s) below
+and see if they match what is expected. If they do not,
+consider increasing the timeout, either at the individual
+method call level, e.g. WaitForElement("div", TimeSpan.FromSeconds(15)),
+or via the static TestContext.DefaultWaitTimeout property.
+
+Check count: 1.
+Component render count: 4.
+Total render count across all components: 0.
+---- Assert.DoesNotContain() Failure: Item found in collection
+                                         ↓ (pos 4)
+Collection: [···, "games/65", "games/8", "games/69", "games/64", "games/11", ···]
+Found:      "games/69"
+  Stack Trace:
+     at Bunit.RenderedComponentWaitForHelperExtensions.WaitForAssertion[TComponent](IRenderedComponent`1 renderedComponent, Action assertion, Nullable`1 timeout) in /_/src/bunit/Extensions/WaitForHelpers/RenderedComponentWaitForHelperExtensions.WaitForState.cs:line 102
+   at BaseballScorecard.Tests.HomePageTests.Year_filter_shows_only_that_year_and_all_shows_every_year() in tests/BaseballScorecard.Tests/HomePageTests.cs:line 127
+--- End of stack trace from previous location ---

@@ -57,13 +57,18 @@
     private List<Roster> rosters = [];
     private string? error;
     private bool saving;
+    private int loadNumber;
 
     protected override Task OnInitializedAsync() => LoadRostersAsync();
 
     // Lists the rosters for the Date's year and drops a picked team that is not one of them.
+    // A load that finishes after a newer one started is stale (an older Date) and is thrown away.
     private async Task LoadRostersAsync()
     {
-        rosters = await GameService.RostersForYearAsync(model.Date.Year);
+        var load = ++loadNumber;
+        var loaded = await GameService.RostersForYearAsync(model.Date.Year);
+        if (load != loadNumber) return;
+        rosters = loaded;
         if (rosters.All(r => r.Id != model.AwayRosterId)) model.AwayRosterId = 0;
         if (rosters.All(r => r.Id != model.HomeRosterId)) model.HomeRosterId = 0;
     }

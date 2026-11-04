@@ -143,6 +143,30 @@ public class NewGamePageTests : BunitContext
         }
     }
 
+    // Issue #40: the first load (today's year) is still running when the scorer picks a date in another year.
+    // If it finishes last, its rosters must not replace the ones for the picked date.
+    [Fact]
+    public async Task A_slow_first_load_that_finishes_after_a_date_change_does_not_replace_the_new_years_teams()
+    {
+        var old = await NewRosterAsync("Sox", 2025);
+        var current = await NewRosterAsync("Cubs", DateTime.Today.Year);
+        var firstLoad = _gated.Gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cut = Render<NewGame>();
+        _gated.Gate = null;
+
+        await Set(cut, "#date", "2025-06-01");
+        cut.WaitForAssertion(() => Assert.Contains(old.TeamName, Options(cut, "away")));
+        var renders = cut.RenderCount;
+        firstLoad.SetResult();
+        cut.WaitForState(() => cut.RenderCount > renders);
+
+        foreach (var select in new[] { "away", "home" })
+        {
+            Assert.Contains(old.TeamName, Options(cut, select));
+            Assert.DoesNotContain(current.TeamName, Options(cut, select));
+        }
+    }
+
     [Fact]
     public async Task A_valid_save_creates_the_game_and_opens_its_page()
     {
