@@ -15,15 +15,6 @@ else if (game is not null)
 
     <h1>@Matchup</h1>
 
-    <dl>
-        <dt>Date</dt>
-        <dd id="game-date">@game.Date.ToString("MMMM d, yyyy", CultureInfo.InvariantCulture)</dd>
-        <dt>Innings</dt>
-        <dd id="game-innings">@game.Innings</dd>
-        <dt>Batters</dt>
-        <dd id="game-batters">@game.Batters</dd>
-    </dl>
-
     <LineupEditor GameId="game.Id" RosterId="game.AwayRosterId" Side="away" TeamName="@game.AwayRoster!.TeamName" OnSaved="StateHasChanged" />
     <LineupEditor GameId="game.Id" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" OnSaved="StateHasChanged" />
 

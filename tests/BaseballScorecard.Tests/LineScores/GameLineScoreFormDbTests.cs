@@ -73,7 +73,7 @@ public class GameLineScoreFormDbTests : BunitContext
 
         var cut = RenderGame(g.Id);
 
-        Assert.Equal(["", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Final"],
+        Assert.Equal(["April 2, 2026", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Final"],
             cut.FindAll("#line-score thead th").Select(th => th.TextContent.Trim()));
         var rows = cut.FindAll("#line-score tbody tr");
         Assert.Equal(2, rows.Count);
@@ -90,7 +90,7 @@ public class GameLineScoreFormDbTests : BunitContext
 
         var cut = RenderGame(g.Id);
 
-        Assert.Equal(["", "1", "2", "3", "4", "5", "6", "7", "Final"],
+        Assert.Equal(["April 2, 2026", "1", "2", "3", "4", "5", "6", "7", "Final"],
             cut.FindAll("#line-score thead th").Select(th => th.TextContent.Trim()));
         Assert.Equal(7, cut.FindAll("#line-score tbody tr:first-child input").Count);
         Assert.Empty(cut.FindAll("#away-inning-8-runs"));
