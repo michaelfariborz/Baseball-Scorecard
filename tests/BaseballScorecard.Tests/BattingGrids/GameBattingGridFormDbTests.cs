@@ -29,6 +29,7 @@ public class GameBattingGridFormDbTests : BunitContext
         Services.AddScoped<LineupService>();
         Services.AddScoped<LineScoreService>();
         Services.AddScoped<BattingGridService>();
+        Services.AddScoped<PitchingService>();
         _grid = new BattingGridService(new FixtureDbFactory(fixture));
     }
 

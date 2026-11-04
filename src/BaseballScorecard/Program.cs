@@ -13,6 +13,7 @@ builder.Services.AddScoped<PlayerService>();
 builder.Services.AddScoped<LineupService>();
 builder.Services.AddScoped<LineScoreService>();
 builder.Services.AddScoped<BattingGridService>();
+builder.Services.AddScoped<PitchingService>();
 
 var app = builder.Build();
 

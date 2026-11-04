@@ -21,6 +21,8 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<InningHitsLob> InningHitsLob => Set<InningHitsLob>();
 
+    public DbSet<GamePitcher> GamePitchers => Set<GamePitcher>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
@@ -97,6 +99,20 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<InningHitsLob>()
             .HasIndex(t => new { t.GameId, t.RosterId, t.Inning })
+            .IsUnique();
+
+        // A player pitches at most once per game; the row goes with its game, or with the player off the roster.
+        modelBuilder.Entity<GamePitcher>()
+            .HasOne<Game>().WithMany().HasForeignKey(p => p.GameId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<GamePitcher>()
+            .HasOne<Roster>().WithMany().HasForeignKey(p => p.RosterId)
+            .OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<GamePitcher>()
+            .HasOne<Player>().WithMany().HasForeignKey(p => p.PlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<GamePitcher>()
+            .HasIndex(p => new { p.GameId, p.PlayerId })
             .IsUnique();
     }
 }

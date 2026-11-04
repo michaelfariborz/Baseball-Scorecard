@@ -1,0 +1,103 @@
+@using BaseballScorecard.Data
+@inject PitchingService PitchingService
+@inject PlayerService PlayerService
+
+@* One team's pitchers, in the order the scorer added them, each with a typed-in decision.
+   Side ("away" / "home") prefixes every element id. *@
+<section id="@Side-pitchers">
+    <h2>@TeamName pitchers</h2>
+
+    <table>
+        <thead>
+            <tr><th scope="col">Pitcher</th><th scope="col">Decision</th><th scope="col"></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var row in pitchers)
+            {
+                var pitcher = row;
+                var id = $"{Side}-pitcher-{pitcher.PlayerId}";
+                <tr @key="pitcher.Id">
+                    <td>@Name(pitcher.PlayerId)</td>
+                    <td>
+                        <select id="@id-decision" aria-label="@Name(pitcher.PlayerId) decision"
+                                value="@pitcher.Decision"
+                                @onchange="e => SetDecisionAsync(pitcher, e.Value as string)">
+                            @foreach (var d in PitcherDecisions.All)
+                            {
+                                <option value="@d">@PitcherDecisions.Label(d)</option>
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" id="@id-remove" aria-label="Remove @Name(pitcher.PlayerId)"
+                                @onclick="() => RemoveAsync(pitcher)">Remove</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p>
+        <select id="@Side-add-pitcher" aria-label="Add @TeamName pitcher" value="0" @onchange="AddAsync">
+            <option value="0">Add pitcher</option>
+            @foreach (var p in players)
+            {
+                <option value="@p.Id" disabled="@pitchers.Any(x => x.PlayerId == p.Id)">@PlayerLabel(p)</option>
+            }
+        </select>
+    </p>
+
+    @if (error is not null)
+    {
+        <p id="@Side-pitchers-error" class="validation-message" role="alert">@error</p>
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired] public int GameId { get; set; }
+    [Parameter, EditorRequired] public int RosterId { get; set; }
+    [Parameter, EditorRequired] public string Side { get; set; } = "";
+    [Parameter, EditorRequired] public string TeamName { get; set; } = "";
+
+    private List<Player> players = [];
+    private List<GamePitcher> pitchers = [];
+    private string? error;
+
+    private static string PlayerLabel(Player p) => $"#{p.UniformNumber} {p.FirstName} {p.LastName}";
+
+    private string Name(int playerId) => players.FirstOrDefault(p => p.Id == playerId) is { } p ? PlayerLabel(p) : "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        players = await PlayerService.ListAsync(RosterId);
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync() =>
+        pitchers = (await PitchingService.ListAsync(GameId)).Where(p => p.RosterId == RosterId).ToList();
+
+    private async Task AddAsync(ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value as string, out var playerId) || playerId == 0)
+        {
+            return;
+        }
+        error = await PitchingService.AddAsync(GameId, RosterId, playerId);
+        await LoadAsync();
+    }
+
+    private async Task RemoveAsync(GamePitcher pitcher)
+    {
+        await PitchingService.RemoveAsync(GameId, pitcher.Id);
+        error = null;
+        await LoadAsync();
+    }
+
+    private async Task SetDecisionAsync(GamePitcher pitcher, string? value)
+    {
+        error = Enum.TryParse<PitcherDecision>(value, out var decision)
+            ? await PitchingService.SetDecisionAsync(GameId, pitcher.Id, decision)
+            : PitchingService.DecisionMessage;
+        await LoadAsync();
+    }
+}

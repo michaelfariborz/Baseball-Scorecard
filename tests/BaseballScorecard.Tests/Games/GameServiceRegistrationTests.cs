@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BaseballScorecard.Tests.Games;
 
-// The page tests register GameService, LineupService, LineScoreService and BattingGridService themselves; this pins that the real app host (Program.cs) does too.
+// The page tests register GameService, LineupService, LineScoreService, BattingGridService and PitchingService themselves; this pins that the real app host (Program.cs) does too.
 public class GameServiceRegistrationTests
 {
     [Fact]
@@ -28,5 +28,6 @@ public class GameServiceRegistrationTests
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<LineupService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<LineScoreService>());
         Assert.NotNull(scope.ServiceProvider.GetRequiredService<BattingGridService>());
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<PitchingService>());
     }
 }
