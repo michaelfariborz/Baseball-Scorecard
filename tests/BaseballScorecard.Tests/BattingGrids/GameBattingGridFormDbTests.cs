@@ -83,7 +83,7 @@ public class GameBattingGridFormDbTests : BunitContext
         {
             foreach (var side in new[] { "away", "home" })
             {
-                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position"));
+                Assert.NotEmpty(cut.FindAll($"#{side}-slot-9-position, #{side}-edit-lineup"));
                 Assert.NotEmpty(cut.FindAll($"#{side}-batting-grid table, #{side}-batting-grid-empty"));
             }
         });
@@ -150,7 +150,8 @@ public class GameBattingGridFormDbTests : BunitContext
         var cut = RenderGame(s.Game.Id);
         cut.Find("#home-slot-1-player").Change($"{s.Home[0].Id}");
 
-        cut.Find("#away-save-lineup").Click();
+        cut.Find("#away-edit-lineup").Click();
+        cut.WaitForElement("#away-save-lineup").Click();
 
         cut.WaitForElement("#away-lineup-saved");
         Assert.Equal($"{s.Home[0].Id}", cut.Find("#home-slot-1-player").GetAttribute("value"));
