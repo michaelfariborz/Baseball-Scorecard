@@ -404,7 +404,9 @@ If a screenshot file is >5MB, downscale to ≤1920px wide before committing; Git
    - Re-run the test command Tester used (recorded in Tester's PR handoff comment as `Local tests:` line).
    - Tests green → continue to step 6.
    - Tests red → open new `[qa]`-prefixed PR thread quoting the failure output, move card Review → QA with `loop:rebuild-N`, exit. Tester wrote a broken suite; QA owns the fix.
-6. **Adversarial mode** (per `truth_gate`): when triggered, spawn 2 sub-agents in parallel:
+6. **Adversarial mode** (per `truth_gate`): when triggered, spawn 2 sub-agents in parallel
+   (workflow backend: the wave runs them as its own agents before this lane and passes the score
+   in the `Truth-check` prompt line; no independent score → never merge, see super-review → "Adversarial mode"):
    - **Code-grounder** — verify cited file:line still exists and matches claims.
    - **Historian** — `git blame` the changed lines, check for ADRs / prior incidents.
    - **Budget cap (added 2026-05-22): each sub-agent ≤50 gh calls.** Prefer local `git blame` / `git log` over `gh api graphql`. If a sub-agent needs >50 calls to reach confidence, it returns `confidence: "insufficient_data"` and the Reviewer flags the card as 🛡 truth-check inconclusive instead of burning the shared quota. See `rate-limit-etiquette.md`.

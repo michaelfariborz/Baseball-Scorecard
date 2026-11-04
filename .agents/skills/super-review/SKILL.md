@@ -411,6 +411,13 @@ When activated, spawn 2 sub-agents in parallel:
 - **Code-grounder.** Verify cited file:line still exists and matches claims.
 - **Historian.** `git blame` the changed lines; check for ADRs / prior incidents.
 
+**In a super-board workflow wave** a lane agent cannot start sub-agents, so the wave script
+(`super-board-wave.js` → `runTruthCheck`) applies the gate and runs both as agents of their own
+(`truth:code-grounder:#<N>`, `truth:historian:#<N>`) with this brief. Your prompt's
+`Truth-check` line carries their scores; never run or redo the check yourself. When the gate
+fired and that line says there is no independent score, never merge on a score of your own:
+bounce for other findings, or Block 🛡 truth-check inconclusive.
+
 **Use this brief verbatim.** Fill the `<…>` slots; do not reword, add or drop lines. A
 reviewer that wrote its own brief once told the sub-agents over-engineering was blocking,
 and a correct PR was held for it.

@@ -7,6 +7,7 @@ export const meta = {
     { title: 'Classify', detail: 'haiku router: kind (feature | bug | qa) + complexity per Ready card' },
     { title: 'Build', detail: 'Builder lifecycle (run.md): worktree, branch, draft PR' },
     { title: 'QA', detail: 'Tester lifecycle (run.md): test plan, evidence, screenshots' },
+    { title: 'Truth-check', detail: 'truth_gate per Review card; Code-grounder + Historian as their own agents (super-review → Adversarial mode)' },
     { title: 'Review', detail: 'Reviewer lifecycle (run.md): gates, rerun tests, merge' },
   ],
 }
@@ -120,8 +121,8 @@ const REVIEW_MEMORY = [
   `Class every finding Gap / Bug / Verification miss / Scope drift / Over-engineering, and list what you verified correct.`,
   // Simplest-solution pass (super-review step 3): Should fix at most, never a bounce on its own.
   `Run ponytail:ponytail-review on the merge-base diff (inline ladder if the plugin is absent); Over-engineering never blocks merge alone.`,
-  // Truth-check brief is fixed (super-review → Adversarial mode); a hand-written one once made over-building blocking.
-  `Truth-check sub-agents get the fixed brief from super-review → "Adversarial mode", verbatim. After collecting, reclass any Over-engineering Blocker to Should fix; it never decides merge or bounce.`,
+  // The wave runs the truth-check as its own agents (#48); the Truth-check line below carries the score.
+  `The truth-check is run by this wave, not by you (Truth-check line below). Reclass any Over-engineering Blocker in its findings to Should fix; it never decides merge or bounce.`,
   // Merge policy + migrations live in the gate (run.md → Merge protocol step 5).
   `Merge only via super-board-merge-gate.sh. Exit 7 = merge_policy says a human merges (money/auth/schema/size): Blocked with the 🙋 template quoting its human-gate lines; To unblock = merge it yourself, or comment done to approve.`,
   `Exit 8 = 🙋 needs you (migration for a DB the robot may not touch, failed migrate, declared human step): Blocked with the 🙋 template, exact commands from its needs-you lines, label needs-you.`,
@@ -144,7 +145,7 @@ const SKILLS_CHECK = (cards, lane) => [
   `Load the exact resolved_path files. Only declared fallback IDs are allowed. Before using a conditional/custom helper repeat this CLI with --require <exact-name>.`,
 ].join('\n')
 
-const lanePrompt = (lane, card) => [
+const lanePrompt = (lane, card, extra = []) => [
   SKILLS_CHECK([card], lane),
   READ_FAILURE,
   `Run ${LANE[lane].skill} on issue #${card.number} ("${card.title}") for a super-board workflow wave.`,
@@ -154,6 +155,7 @@ const lanePrompt = (lane, card) => [
   BOARD_IO(),
   `Commits, PR title, PR body blocks, comments: .claude/skills/super-board/references/writing-standard.md. Rewrite only your own PR body blocks, with .claude/bin/super-board-pr-body.sh.`,
   ...(lane === 'review' ? REVIEW_MEMORY : []),
+  ...extra,
   // Label, not status: `card.status` is the status when the wave started, so a card built earlier in this wave still reads Ready.
   ...(lane === 'qa' && card.status === 'Ready' && labelsOf(card).includes('qa')
     ? [`This card is labelled qa: it skips Building. Move it Ready → QA yourself, create the issue branch from the base branch, and test what is already there (run.md → "qa cards").`]
@@ -185,13 +187,13 @@ const tierFor = (cls) => (cls ? ladder[cls.complexity] : undefined)
 // The classify router writes no code — haiku is fine except on --high runs.
 const classifyModel = (input.tier || 'medium') === 'high' ? 'sonnet' : 'haiku'
 
-const runLane = async (lane, card, model, history) => {
+const runLane = async (lane, card, model, history, extra) => {
   if (halted) {
     const result = { status: 'halted', column: card.status, detail: 'run halted; preserve work and repair the reported readiness or evidence problem' }
     history.push({ lane, ...result })
     return result
   }
-  const r = await agent(lanePrompt(lane, card), {
+  const r = await agent(lanePrompt(lane, card, extra), {
     label: `${lane}:#${card.number}`,
     phase: LANE[lane].phase,
     schema: STAGE_SCHEMA,
@@ -201,6 +203,130 @@ const runLane = async (lane, card, model, history) => {
   if (result.status === 'halted') halted = true
   history.push({ lane, ...result })
   return result
+}
+
+// Truth-check (super-review → "Adversarial mode", run.md → Reviewer step 6). A
+// lane agent has no tool to start sub-agents, so a Reviewer told to run the
+// check skipped it or scored its own work (#48: #40 merged on a self-score).
+// The wave runs it instead: a cheap gate agent applies `truth_gate`, then the
+// Code-grounder and Historian run as two agents of their own, in parallel, and
+// the Reviewer gets their minimum score. No independent score when the gate
+// fired (or the gate agent was blind) → the Reviewer is told not to merge.
+const TRUTH_GATE_SCHEMA = {
+  type: 'object',
+  properties: {
+    status: { type: 'string', enum: ['fires', 'skip', 'halted'] },
+    detail: { type: 'string' },
+    pr: { type: 'integer' },
+    threshold: { type: 'integer' },
+    acs: { type: 'string' },
+    diff: { type: 'string' },
+    claims: { type: 'string' },
+  },
+  required: ['status', 'detail'],
+}
+const TRUTH_SCHEMA = {
+  type: 'object',
+  properties: {
+    status: { type: 'string', enum: ['ok', 'halted'] },
+    confidence: { type: 'integer', minimum: 0, maximum: 100 },
+    insufficientData: { type: 'boolean' },
+    findings: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          class: { type: 'string' },
+          severity: { type: 'string' },
+          where: { type: 'string' },
+          finding: { type: 'string' },
+        },
+      },
+    },
+    detail: { type: 'string' },
+  },
+  required: ['status'],
+}
+const truthGatePrompt = (card) => [
+  READ_FAILURE,
+  `Truth-gate check for issue #${card.number} ("${card.title}"), a card in Review. Config: ${input.configPath}. You write nothing: no comments, labels, moves, worktrees or commits.`,
+  `Read truth_gate and truth_threshold (default 70) from the config. Find the open PR for branch issue-${card.number}-* and its labels, and count changed lines (additions + deletions) of its merge-base diff against config.base_branch.`,
+  `Rule (super-review → "Adversarial mode"): off → skip · always → fires · non-trivial (default) → fires when changed lines ≥ 10 or a label is security, migration, payments or auth; otherwise skip.`,
+  `fires → return pr, threshold, acs (the issue's Acceptance Criteria section, verbatim), diff (the exact local git command that prints the merge-base diff, after fetching both refs), claims (the PR's Solution block and the newest "[builder] [report]" PR comment, verbatim).`,
+  `skip → return status skip and the reason in detail. Exit 79 on a required read → status halted.`,
+].join('\n')
+// super-review → "Adversarial mode", verbatim; truth-check.test.mjs fails if they drift.
+const TRUTH_JOB = {
+  'Code-grounder': 'verify every file:line the PR cites still exists and does what the PR claims.',
+  Historian: 'git blame the changed lines; look for ADRs, prior incidents, reverted attempts.',
+}
+const truthBrief = (role, g) => [
+  `You are the ${role} in an adversarial truth-check of PR #${g.pr}.`,
+  `Job: ${TRUTH_JOB[role]}`,
+  `Read the issue ACs and the diff first and form your own hypotheses. Only then read the`,
+  `builder's summary below, as claims to check, not as the frame.`,
+  `ACs: ${g.acs || ''}`,
+  `Diff: ${g.diff || ''}`,
+  `Builder's summary (claims): ${g.claims || ''}`,
+  `Budget: at most 50 gh calls; prefer local git. Over budget: confidence "insufficient_data".`,
+  `Class every finding: Gap / Bug / Verification miss / Scope drift / Over-engineering / No issue.`,
+  `Severity: Blocker / Should fix / Nit.`,
+  `Over-engineering is ALWAYS Should fix and NEVER Blocker on its own. It does not lower your`,
+  `confidence score.`,
+  `Confidence 0-100 = how sure you are the PR's claims are true and the code does what the ACs`,
+  `ask. Design taste and over-building do not count against it.`,
+  `Return: findings (class, severity, file:line, one line each) and confidence.`,
+].join('\n')
+const truthPrompt = (role, g) => [
+  truthBrief(role, g),
+  ``,
+  `Read-only: no worktree, commits, comments, labels or moves. ${READ_SHAPES}`,
+  `Structured output: confidence as an integer; "insufficient_data" → insufficientData true and no confidence. Exit 79 on a required read → status halted.`,
+].join('\n')
+const truthLabel = (role, card) => `truth:${role.toLowerCase()}:#${card.number}`
+const NO_SCORE = (why) =>
+  `Truth-check: the gate fired but there is NO independent truth score (${why}). Do NOT run super-board-merge-gate.sh, and do not score the PR yourself. ` +
+  `Finish the review: bounce for other findings as usual; otherwise post the Block template with reason 🛡 truth-check inconclusive (${why}) and move Review → Blocked.`
+
+const runTruthCheck = async (card, history) => {
+  const g = await agent(truthGatePrompt(card), {
+    label: `truth-gate:#${card.number}`, phase: 'Truth-check', model: preflightModel, schema: TRUTH_GATE_SCHEMA,
+  })
+  if (g && g.status === 'halted') halted = true
+  if (halted) return []
+  if (g && g.status === 'skip') {
+    history.push({ lane: 'truth', status: 'skipped', column: 'Review', detail: g.detail })
+    return [`Truth gate skipped by this wave (${g.detail}): no truth-check agents ran and none is needed; do not start one.`]
+  }
+  if (!g || g.status !== 'fires' || !Number.isInteger(g.pr)) {
+    const why = g ? `truth-gate agent gave no PR: ${g.detail}` : 'truth-gate agent returned nothing'
+    history.push({ lane: 'truth', status: 'no-score', column: 'Review', detail: why })
+    return [NO_SCORE(why)]
+  }
+  const roles = ['Code-grounder', 'Historian']
+  const scores = await Promise.all(roles.map((role) => agent(truthPrompt(role, g), {
+    label: truthLabel(role, card), phase: 'Truth-check', schema: TRUTH_SCHEMA,
+  })))
+  if (scores.some((s) => s && s.status === 'halted')) halted = true
+  if (halted) return []
+  const missing = roles.filter((role, i) => {
+    const s = scores[i]
+    return !s || s.status !== 'ok' || s.insufficientData || !Number.isInteger(s.confidence)
+  })
+  if (missing.length) {
+    const why = missing.map((role) => `${truthLabel(role, card)} gave no score`).join(', ')
+    history.push({ lane: 'truth', status: 'no-score', column: 'Review', detail: why })
+    return [NO_SCORE(why)]
+  }
+  const threshold = Number.isInteger(g.threshold) ? g.threshold : 70
+  const min = Math.min(...scores.map((s) => s.confidence))
+  const by = roles.map((role, i) => `${truthLabel(role, card)} ${scores[i].confidence}/100`).join(' · ')
+  history.push({ lane: 'truth', status: 'scored', column: 'Review', detail: `${min}/100 (${by})` })
+  return [
+    `Truth-check (run by this wave, PR #${g.pr}): ${by} · combined (minimum) ${min}/100 vs truth_threshold ${threshold}: ${min >= threshold ? 'at or above' : 'below'}.`,
+    `Findings: ${JSON.stringify(roles.map((role, i) => ({ agent: truthLabel(role, card), findings: scores[i].findings || [] })))}`,
+    `Use this score in step 6 and 7 (run.md → Reviewer); re-score only to drop an Over-engineering penalty. Show the score and both agent labels in the Reviewer report comment.`,
+  ]
 }
 
 // Builder pre-flight (run.md → "Builder pre-flight"). Before ANY Ready card
@@ -336,7 +462,8 @@ const results = await pipeline(
     if (at === 'Review') {
       // Reviewer always on session model. No lane-level serialisation: the merge
       // gate holds the mutex for the merge alone (see the note above).
-      await runLane('review', card, undefined, history)
+      const truth = await runTruthCheck(card, history)
+      await runLane('review', card, undefined, history, truth)
     }
     return { number: card.number, history }
   }
