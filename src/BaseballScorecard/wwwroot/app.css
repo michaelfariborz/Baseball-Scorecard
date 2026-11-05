@@ -40,3 +40,16 @@ h1:focus {
 .inning-header {
     text-align: center;
 }
+
+.batting-grid {
+    border-collapse: collapse;
+    border: 1px solid currentColor;
+}
+
+.batting-grid th {
+    border: 1px solid currentColor;
+}
+
+.batting-grid td {
+    border: 1px solid currentColor;
+}
