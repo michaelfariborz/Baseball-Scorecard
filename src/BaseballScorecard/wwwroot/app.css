@@ -53,3 +53,68 @@ h1:focus {
 .batting-grid td {
     border: 1px solid currentColor;
 }
+
+.at-bat-cell {
+    display: block;
+    width: 100%;
+    min-width: 2.75rem;
+    min-height: 2rem;
+    padding: 0.25rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+}
+
+.at-bat-cell:hover {
+    background: rgb(0 0 0 / 0.05);
+}
+
+.at-bat-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    background: rgb(0 0 0 / 0.4);
+}
+
+.at-bat-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1051;
+    transform: translate(-50%, -50%);
+    width: min(32rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 2rem);
+    overflow: auto;
+    padding: 1rem 1.25rem;
+    border: 1px solid currentColor;
+    border-radius: 0.5rem;
+    background: var(--bs-body-bg, #fff);
+    color: var(--bs-body-color, #212529);
+}
+
+.at-bat-close {
+    float: right;
+    border: 0;
+    background: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.at-bat-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0.25rem 1rem;
+    margin: 0.75rem 0;
+    padding: 0;
+    border: 0;
+}
+
+.at-bat-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}

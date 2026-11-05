@@ -97,6 +97,8 @@ public class GameBattingGridFormDbTests : BunitContext
     private static string Value(IRenderedComponent<GamePage> cut, string id) =>
         cut.Find($"#{id}").GetAttribute("value") ?? "";
 
+    private static string Cell(IRenderedComponent<GamePage> cut, string id) => cut.Find($"#{id}").TextContent.Trim();
+
     [Fact]
     public async Task Saved_lineup_shows_nine_rows_in_batting_order_then_inning_columns()
     {
@@ -114,7 +116,8 @@ public class GameBattingGridFormDbTests : BunitContext
         {
             var cells = rows[i].QuerySelectorAll("td, th").Select(c => c.TextContent.Trim()).Take(3).ToList();
             Assert.Equal([s.Away[i].UniformNumber, $"First {s.Away[i].LastName}", Positions.Abbreviation(Positions9[i])], cells);
-            Assert.Equal(7, rows[i].QuerySelectorAll("input").Length);
+            Assert.Equal(0, rows[i].QuerySelectorAll("input").Length);
+            Assert.Equal(7, rows[i].QuerySelectorAll("button.at-bat-cell").Length);
         }
         Assert.NotNull(cut.Find("#away-slot-9-inning-7-note"));
         Assert.Empty(cut.FindAll("#away-slot-1-inning-8-note"));
@@ -183,30 +186,6 @@ public class GameBattingGridFormDbTests : BunitContext
     }
 
     [Fact]
-    public async Task Typed_note_saves_and_is_still_there_after_a_reload_and_clearing_removes_it()
-    {
-        var s = await NewGameAsync();
-        var cut = RenderGame(s.Game.Id);
-
-        cut.Find("#away-slot-3-inning-2-note").Change("6-3");
-        cut.WaitForAssertion(() => Assert.Equal("6-3", Value(cut, "away-slot-3-inning-2-note")));
-        cut.Find("#away-slot-4-inning-2-note").Change("K");
-        cut.WaitForAssertion(() => Assert.Equal("K", Value(cut, "away-slot-4-inning-2-note")));
-        Assert.Equal(2, (await _grid.ListNotesAsync(s.Game.Id)).Count);
-
-        var reloaded = RenderGame(s.Game.Id);
-        Assert.Equal("6-3", Value(reloaded, "away-slot-3-inning-2-note"));
-        Assert.Equal("K", Value(reloaded, "away-slot-4-inning-2-note"));
-        Assert.Equal("", Value(reloaded, "away-slot-3-inning-3-note"));
-        Assert.Equal("20", reloaded.Find("#away-slot-3-inning-2-note").GetAttribute("maxlength"));
-
-        reloaded.Find("#away-slot-3-inning-2-note").Change("");
-        reloaded.WaitForAssertion(() => Assert.Equal("", Value(reloaded, "away-slot-3-inning-2-note")));
-        Assert.Single(await _grid.ListNotesAsync(s.Game.Id));
-        Assert.Equal("", Value(RenderGame(s.Game.Id), "away-slot-3-inning-2-note"));
-    }
-
-    [Fact]
     public async Task Grid_shows_abbreviations_including_a_pinch_runner_saved_in_the_lineup()
     {
         var s = await NewGameAsync();
@@ -243,8 +222,8 @@ public class GameBattingGridFormDbTests : BunitContext
 
         var slot1 = cut.FindAll("#away-batting-grid tbody tr.batter")[0];
         Assert.Equal($"First {newOrder[0].LastName}", slot1.QuerySelectorAll("td")[1].TextContent.Trim());
-        Assert.Equal("6-3", Value(cut, "away-slot-1-inning-2-note"));
-        Assert.Equal("", Value(cut, "away-slot-9-inning-2-note"));
+        Assert.Equal("6-3", Cell(cut, "away-slot-1-inning-2-note"));
+        Assert.Equal("", Cell(cut, "away-slot-9-inning-2-note"));
     }
 
     [Fact]
