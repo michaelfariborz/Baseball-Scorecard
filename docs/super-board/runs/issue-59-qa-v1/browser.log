@@ -1,0 +1,13 @@
+PASS AC1 away cell opens dialog naming batter + inning title="Away Cub3, inning 4" inputs=0 tag=BUTTON
+PASS AC2 dialog offers exactly the 13 results 1B,2B,3B,HR,BB,HBP,K,ꓘ,GO,FO,SF,FC,E
+PASS AC1 home cell opens dialog naming batter + inning title="Home Sox3, inning 4" inputs=0 tag=BUTTON
+PASS AC2 saving ꓘ shows it in the cell 
+PASS AC2 home grid saving 1B shows it in the cell 
+PASS AC3 BB opens selected, changed to HR, reopened HR selected, cleared first=BB second=HR
+PASS AC4 cancel leaves saved result ꓘ -> ꓘ
+PASS AC4 close leaves saved result ꓘ -> ꓘ
+PASS AC4 backdrop leaves saved result ꓘ -> ꓘ
+PASS AC5 after reload cells keep ꓘ and 1B, HITS input kept away=ꓘ home=1B away-inning-1-hits=2
+PASS AC6 6-3 shows, opens with nothing selected, saving GO replaces text=6-3 selected=null saveDisabled=true
+PASS AC7 Enter opens, focus in dialog, Esc closes without saving, focus back on cell inDialog=home-at-bat-dialog back=home-slot-4-inning-6-note cell=""
+PASS green no console errors / page errors / 5xx / 401 / 403 {"consoleErrors":[],"pageErrors":[],"bad":[]}

@@ -3,8 +3,8 @@
 @inject LineupService LineupService
 @inject PlayerService PlayerService
 
-@* One team's batting grid: a free-text note per batting slot per inning, then HITS and LOB per inning,
-   all typed by the scorer and saved on change. Side ("away" / "home") prefixes every element id. *@
+@* One team's batting grid: an at-bat result per batting slot per inning, picked from a dialog, then HITS and LOB
+   per inning, typed by the scorer and saved on change. Side ("away" / "home") prefixes every element id. *@
 <section id="@Side-batting-grid">
     <h2>@TeamName batting</h2>
 
@@ -38,11 +38,11 @@
                         {
                             var n = inning;
                             var id = $"{Side}-slot-{slot}-inning-{n}-note";
+                            var note = Note(slot, n);
                             <td>
-                                <input id="@id" type="text" size="4" maxlength="@BattingGridService.NoteMaxLength"
-                                       aria-label="Batting slot @slot, inning @n"
-                                       value="@Text(id, Note(slot, n))"
-                                       @onchange="e => SaveNoteAsync(id, slot, n, e.Value as string)" />
+                                <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
+                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}")"
+                                        @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">@note</button>
                             </td>
                         }
                     </tr>
@@ -75,6 +75,37 @@
     {
         <p id="@Side-batting-grid-error" class="validation-message" role="alert">@error</p>
     }
+
+    @if (dialog is { } d)
+    {
+        <div class="at-bat-backdrop" @onclick="Close"></div>
+        <div id="@Side-at-bat-dialog" class="at-bat-dialog" role="dialog" aria-modal="true"
+             aria-labelledby="@Side-at-bat-title" tabindex="-1" @ref="dialogRef" @onkeydown="OnDialogKeyDown">
+            <button id="@Side-at-bat-close" type="button" class="at-bat-close" aria-label="Close" @onclick="Close">×</button>
+            <h3 id="@Side-at-bat-title">@d.Batter, inning @d.Inning</h3>
+            <fieldset class="at-bat-results">
+                <legend>Result</legend>
+                @foreach (var r in AtBatResult.All)
+                {
+                    var result = r;
+                    <label>
+                        <input type="radio" name="@Side-at-bat-result" value="@result.Code"
+                               checked="@(choice == result.Code)" @onchange="() => choice = result.Code" />
+                        <strong>@result.Code</strong> @result.Label
+                    </label>
+                }
+            </fieldset>
+            @if (dialogError is not null)
+            {
+                <p id="@Side-at-bat-error" class="validation-message" role="alert">@dialogError</p>
+            }
+            <div class="at-bat-actions">
+                <button id="@Side-at-bat-save" type="button" disabled="@(choice is null)" @onclick="() => SaveResultAsync(choice)">Save</button>
+                <button id="@Side-at-bat-clear" type="button" @onclick="() => SaveResultAsync(null)">Clear</button>
+                <button id="@Side-at-bat-cancel" type="button" @onclick="Close">Cancel</button>
+            </div>
+        </div>
+    }
 </section>
 
 @code {
@@ -94,6 +125,17 @@
     // What a rejected input shows instead, keyed by element id: the text that was typed, so the scorer can fix it.
     private Dictionary<string, string> typed = [];
     private string? error;
+
+    // The open at-bat dialog: which cell it edits, and the result picked so far (null = none).
+    private sealed record AtBatDialog(string CellId, int Slot, int Inning, string Batter);
+    private AtBatDialog? dialog;
+    private string? choice;
+    private string? dialogError;
+    private ElementReference dialogRef;
+    private readonly Dictionary<string, ElementReference> cellRefs = [];
+    // Set when the next render must move focus: into the dialog after opening, back to its cell after closing.
+    private bool focusDialog;
+    private string? focusCellId;
 
     private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note : "";
 
@@ -131,8 +173,65 @@
             .Where(x => x.RosterId == RosterId).ToDictionary(x => x.Inning);
     }
 
-    private Task SaveNoteAsync(string id, int slot, int inning, string? text) =>
-        AfterSaveAsync(id, text, BattingGridService.SaveNoteAsync(Game.Id, RosterId, slot, inning, text));
+    // A cell holding older free text (or nothing) opens with no result selected.
+    private void Open(string cellId, BatterRow row, int inning)
+    {
+        var batter = row.Name == "" ? $"Batting slot {row.Slot}" : row.Name;
+        dialog = new AtBatDialog(cellId, row.Slot, inning, batter);
+        choice = AtBatResult.Find(Note(row.Slot, inning))?.Code;
+        dialogError = null;
+        focusDialog = true;
+    }
+
+    private void OnDialogKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            Close();
+        }
+    }
+
+    // Closes without saving and hands focus back to the cell that opened the dialog.
+    private void Close()
+    {
+        focusCellId = dialog?.CellId;
+        dialog = null;
+        choice = null;
+        dialogError = null;
+    }
+
+    // Saves the picked result's code, or clears the cell when code is null. A refused save keeps the dialog open with the message.
+    private async Task SaveResultAsync(string? code)
+    {
+        if (dialog is not { } d)
+        {
+            return;
+        }
+        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code);
+        if (dialogError is not null)
+        {
+            return;
+        }
+        await LoadCellsAsync();
+        Close();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (focusDialog && dialog is not null)
+        {
+            focusDialog = false;
+            await dialogRef.FocusAsync();
+        }
+        else if (focusCellId is { } id)
+        {
+            focusCellId = null;
+            if (cellRefs.TryGetValue(id, out var cell))
+            {
+                await cell.FocusAsync();
+            }
+        }
+    }
 
     private Task SaveCountAsync(string id, int inning, string? text, Func<int, int, int, string?, Task<string?>> save) =>
         AfterSaveAsync(id, text, save(Game.Id, RosterId, inning, text));

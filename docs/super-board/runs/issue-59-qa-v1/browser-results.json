@@ -1,0 +1,80 @@
+[
+  {
+    "ac": "AC1",
+    "name": "away cell opens dialog naming batter + inning",
+    "ok": true,
+    "detail": "title=\"Away Cub3, inning 4\" inputs=0 tag=BUTTON"
+  },
+  {
+    "ac": "AC2",
+    "name": "dialog offers exactly the 13 results",
+    "ok": true,
+    "detail": "1B,2B,3B,HR,BB,HBP,K,ꓘ,GO,FO,SF,FC,E"
+  },
+  {
+    "ac": "AC1",
+    "name": "home cell opens dialog naming batter + inning",
+    "ok": true,
+    "detail": "title=\"Home Sox3, inning 4\" inputs=0 tag=BUTTON"
+  },
+  {
+    "ac": "AC2",
+    "name": "saving ꓘ shows it in the cell",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC2",
+    "name": "home grid saving 1B shows it in the cell",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC3",
+    "name": "BB opens selected, changed to HR, reopened HR selected, cleared",
+    "ok": true,
+    "detail": "first=BB second=HR"
+  },
+  {
+    "ac": "AC4",
+    "name": "cancel leaves saved result",
+    "ok": true,
+    "detail": "ꓘ -> ꓘ"
+  },
+  {
+    "ac": "AC4",
+    "name": "close leaves saved result",
+    "ok": true,
+    "detail": "ꓘ -> ꓘ"
+  },
+  {
+    "ac": "AC4",
+    "name": "backdrop leaves saved result",
+    "ok": true,
+    "detail": "ꓘ -> ꓘ"
+  },
+  {
+    "ac": "AC5",
+    "name": "after reload cells keep ꓘ and 1B, HITS input kept",
+    "ok": true,
+    "detail": "away=ꓘ home=1B away-inning-1-hits=2"
+  },
+  {
+    "ac": "AC6",
+    "name": "6-3 shows, opens with nothing selected, saving GO replaces",
+    "ok": true,
+    "detail": "text=6-3 selected=null saveDisabled=true"
+  },
+  {
+    "ac": "AC7",
+    "name": "Enter opens, focus in dialog, Esc closes without saving, focus back on cell",
+    "ok": true,
+    "detail": "inDialog=home-at-bat-dialog back=home-slot-4-inning-6-note cell=\"\""
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]
