@@ -151,6 +151,7 @@ test('the gate agent gets the truth_gate rule and writes nothing', async () => {
   assert.ok(gate.includes('truth_min_lines (default 10)'))
   assert.ok(gate.includes('leaving out test files'))
   assert.ok(gate.includes('You write nothing'))
+  assert.ok(gate.includes('Do not build or run tests'))
 })
 
 // A Ready card runs Pre-flight, Classify, Build, QA, then Review: Review takes
@@ -198,4 +199,10 @@ test('a card that enters at Review (never classified) keeps the session model', 
   }))
   await run({ configPath: 'c.json', cards: [CARD] }, agent, pipeline, () => {})
   assert.equal(calls.find((c) => c.label === 'review:#40').model, undefined)
+})
+
+test('the Reviewer leaves the suite rerun to the merge gate, except where the gate does not verify', async () => {
+  const { review } = await wave()
+  assert.ok(review.includes('Do not rerun the full suite before the merge gate'))
+  assert.ok(review.includes('the gate exits 7 or 8 (it stops before verifying)'))
 })

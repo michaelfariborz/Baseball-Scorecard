@@ -317,10 +317,14 @@ See `.claude/skills/super-board/references/run.md` → Reviewer. Summary of the 
 3. Read PR + spot-check Tester evidence + read CLAUDE.md / AGENTS.md.
    **3b. Prior-report check** — load `prior_report` (see "Review remembers"); if present, round 1 checks each prior finding; any `not fixed` → re-open its thread, bounce by prefix, post the report, exit.
 4. Review code + tests.
-5. **Reviewer-side test rerun (always — closes Tester self-verification gap):**
-   - Pull `issue-<N>-<slug>` into review worktree.
-   - Re-run the EXACT command from Tester's PR `Local tests:` line.
-   - Green → continue. Red → open new `[qa]`-prefixed thread quoting failure, move card Review → QA with `loop:rebuild-N`, exit.
+5. **Independent test rerun — the merge gate runs it (closes the Tester self-verification gap):**
+   - The gate runs `config.verify_commands` on the exact head you pin, merged with the base, and
+     refuses to merge on red (exit 2). That is the independent rerun: do not run the suite yourself
+     first. Run a targeted test only when you need it to confirm or rule out a finding.
+   - Rerun the Tester's `Local tests:` command yourself only when (a) it runs tests that
+     `verify_commands` does not (e.g. an e2e suite outside them), or (b) the gate exits 7 or 8:
+     it stops before verifying, so run it before posting the human request and quote the result.
+   - Red on your own rerun → open new `[qa]`-prefixed thread quoting failure, move card Review → QA with `loop:rebuild-N`, exit.
    - If QA includes `Runtime checks:`, follow
      [optional runtime verification](../super-qa/references/runtime-verification.md):
      rerun the same scenario/config and pinned versions into new review evidence,

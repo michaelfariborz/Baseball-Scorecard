@@ -8,7 +8,7 @@ export const meta = {
     { title: 'Build', detail: 'Builder lifecycle (run.md): worktree, branch, draft PR' },
     { title: 'QA', detail: 'Tester lifecycle (run.md): test plan, evidence, screenshots' },
     { title: 'Truth-check', detail: 'truth_gate per Review card; Code-grounder + Historian as their own agents (super-review → Adversarial mode)' },
-    { title: 'Review', detail: 'Reviewer lifecycle (run.md): gates, rerun tests, merge' },
+    { title: 'Review', detail: 'Reviewer lifecycle (run.md): gates, merge (the merge gate reruns the tests)' },
   ],
 }
 
@@ -124,6 +124,7 @@ const REVIEW_MEMORY = [
   // The wave runs the truth-check as its own agents (#48); the Truth-check line below carries the score.
   `The truth-check is run by this wave, not by you (Truth-check line below). Reclass any Over-engineering Blocker in its findings to Should fix; it never decides merge or bounce.`,
   // Merge policy + migrations live in the gate (run.md → Merge protocol step 5).
+  `Do not rerun the full suite before the merge gate: the gate runs config.verify_commands on the pinned head merged with the base. Rerun the Tester's Local tests: command yourself only if it covers tests verify_commands does not, or the gate exits 7 or 8 (it stops before verifying).`,
   `Merge only via super-board-merge-gate.sh. Exit 7 = merge_policy says a human merges (money/auth/schema/size): Blocked with the 🙋 template quoting its human-gate lines; To unblock = merge it yourself, or comment done to approve.`,
   `Exit 8 = 🙋 needs you (migration for a DB the robot may not touch, failed migrate, declared human step): Blocked with the 🙋 template, exact commands from its needs-you lines, label needs-you.`,
 ]
@@ -253,6 +254,7 @@ const truthGatePrompt = (card) => [
   `Read truth_gate, truth_threshold (default 70) and truth_min_lines (default 10) from the config. Find the open PR for branch issue-${card.number}-* and its labels, and count changed lines (additions + deletions) of its merge-base diff against config.base_branch, leaving out test files (paths under a tests/ or test/ folder, or named *Tests.*, *.test.* or *.spec.*).`,
   `Rule (super-review → "Adversarial mode"): off → skip · always → fires · non-trivial (default) → fires when those non-test changed lines ≥ truth_min_lines or a label is security, migration, payments or auth; otherwise skip.`,
   `fires → return pr, threshold, acs (the issue's Acceptance Criteria section, verbatim), diff (the exact local git command that prints the merge-base diff, after fetching both refs), claims (the PR's Solution block and the newest "[builder] [report]" PR comment, verbatim).`,
+  `Do not build or run tests: this check only counts lines and reads the PR.`,
   `skip → return status skip and the reason in detail. Exit 79 on a required read → status halted.`,
 ].join('\n')
 // super-review → "Adversarial mode", verbatim; truth-check.test.mjs fails if they drift.
