@@ -23,4 +23,7 @@ public class BattingNote
 
     [MaxLength(BattingGridService.NoteMaxLength)]
     public string Note { get; set; } = "";
+
+    /// <summary>The furthest base the batter reached: 0 none, 1 first, 2 second, 3 third, 4 home.</summary>
+    public int BasesReached { get; set; }
 }

@@ -39,10 +39,23 @@
                             var n = inning;
                             var id = $"{Side}-slot-{slot}-inning-{n}-note";
                             var note = Note(slot, n);
+                            var bases = Bases(slot, n);
                             <td>
                                 <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
-                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}")"
-                                        @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">@note</button>
+                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}")"
+                                        @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">
+                                    @if (bases > 0)
+                                    {
+                                        <svg class="bases-diamond" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                            @for (var i = 0; i < bases; i++)
+                                            {
+                                                var (x1, y1, x2, y2) = DiamondSegments[i];
+                                                <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" />
+                                            }
+                                        </svg>
+                                    }
+                                    <span class="at-bat-note">@note</span>
+                                </button>
                             </td>
                         }
                     </tr>
@@ -95,13 +108,25 @@
                     </label>
                 }
             </fieldset>
+            <fieldset id="@Side-at-bat-bases" class="at-bat-bases">
+                <legend>Bases reached</legend>
+                @for (var i = 0; i < BaseNames.Length; i++)
+                {
+                    var n = i;
+                    <label>
+                        <input type="radio" name="@Side-at-bat-bases" value="@n"
+                               checked="@(basesChoice == n)" @onchange="() => basesChoice = n" />
+                        @BaseNames[n]
+                    </label>
+                }
+            </fieldset>
             @if (dialogError is not null)
             {
                 <p id="@Side-at-bat-error" class="validation-message" role="alert">@dialogError</p>
             }
             <div class="at-bat-actions">
-                <button id="@Side-at-bat-save" type="button" disabled="@(choice is null)" @onclick="() => SaveResultAsync(choice)">Save</button>
-                <button id="@Side-at-bat-clear" type="button" @onclick="() => SaveResultAsync(null)">Clear</button>
+                <button id="@Side-at-bat-save" type="button" disabled="@(choice is null)" @onclick="() => SaveResultAsync(choice, basesChoice)">Save</button>
+                <button id="@Side-at-bat-clear" type="button" @onclick="() => SaveResultAsync(null, 0)">Clear</button>
                 <button id="@Side-at-bat-cancel" type="button" @onclick="Close">Cancel</button>
             </div>
         </div>
@@ -120,7 +145,7 @@
     private List<BatterRow>? rows;
     private bool loaded;
     // Saved notes keyed by (slot, inning); saved HITS / LOB keyed by inning.
-    private Dictionary<(int, int), string> notes = [];
+    private Dictionary<(int, int), BattingNote> notes = [];
     private Dictionary<int, InningHitsLob> saved = [];
     // What a rejected input shows instead, keyed by element id: the text that was typed, so the scorer can fix it.
     private Dictionary<string, string> typed = [];
@@ -130,6 +155,7 @@
     private sealed record AtBatDialog(string CellId, int Slot, int Inning, string Batter);
     private AtBatDialog? dialog;
     private string? choice;
+    private int basesChoice;
     private string? dialogError;
     private ElementReference dialogRef;
     private readonly Dictionary<string, ElementReference> cellRefs = [];
@@ -137,7 +163,17 @@
     private bool focusDialog;
     private string? focusCellId;
 
-    private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note : "";
+    // Bases reached 0–4, as the dialog names them.
+    private static readonly string[] BaseNames = ["none", "1st", "2nd", "3rd", "home"];
+
+    // One diamond segment per base reached, in running order, on a 20×20 viewBox:
+    // bottom centre to centre right (1st), to top centre (2nd), to centre left (3rd), back to bottom centre (home).
+    private static readonly (int X1, int Y1, int X2, int Y2)[] DiamondSegments =
+        [(10, 18, 18, 10), (18, 10, 10, 2), (10, 2, 2, 10), (2, 10, 10, 18)];
+
+    private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.Note : "";
+
+    private int Bases(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.BasesReached : 0;
 
     private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
 
@@ -168,7 +204,7 @@
     private async Task LoadCellsAsync()
     {
         notes = (await BattingGridService.ListNotesAsync(Game.Id))
-            .Where(x => x.RosterId == RosterId).ToDictionary(x => (x.BattingOrder, x.Inning), x => x.Note);
+            .Where(x => x.RosterId == RosterId).ToDictionary(x => (x.BattingOrder, x.Inning));
         saved = (await BattingGridService.ListHitsLobAsync(Game.Id))
             .Where(x => x.RosterId == RosterId).ToDictionary(x => x.Inning);
     }
@@ -179,6 +215,7 @@
         var batter = row.Name == "" ? $"Batting slot {row.Slot}" : row.Name;
         dialog = new AtBatDialog(cellId, row.Slot, inning, batter);
         choice = AtBatResult.Find(Note(row.Slot, inning))?.Code;
+        basesChoice = Bases(row.Slot, inning);
         dialogError = null;
         focusDialog = true;
     }
@@ -197,17 +234,19 @@
         focusCellId = dialog?.CellId;
         dialog = null;
         choice = null;
+        basesChoice = 0;
         dialogError = null;
     }
 
-    // Saves the picked result's code, or clears the cell when code is null. A refused save keeps the dialog open with the message.
-    private async Task SaveResultAsync(string? code)
+    // Saves the picked result's code and bases reached, or clears the cell when code is null.
+    // A refused save keeps the dialog open with the message.
+    private async Task SaveResultAsync(string? code, int bases)
     {
         if (dialog is not { } d)
         {
             return;
         }
-        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code);
+        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases);
         if (dialogError is not null)
         {
             return;

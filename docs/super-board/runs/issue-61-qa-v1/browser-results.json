@@ -1,0 +1,74 @@
+[
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats K, 6-3, BB still show; no diamond drawn",
+    "ok": true,
+    "detail": "notes=K|6-3|BB lines=0 svg=0"
+  },
+  {
+    "ac": "AC1",
+    "name": "dialog offers Bases reached none/1st/2nd/3rd/home, empty cell opens on none",
+    "ok": true,
+    "detail": "legend=Bases reached labels=none,1st,2nd,3rd,home values=0,1,2,3,4 checked=0"
+  },
+  {
+    "ac": "AC1",
+    "name": "save keeps 2nd, reopening shows 2nd, cancel after picking home keeps 2nd",
+    "ok": true,
+    "detail": "reopened=2 segsAfterCancel=2"
+  },
+  {
+    "ac": "AC1",
+    "name": "arrow key on the bases group moves 2nd to 3rd",
+    "ok": true,
+    "detail": "checked=3"
+  },
+  {
+    "ac": "AC1",
+    "name": "old BB cell opens on none; saving 1st keeps BB and draws one segment",
+    "ok": true,
+    "detail": "pre=0 note=BB"
+  },
+  {
+    "ac": "AC2",
+    "name": "bases 1 draws first 1 segment(s) in running order, visible",
+    "ok": true,
+    "detail": "segs=10,18-18,10 box=86x32 stroke=rgb(0, 0, 0)"
+  },
+  {
+    "ac": "AC2",
+    "name": "bases 2 draws first 2 segment(s) in running order, visible",
+    "ok": true,
+    "detail": "segs=10,18-18,10 18,10-10,2 box=86x32 stroke=rgb(0, 0, 0)"
+  },
+  {
+    "ac": "AC2",
+    "name": "bases 3 draws first 3 segment(s) in running order, visible",
+    "ok": true,
+    "detail": "segs=10,18-18,10 18,10-10,2 10,2-2,10 box=86x32 stroke=rgb(0, 0, 0)"
+  },
+  {
+    "ac": "AC2",
+    "name": "bases 4 draws first 4 segment(s) in running order, visible",
+    "ok": true,
+    "detail": "segs=10,18-18,10 18,10-10,2 10,2-2,10 2,10-10,18 box=86x32 stroke=rgb(0, 0, 0)"
+  },
+  {
+    "ac": "AC3",
+    "name": "after reload segment counts stay 1,2,3,4 / 2 / 1",
+    "ok": true,
+    "detail": "1,2,3,4,2,1"
+  },
+  {
+    "ac": "AC3",
+    "name": "Clear on a 3rd-base cell: opens on 3, clears note + diamond, reopens on none, stays cleared after reload",
+    "ok": true,
+    "detail": "pre=3 note=\"\" post=0 segsAfterReload=0"
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]
