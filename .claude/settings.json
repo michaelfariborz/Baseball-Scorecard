@@ -106,5 +106,8 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet test:*)"
     ]
+  },
+  "enabledPlugins": {
+    "super-board@super-board": false
   }
 }

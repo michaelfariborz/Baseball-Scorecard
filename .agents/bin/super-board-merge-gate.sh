@@ -343,6 +343,13 @@ if [ "$DRY" -eq 1 ]; then
   exit 0
 fi
 
+# GitHub never merges a draft. Mark ready here (idempotent) so a reviewer whose own
+# `gh pr ready` was refused by a session permission check still lands a clean review.
+python3 "$GITHUB_READ" --check
+if ! gh pr ready "$PR" ${REPO:+--repo "$REPO"} >/dev/null 2>&1; then
+  python3 "$GITHUB_READ" --halt "Could not mark PR #${PR} ready for review in the merge gate; nothing was merged. Check GitHub access, then restart."
+fi
+
 # --match-head-commit makes GitHub refuse if anything was pushed after HEAD_SHA,
 # including during the verification run above.
 python3 "$GITHUB_READ" --check

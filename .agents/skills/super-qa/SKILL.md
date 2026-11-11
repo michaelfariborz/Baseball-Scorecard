@@ -670,11 +670,11 @@ inconclusive result cannot prove a performance AC; do not replace correctness
 checks or add profiling to unrelated issues.
 
 ### Pass-handoff PR comment MUST include the test command
-Every Pass-handoff PR comment includes a `Local tests:` line with the EXACT command Reviewer will re-run as the self-verification gate:
+Every Pass-handoff PR comment includes a `Local tests:` line with the EXACT command you ran. The merge gate's `verify_commands` run is the independent check; the Reviewer reruns this command itself when it covers tests the gate does not, or when the gate stops for a human:
 ```
 Local tests:  npm test --run streaming
 ```
-This is non-optional. Reviewer re-runs this command; red → bounce back to QA.
+This is non-optional. Red on the Reviewer's rerun → bounce back to QA.
 
 ### Issue-comment evidence format (REQUIRED — both pass and fail)
 
