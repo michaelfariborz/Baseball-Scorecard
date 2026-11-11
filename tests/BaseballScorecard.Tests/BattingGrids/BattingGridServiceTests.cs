@@ -204,4 +204,121 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("1B", 1), (note.Note, note.BasesReached));
     }
+
+    [Theory]
+    [InlineData("GO", "4-6-3", "DP")]
+    [InlineData("FO", "8", "")]
+    [InlineData("SF", "9", null)]
+    [InlineData("FC", "6-4", "")]
+    [InlineData("GO", "5-4-3", "TP")]
+    [InlineData("E", "6", "")]
+    [InlineData("GO", "", "")]
+    public async Task Fielders_and_double_or_triple_play_save_with_the_result_and_reload(string code, string fielders, string? multiOut)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, code, 0, $" {fielders} ", multiOut));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal((code, fielders, multiOut ?? ""), (note.Note, note.Fielders, note.MultiOut));
+    }
+
+    [Theory]
+    [InlineData("GO", "0")]
+    [InlineData("GO", "10")]
+    [InlineData("GO", "6-")]
+    [InlineData("GO", "-3")]
+    [InlineData("GO", "6--3")]
+    [InlineData("GO", "6 3")]
+    [InlineData("FO", "SS")]
+    [InlineData("FC", "6/4")]
+    [InlineData("SF", "1-2-3-4-5-6-7-8-9-1-2")]
+    public async Task Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(string code, string fielders)
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "GO", 0, "6-3"));
+
+        Assert.Equal(BattingGridService.FieldersMessage,
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, fielders));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("GO", "6-3"), (note.Note, note.Fielders));
+    }
+
+    [Theory]
+    [InlineData("6-3")]
+    [InlineData("0")]
+    [InlineData("66")]
+    [InlineData("x")]
+    public async Task An_error_takes_one_fielder_1_to_9(string fielder)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Equal(BattingGridService.ErrorFielderMessage,
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "E", 0, fielder));
+
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+    }
+
+    [Theory]
+    [InlineData("GO", "XP", BattingGridService.MultiOutMessage)]
+    [InlineData("GO", "dp", BattingGridService.MultiOutMessage)]
+    [InlineData("E", "DP", BattingGridService.ErrorMultiOutMessage)]
+    [InlineData("1B", "DP", BattingGridService.NoFieldersMessage)]
+    public async Task Double_or_triple_play_is_refused_where_it_does_not_apply(string code, string multiOut, string message)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, "6", multiOut));
+
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+    }
+
+    [Theory]
+    [InlineData("1B")]
+    [InlineData("K")]
+    [InlineData("6-3")]
+    public async Task Results_without_fielders_refuse_fielders(string code)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Equal(BattingGridService.NoFieldersMessage,
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, "8"));
+
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+    }
+
+    [Fact]
+    public async Task Saving_a_result_without_fielders_or_clearing_removes_saved_fielders()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "GO", 0, "4-6-3", "DP"));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1));
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("1B", "", ""), (note.Note, note.Fielders, note.MultiOut));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "FO", 0, "8", "DP"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "GO"));
+        note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("", ""), (note.Fielders, note.MultiOut));
+    }
+
+    [Theory]
+    [InlineData("GO", "4-6-3", "DP", "GO 4-6-3 DP")]
+    [InlineData("FO", "8", "", "FO 8")]
+    [InlineData("GO", "", "TP", "GO TP")]
+    [InlineData("E", "6", "", "E6")]
+    [InlineData("E", "", "", "E")]
+    [InlineData("1B", "", "", "1B")]
+    [InlineData("6-3", "", "", "6-3")]
+    public void Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(string code, string fielders,
+        string multiOut, string expected)
+    {
+        var note = new BattingNote { Note = code, Fielders = fielders, MultiOut = multiOut };
+
+        Assert.Equal(expected, AtBatResult.CellText(note));
+    }
 }

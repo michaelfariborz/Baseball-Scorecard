@@ -38,7 +38,7 @@
                         {
                             var n = inning;
                             var id = $"{Side}-slot-{slot}-inning-{n}-note";
-                            var note = Note(slot, n);
+                            var note = CellText(slot, n);
                             var bases = Bases(slot, n);
                             <td>
                                 <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
@@ -103,11 +103,42 @@
                     var result = r;
                     <label>
                         <input type="radio" name="@Side-at-bat-result" value="@result.Code"
-                               checked="@(choice == result.Code)" @onchange="() => choice = result.Code" />
+                               checked="@(choice == result.Code)" @onchange="() => Pick(result.Code)" />
                         <strong>@result.Code</strong> @result.Label
                     </label>
                 }
             </fieldset>
+            @switch (AtBatResult.Find(choice ?? "")?.Fielders)
+            {
+                case FielderEntry.Sequence:
+                    <div class="at-bat-fielders">
+                        <label for="@Side-at-bat-fielders">Fielders</label>
+                        <input id="@Side-at-bat-fielders" type="text" inputmode="numeric" size="10"
+                               maxlength="@BattingGridService.FieldersMaxLength" placeholder="6-3"
+                               aria-describedby="@Side-at-bat-fielders-hint" @bind="fieldersChoice" />
+                        <span id="@Side-at-bat-fielders-hint" class="hint">Position numbers 1–9 joined by hyphens</span>
+                    </div>
+                    <fieldset id="@Side-at-bat-multi-out" class="at-bat-multi-out">
+                        <legend>Double or triple play</legend>
+                        @foreach (var (value, label) in MultiOuts)
+                        {
+                            var v = value;
+                            <label>
+                                <input type="radio" name="@Side-at-bat-multi-out" value="@v"
+                                       checked="@(multiOutChoice == v)" @onchange="() => multiOutChoice = v" />
+                                @label
+                            </label>
+                        }
+                    </fieldset>
+                    break;
+                case FielderEntry.Single:
+                    <div class="at-bat-fielders">
+                        <label for="@Side-at-bat-error-by">Error by fielder (1–9)</label>
+                        <input id="@Side-at-bat-error-by" type="text" inputmode="numeric" size="2" maxlength="1"
+                               placeholder="6" @bind="fieldersChoice" />
+                    </div>
+                    break;
+            }
             <fieldset id="@Side-at-bat-bases" class="at-bat-bases">
                 <legend>Bases reached</legend>
                 @for (var i = 0; i < BaseNames.Length; i++)
@@ -156,6 +187,9 @@
     private AtBatDialog? dialog;
     private string? choice;
     private int basesChoice;
+    // The fielders typed and the DP / TP picked ("" = none); saved only when the result records fielders.
+    private string fieldersChoice = "";
+    private string multiOutChoice = "";
     private string? dialogError;
     private ElementReference dialogRef;
     private readonly Dictionary<string, ElementReference> cellRefs = [];
@@ -166,12 +200,17 @@
     // Bases reached 0–4, as the dialog names them.
     private static readonly string[] BaseNames = ["none", "1st", "2nd", "3rd", "home"];
 
+    private static readonly (string Value, string Label)[] MultiOuts = [("", "none"), ("DP", "DP"), ("TP", "TP")];
+
     // One diamond segment per base reached, in running order, on a 20×20 viewBox:
     // bottom centre to centre right (1st), to top centre (2nd), to centre left (3rd), back to bottom centre (home).
     private static readonly (int X1, int Y1, int X2, int Y2)[] DiamondSegments =
         [(10, 18, 18, 10), (18, 10, 10, 2), (10, 2, 2, 10), (2, 10, 10, 18)];
 
     private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.Note : "";
+
+    private string CellText(int slot, int inning) =>
+        notes.TryGetValue((slot, inning), out var note) ? AtBatResult.CellText(note) : "";
 
     private int Bases(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.BasesReached : 0;
 
@@ -216,8 +255,23 @@
         dialog = new AtBatDialog(cellId, row.Slot, inning, batter);
         choice = AtBatResult.Find(Note(row.Slot, inning))?.Code;
         basesChoice = Bases(row.Slot, inning);
+        notes.TryGetValue((row.Slot, inning), out var saved);
+        fieldersChoice = saved?.Fielders ?? "";
+        multiOutChoice = saved?.MultiOut ?? "";
         dialogError = null;
         focusDialog = true;
+    }
+
+    // Moving to a result that records fielders differently starts its fielders over, so nothing typed for
+    // one kind (a 6-3 for a ground out) is carried into another (an error's one fielder).
+    private void Pick(string code)
+    {
+        if (AtBatResult.Find(code)?.Fielders != AtBatResult.Find(choice ?? "")?.Fielders)
+        {
+            fieldersChoice = "";
+            multiOutChoice = "";
+        }
+        choice = code;
     }
 
     private void OnDialogKeyDown(KeyboardEventArgs e)
@@ -235,18 +289,24 @@
         dialog = null;
         choice = null;
         basesChoice = 0;
+        fieldersChoice = "";
+        multiOutChoice = "";
         dialogError = null;
     }
 
-    // Saves the picked result's code and bases reached, or clears the cell when code is null.
-    // A refused save keeps the dialog open with the message.
+    // Saves the picked result's code, bases reached and (when the result records them) fielders and DP / TP,
+    // or clears the cell when code is null. A refused save keeps the dialog open with the message.
     private async Task SaveResultAsync(string? code, int bases)
     {
         if (dialog is not { } d)
         {
             return;
         }
-        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases);
+        var entry = AtBatResult.Find(code ?? "")?.Fielders ?? FielderEntry.None;
+        var fielders = entry == FielderEntry.None ? null : fieldersChoice;
+        var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
+        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
+            fielders, multiOut);
         if (dialogError is not null)
         {
             return;

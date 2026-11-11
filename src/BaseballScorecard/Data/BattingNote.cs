@@ -26,4 +26,15 @@ public class BattingNote
 
     /// <summary>The furthest base the batter reached: 0 none, 1 first, 2 second, 3 third, 4 home.</summary>
     public int BasesReached { get; set; }
+
+    /// <summary>
+    /// Fielders by position number in the order the ball moved (<c>4-6-3</c>), or the one fielder charged with an
+    /// error (<c>6</c>). Blank when the result records no fielders.
+    /// </summary>
+    [MaxLength(BattingGridService.FieldersMaxLength)]
+    public string Fielders { get; set; } = "";
+
+    /// <summary><c>DP</c> or <c>TP</c> for a double or triple play; blank otherwise.</summary>
+    [MaxLength(2)]
+    public string MultiOut { get; set; } = "";
 }

@@ -332,4 +332,163 @@ public class AtBatDialogFormDbTests : BunitContext
         Assert.Empty(cut.FindAll("#away-batting-grid svg.bases-diamond line"));
         Assert.Empty(cut.FindAll("#home-batting-grid svg.bases-diamond line"));
     }
+
+    private static string? CheckedMultiOut(IRenderedComponent<GamePage> cut, string side) =>
+        cut.FindAll($"#{side}-at-bat-multi-out input[type=radio]").SingleOrDefault(r => r.HasAttribute("checked"))?.GetAttribute("value");
+
+    [Theory]
+    [InlineData("GO")]
+    [InlineData("FO")]
+    [InlineData("SF")]
+    [InlineData("FC")]
+    public async Task Outs_in_play_show_a_fielders_input_and_a_none_DP_TP_choice(string code)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 1, 1);
+
+        Pick(cut, "away", code);
+
+        cut.WaitForElement("#away-at-bat-fielders");
+        Assert.Equal(["", "DP", "TP"], cut.FindAll("#away-at-bat-multi-out input[type=radio]").Select(r => r.GetAttribute("value")));
+        Assert.Equal("", CheckedMultiOut(cut, "away"));
+        Assert.Empty(cut.FindAll("#away-at-bat-error-by"));
+    }
+
+    [Fact]
+    public async Task An_error_shows_one_fielder_input_and_no_DP_TP_choice()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 1, 1);
+
+        Pick(cut, "away", "E");
+
+        var input = cut.WaitForElement("#away-at-bat-error-by");
+        Assert.Equal("1", input.GetAttribute("maxlength"));
+        Assert.Empty(cut.FindAll("#away-at-bat-fielders"));
+        Assert.Empty(cut.FindAll("#away-at-bat-multi-out"));
+    }
+
+    [Theory]
+    [InlineData("1B")]
+    [InlineData("K")]
+    [InlineData("BB")]
+    public async Task Other_results_show_no_fielder_inputs(string code)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 1, 1);
+        Assert.Empty(cut.FindAll("#away-at-bat-fielders"));
+
+        Pick(cut, "away", "GO");
+        cut.WaitForElement("#away-at-bat-fielders");
+        Pick(cut, "away", code);
+
+        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#away-at-bat-fielders")));
+        Assert.Empty(cut.FindAll("#away-at-bat-multi-out"));
+        Assert.Empty(cut.FindAll("#away-at-bat-error-by"));
+    }
+
+    [Theory]
+    [InlineData("GO", "fielders", "6/3", BattingGridService.FieldersMessage)]
+    [InlineData("FO", "fielders", "88-", BattingGridService.FieldersMessage)]
+    [InlineData("E", "error-by", "0", BattingGridService.ErrorFielderMessage)]
+    public async Task Bad_fielders_are_not_saved_and_the_dialog_says_why(string code, string input, string typed, string message)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 1, 1);
+        Pick(cut, "home", code);
+
+        cut.WaitForElement($"#home-at-bat-{input}").Change(typed);
+        cut.Find("#home-at-bat-save").Click();
+
+        cut.WaitForAssertion(() => Assert.Equal(message, cut.Find("#home-at-bat-error").TextContent));
+        Assert.NotEmpty(cut.FindAll("#home-at-bat-dialog"));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+    }
+
+    [Fact]
+    public async Task Saving_a_ground_out_double_play_shows_it_in_the_cell_after_reload_and_on_reopen()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 2, 3);
+        Pick(cut, "away", "GO");
+
+        cut.WaitForElement("#away-at-bat-fielders").Change("4-6-3");
+        cut.FindAll("#away-at-bat-multi-out input[type=radio]").Single(r => r.GetAttribute("value") == "DP").Change("DP");
+        cut.WaitForAssertion(() => Assert.Equal("DP", CheckedMultiOut(cut, "away")));
+        cut.Find("#away-at-bat-save").Click();
+
+        WaitClosed(cut, "away");
+        cut.WaitForAssertion(() => Assert.Equal("GO 4-6-3 DP", Cell(cut, "away-slot-2-inning-3-note")));
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal("GO 4-6-3 DP", Cell(reloaded, "away-slot-2-inning-3-note"));
+        Open(reloaded, "away", 2, 3);
+        Assert.Equal("GO", Checked(reloaded, "away"));
+        Assert.Equal("4-6-3", reloaded.Find("#away-at-bat-fielders").GetAttribute("value"));
+        Assert.Equal("DP", CheckedMultiOut(reloaded, "away"));
+    }
+
+    [Fact]
+    public async Task Saving_an_error_by_the_shortstop_shows_E6_after_reload_and_on_reopen()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 5, 6);
+        Pick(cut, "home", "E");
+
+        cut.WaitForElement("#home-at-bat-error-by").Change("6");
+        cut.Find("#home-at-bat-save").Click();
+
+        WaitClosed(cut, "home");
+        cut.WaitForAssertion(() => Assert.Equal("E6", Cell(cut, "home-slot-5-inning-6-note")));
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal("E6", Cell(reloaded, "home-slot-5-inning-6-note"));
+        Open(reloaded, "home", 5, 6);
+        Assert.Equal("6", reloaded.Find("#home-at-bat-error-by").GetAttribute("value"));
+    }
+
+    [Fact]
+    public async Task Switching_to_a_result_without_fielders_removes_saved_fielders()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, "GO", 0, "4-6-3", "DP"));
+        var cut = RenderGame(game.Id);
+        Assert.Equal("GO 4-6-3 DP", Cell(cut, "away-slot-1-inning-1-note"));
+
+        Open(cut, "away", 1, 1);
+        Pick(cut, "away", "1B");
+        cut.Find("#away-at-bat-save").Click();
+
+        WaitClosed(cut, "away");
+        cut.WaitForAssertion(() => Assert.Equal("1B", Cell(cut, "away-slot-1-inning-1-note")));
+        var note = Assert.Single(await _grid.ListNotesAsync(game.Id));
+        Assert.Equal(("1B", "", ""), (note.Note, note.Fielders, note.MultiOut));
+        Open(cut, "away", 1, 1);
+        Pick(cut, "away", "GO");
+        Assert.Equal("", cut.WaitForElement("#away-at-bat-fielders").GetAttribute("value") ?? "");
+        Assert.Equal("", CheckedMultiOut(cut, "away"));
+    }
+
+    [Fact]
+    public async Task Clear_removes_saved_fielders_and_double_play()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 3, 2, "FC", 0, "6-4", "DP"));
+        var cut = RenderGame(game.Id);
+
+        Open(cut, "home", 3, 2);
+        Assert.Equal("6-4", cut.Find("#home-at-bat-fielders").GetAttribute("value"));
+        cut.Find("#home-at-bat-clear").Click();
+
+        WaitClosed(cut, "home");
+        cut.WaitForAssertion(() => Assert.Equal("", Cell(cut, "home-slot-3-inning-2-note")));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+        Open(cut, "home", 3, 2);
+        Assert.Null(Checked(cut, "home"));
+        Assert.Empty(cut.FindAll("#home-at-bat-fielders"));
+    }
 }

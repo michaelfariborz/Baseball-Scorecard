@@ -133,7 +133,8 @@ h1:focus {
     border: 0;
 }
 
-.at-bat-bases {
+.at-bat-bases,
+.at-bat-multi-out {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
@@ -142,9 +143,24 @@ h1:focus {
     border: 0;
 }
 
-.at-bat-bases legend {
+.at-bat-bases legend,
+.at-bat-multi-out legend {
     width: 100%;
     font-size: 1rem;
+}
+
+.at-bat-fielders {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.5rem;
+    margin: 0.75rem 0;
+}
+
+.at-bat-fielders .hint {
+    flex-basis: 100%;
+    font-size: 0.875rem;
+    opacity: 0.75;
 }
 
 .at-bat-actions {
