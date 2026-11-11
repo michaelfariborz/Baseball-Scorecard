@@ -1,0 +1,212 @@
+[
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats K, 6-3, GO, BB, E still show unchanged",
+    "ok": true,
+    "detail": "notes=K|6-3|GO|BB|E"
+  },
+  {
+    "ac": "AC4",
+    "name": "old GO cell reopens with blank fielders and DP/TP none",
+    "ok": true,
+    "detail": "fielders=\"\" multi="
+  },
+  {
+    "ac": "AC1",
+    "name": "no result picked: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "GO: fielders input + none/DP/TP choice, no error input",
+    "ok": true,
+    "detail": "labels=none,DP,TP"
+  },
+  {
+    "ac": "AC1",
+    "name": "FO: fielders input + none/DP/TP choice, no error input",
+    "ok": true,
+    "detail": "labels=none,DP,TP"
+  },
+  {
+    "ac": "AC1",
+    "name": "SF: fielders input + none/DP/TP choice, no error input",
+    "ok": true,
+    "detail": "labels=none,DP,TP"
+  },
+  {
+    "ac": "AC1",
+    "name": "FC: fielders input + none/DP/TP choice, no error input",
+    "ok": true,
+    "detail": "labels=none,DP,TP"
+  },
+  {
+    "ac": "AC1",
+    "name": "E: one fielder input (1–9), no DP/TP",
+    "ok": true,
+    "detail": "label=Error by fielder (1–9)"
+  },
+  {
+    "ac": "AC1",
+    "name": "1B: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "2B: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "3B: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "HR: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "BB: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "HBP: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "K: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "ꓘ: no fielder inputs",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"6/3\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"0-3\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "FO \"8-\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "FC \"SS\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"10\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "E \"0\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"An error is charged to one fielder: a position number 1–9.\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "E \"x\" refused with a message, dialog stays open, cell stays blank",
+    "ok": true,
+    "detail": "msg=\"An error is charged to one fielder: a position number 1–9.\" cell=\"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"8\" accepted",
+    "ok": true,
+    "detail": "cell=\"GO 8\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"6-3\" accepted",
+    "ok": true,
+    "detail": "cell=\"GO 6-3\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"4-6-3\" accepted",
+    "ok": true,
+    "detail": "cell=\"GO 4-6-3\""
+  },
+  {
+    "ac": "AC2",
+    "name": "GO \"1-2-3-4-5-6-7-8-9\" accepted",
+    "ok": true,
+    "detail": "cell=\"GO 1-2-3-4-5-6-7-8-9\""
+  },
+  {
+    "ac": "AC3",
+    "name": "cells show GO 4-6-3 DP, E6 and FO 8 TP right after save",
+    "ok": true,
+    "detail": "dp=\"GO 4-6-3 DP\" e6=\"E6\""
+  },
+  {
+    "ac": "AC3",
+    "name": "after reload cells still show GO 4-6-3 DP / E6 / FO 8 TP",
+    "ok": true,
+    "detail": "GO 4-6-3 DP|E6|FO 8 TP"
+  },
+  {
+    "ac": "AC3",
+    "name": "reopen shows GO + 4-6-3 + DP, and E + 6",
+    "ok": true,
+    "detail": "GO|4-6-3|DP / E|6"
+  },
+  {
+    "ac": "AC3",
+    "name": "cancel after editing keeps GO 4-6-3 DP",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC4",
+    "name": "switching GO 4-6-3 DP to 1B shows 1B; picking GO again starts blank / none",
+    "ok": true,
+    "detail": "cell=\"1B\" reopen=|"
+  },
+  {
+    "ac": "AC4",
+    "name": "switching FO 8 TP to E in the dialog starts the error box blank",
+    "ok": true,
+    "detail": "error-by=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "Clear on FO 8 TP: cell blank after reload, FO reopens with blank fielders / none",
+    "ok": true,
+    "detail": "cell=\"\" reopen=|"
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]

@@ -1,0 +1,35 @@
+PASS AC4 pre-migration at bats K, 6-3, GO, BB, E still show unchanged notes=K|6-3|GO|BB|E
+PASS AC4 old GO cell reopens with blank fielders and DP/TP none fielders="" multi=
+PASS AC1 no result picked: no fielder inputs 
+PASS AC1 GO: fielders input + none/DP/TP choice, no error input labels=none,DP,TP
+PASS AC1 FO: fielders input + none/DP/TP choice, no error input labels=none,DP,TP
+PASS AC1 SF: fielders input + none/DP/TP choice, no error input labels=none,DP,TP
+PASS AC1 FC: fielders input + none/DP/TP choice, no error input labels=none,DP,TP
+PASS AC1 E: one fielder input (1–9), no DP/TP label=Error by fielder (1–9)
+PASS AC1 1B: no fielder inputs 
+PASS AC1 2B: no fielder inputs 
+PASS AC1 3B: no fielder inputs 
+PASS AC1 HR: no fielder inputs 
+PASS AC1 BB: no fielder inputs 
+PASS AC1 HBP: no fielder inputs 
+PASS AC1 K: no fielder inputs 
+PASS AC1 ꓘ: no fielder inputs 
+PASS AC2 GO "6/3" refused with a message, dialog stays open, cell stays blank msg="Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters)." cell=""
+PASS AC2 GO "0-3" refused with a message, dialog stays open, cell stays blank msg="Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters)." cell=""
+PASS AC2 FO "8-" refused with a message, dialog stays open, cell stays blank msg="Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters)." cell=""
+PASS AC2 FC "SS" refused with a message, dialog stays open, cell stays blank msg="Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters)." cell=""
+PASS AC2 GO "10" refused with a message, dialog stays open, cell stays blank msg="Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters)." cell=""
+PASS AC2 E "0" refused with a message, dialog stays open, cell stays blank msg="An error is charged to one fielder: a position number 1–9." cell=""
+PASS AC2 E "x" refused with a message, dialog stays open, cell stays blank msg="An error is charged to one fielder: a position number 1–9." cell=""
+PASS AC2 GO "8" accepted cell="GO 8"
+PASS AC2 GO "6-3" accepted cell="GO 6-3"
+PASS AC2 GO "4-6-3" accepted cell="GO 4-6-3"
+PASS AC2 GO "1-2-3-4-5-6-7-8-9" accepted cell="GO 1-2-3-4-5-6-7-8-9"
+PASS AC3 cells show GO 4-6-3 DP, E6 and FO 8 TP right after save dp="GO 4-6-3 DP" e6="E6"
+PASS AC3 after reload cells still show GO 4-6-3 DP / E6 / FO 8 TP GO 4-6-3 DP|E6|FO 8 TP
+PASS AC3 reopen shows GO + 4-6-3 + DP, and E + 6 GO|4-6-3|DP / E|6
+PASS AC3 cancel after editing keeps GO 4-6-3 DP 
+PASS AC4 switching GO 4-6-3 DP to 1B shows 1B; picking GO again starts blank / none cell="1B" reopen=|
+PASS AC4 switching FO 8 TP to E in the dialog starts the error box blank error-by=""
+PASS AC4 Clear on FO 8 TP: cell blank after reload, FO reopens with blank fielders / none cell="" reopen=|
+PASS green no console errors / page errors / 5xx / 401 / 403 {"consoleErrors":[],"pageErrors":[],"bad":[]}

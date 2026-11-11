@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
@@ -8,12 +9,19 @@ namespace BaseballScorecard.Data;
 /// Loads and saves the batting grid: a note per batting slot per inning, and HITS and LOB per team per inning.
 /// Each save returns a validation message, or null on success; a rejected save changes nothing.
 /// </summary>
-public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
+public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
 {
     public const int NoteMaxLength = 20;
     public const string NoteTooLongMessage = "A note can be up to 20 characters.";
     public const int MaxBasesReached = 4;
     public const string BasesReachedMessage = "Bases reached must be none, 1st, 2nd, 3rd or home.";
+    public const int FieldersMaxLength = 20;
+    public const string FieldersMessage =
+        "Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).";
+    public const string ErrorFielderMessage = "An error is charged to one fielder: a position number 1–9.";
+    public const string MultiOutMessage = "Double or triple play must be none, DP or TP.";
+    public const string ErrorMultiOutMessage = "An error is never a DP or TP.";
+    public const string NoFieldersMessage = "Only GO, FO, SF, FC and E record fielders.";
     public const string HitsLobMessage = "HITS and LOB must be whole numbers of 0 or more.";
     public const string SlotMessage = "That batting slot is not part of the lineup.";
     public const string InningMessage = "That inning is not part of this game.";
@@ -36,16 +44,23 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
     }
 
     /// <summary>
-    /// Saves the note and bases reached (0–4) for one slot's inning, note trimmed.
-    /// Blank (or null) note clears the cell, bases reached included.
+    /// Saves the note, bases reached (0–4), fielders and DP / TP for one slot's inning, text trimmed.
+    /// Fielders go only with a result that records them (<see cref="AtBatResult.Fielders"/>); leaving them out
+    /// saves them blank. Blank (or null) note clears the cell, everything else included.
     /// </summary>
     public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
-        int basesReached = 0)
+        int basesReached = 0, string? fieldersText = null, string? multiOutText = null)
     {
         var note = noteText?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
         {
             return NoteTooLongMessage;
+        }
+        var fielders = fieldersText?.Trim() ?? "";
+        var multiOut = multiOutText?.Trim() ?? "";
+        if (note != "" && CheckFielders(note, fielders, multiOut) is { } fieldersError)
+        {
+            return fieldersError;
         }
         if (basesReached < 0 || basesReached > MaxBasesReached)
         {
@@ -78,6 +93,8 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
             }).Entity;
             row.Note = note;
             row.BasesReached = basesReached;
+            row.Fielders = fielders;
+            row.MultiOut = multiOut;
         }
         return await SaveAsync(db);
     }
@@ -126,6 +143,34 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
         }
         return await SaveAsync(db);
     }
+
+    /// <summary>The message when the fielders or DP / TP do not fit the result; null when they do (or are blank).</summary>
+    private static string? CheckFielders(string note, string fielders, string multiOut)
+    {
+        switch (AtBatResult.Find(note)?.Fielders ?? FielderEntry.None)
+        {
+            case FielderEntry.Sequence:
+                if (fielders != "" && (fielders.Length > FieldersMaxLength || !FielderSequence().IsMatch(fielders)))
+                {
+                    return FieldersMessage;
+                }
+                return multiOut is "" or "DP" or "TP" ? null : MultiOutMessage;
+            case FielderEntry.Single:
+                if (multiOut != "")
+                {
+                    return ErrorMultiOutMessage;
+                }
+                return fielders == "" || OneFielder().IsMatch(fielders) ? null : ErrorFielderMessage;
+            default:
+                return fielders == "" && multiOut == "" ? null : NoFieldersMessage;
+        }
+    }
+
+    [GeneratedRegex(@"^[1-9](-[1-9])*$")]
+    private static partial Regex FielderSequence();
+
+    [GeneratedRegex(@"^[1-9]$")]
+    private static partial Regex OneFielder();
 
     /// <summary>The message when the team is not in the game or the inning is outside it; null when the cell exists.</summary>
     private static async Task<string?> CheckCellAsync(ScorecardDbContext db, int gameId, int rosterId, int inning)
