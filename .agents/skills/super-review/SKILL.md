@@ -345,7 +345,8 @@ Builder opens PRs as **drafts**, and GitHub never auto-merges a draft. Skipping 
 `gh pr ready` step is why a six-hour run landed zero commits on `main` while producing
 two complete builds. In order, no shortcuts:
 
-1. `gh pr ready <PR>` — idempotent, safe on an already-ready PR.
+1. `gh pr ready <PR>` — idempotent, safe on an already-ready PR. If a session permission
+   check refuses it, go on to step 2 anyway: the gate marks the PR ready itself.
 2. Merge through the gate, pinned to the head you reviewed (`merge_policy.default: "human"`
    keeps a person on every merge — the gate returns exit 7 below):
    record `gh pr view <PR> --json headRefOid` when review passes, then

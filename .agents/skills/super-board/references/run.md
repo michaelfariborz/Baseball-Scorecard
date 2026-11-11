@@ -451,6 +451,7 @@ on the base branch**.
 
 ```
 1. Mark ready      gh pr ready <PR>                     # idempotent; no-op if already ready
+                   # refused by a permission check? go on: the gate marks it ready too
 2. Merge through the gate (step 5), pinned to the reviewed head — never a bare
    `gh pr merge`. The gate applies `merge_policy` (who merges; `default: "human"`
    keeps a person on every merge) and `migrations` (which databases the robot may
