@@ -83,11 +83,11 @@ public class AtBatDialogFormDbTests : BunitContext
         cut.WaitForAssertion(() => Assert.Empty(cut.FindAll($"#{side}-at-bat-dialog")));
 
     private static string? Checked(IRenderedComponent<GamePage> cut, string side) =>
-        cut.FindAll($"#{side}-at-bat-dialog input[type=radio]").SingleOrDefault(r => r.HasAttribute("checked"))?.GetAttribute("value");
+        cut.FindAll($"#{side}-at-bat-dialog .at-bat-results input[type=radio]").SingleOrDefault(r => r.HasAttribute("checked"))?.GetAttribute("value");
 
     private static void Pick(IRenderedComponent<GamePage> cut, string side, string code)
     {
-        cut.FindAll($"#{side}-at-bat-dialog input[type=radio]").Single(r => r.GetAttribute("value") == code).Change(code);
+        cut.FindAll($"#{side}-at-bat-dialog .at-bat-results input[type=radio]").Single(r => r.GetAttribute("value") == code).Change(code);
         cut.WaitForAssertion(() => Assert.Equal(code, Checked(cut, side)));
     }
 
@@ -122,7 +122,7 @@ public class AtBatDialogFormDbTests : BunitContext
 
         Open(cut, "away", 1, 1);
 
-        Assert.Equal(Codes, cut.FindAll("#away-at-bat-dialog input[type=radio]").Select(r => r.GetAttribute("value")));
+        Assert.Equal(Codes, cut.FindAll("#away-at-bat-dialog .at-bat-results input[type=radio]").Select(r => r.GetAttribute("value")));
         Assert.Contains("strikeout looking", cut.Find("#away-at-bat-dialog").TextContent);
         Assert.Contains("strikeout swinging", cut.Find("#away-at-bat-dialog").TextContent);
     }
@@ -235,5 +235,101 @@ public class AtBatDialogFormDbTests : BunitContext
         WaitClosed(cut, "away");
         cut.WaitForAssertion(() => Assert.Equal(cellRef,
             ((ElementReference)JSInterop.VerifyFocusAsyncInvoke(calledTimes: 2)[1].Arguments[0]!).Id));
+    }
+
+    private static string? CheckedBases(IRenderedComponent<GamePage> cut, string side) =>
+        cut.FindAll($"#{side}-at-bat-bases input[type=radio]").SingleOrDefault(r => r.HasAttribute("checked"))?.GetAttribute("value");
+
+    private static void PickBases(IRenderedComponent<GamePage> cut, string side, int bases)
+    {
+        cut.FindAll($"#{side}-at-bat-bases input[type=radio]").Single(r => r.GetAttribute("value") == $"{bases}").Change($"{bases}");
+        cut.WaitForAssertion(() => Assert.Equal($"{bases}", CheckedBases(cut, side)));
+    }
+
+    /// <summary>The diamond segments the cell draws, each as "x1,y1-x2,y2" in drawing order.</summary>
+    private static string[] Segments(IRenderedComponent<GamePage> cut, string cellId) =>
+        cut.FindAll($"#{cellId} svg.bases-diamond line").Select(l =>
+            $"{l.GetAttribute("x1")},{l.GetAttribute("y1")}-{l.GetAttribute("x2")},{l.GetAttribute("y2")}").ToArray();
+
+    // viewBox 0 0 20 20: bottom centre (10,18), centre right (18,10), top centre (10,2), centre left (2,10).
+    private static readonly string[] Diamond = ["10,18-18,10", "18,10-10,2", "10,2-2,10", "2,10-10,18"];
+
+    [Fact]
+    public async Task Dialog_offers_bases_reached_none_to_home_with_none_picked_for_an_empty_cell()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+
+        Open(cut, "away", 1, 1);
+
+        var radios = cut.FindAll("#away-at-bat-bases input[type=radio]");
+        Assert.Equal(["0", "1", "2", "3", "4"], radios.Select(r => r.GetAttribute("value")));
+        var text = cut.Find("#away-at-bat-bases").TextContent;
+        foreach (var label in new[] { "Bases reached", "none", "1st", "2nd", "3rd", "home" })
+        {
+            Assert.Contains(label, text);
+        }
+        Assert.Equal("0", CheckedBases(cut, "away"));
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    public async Task Saving_bases_reached_draws_that_many_segments_in_order_and_survives_a_reload(int bases)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+
+        Open(cut, "home", 2, 3);
+        Pick(cut, "home", "1B");
+        PickBases(cut, "home", bases);
+        cut.Find("#home-at-bat-save").Click();
+
+        WaitClosed(cut, "home");
+        cut.WaitForAssertion(() => Assert.Equal(Diamond[..bases], Segments(cut, "home-slot-2-inning-3-note")));
+        Assert.Equal("1B", Cell(cut, "home-slot-2-inning-3-note"));
+        var note = Assert.Single(await _grid.ListNotesAsync(game.Id));
+        Assert.Equal(("1B", bases), (note.Note, note.BasesReached));
+
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal(Diamond[..bases], Segments(reloaded, "home-slot-2-inning-3-note"));
+        Assert.Empty(Segments(reloaded, "home-slot-2-inning-4-note"));
+        Open(reloaded, "home", 2, 3);
+        Assert.Equal($"{bases}", CheckedBases(reloaded, "home"));
+    }
+
+    [Fact]
+    public async Task Clear_resets_bases_reached_to_none()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 4, 5, "2B", 2));
+        var cut = RenderGame(game.Id);
+        Assert.Equal(Diamond[..2], Segments(cut, "away-slot-4-inning-5-note"));
+
+        Open(cut, "away", 4, 5);
+        Assert.Equal("2", CheckedBases(cut, "away"));
+        cut.Find("#away-at-bat-clear").Click();
+
+        WaitClosed(cut, "away");
+        cut.WaitForAssertion(() => Assert.Empty(Segments(cut, "away-slot-4-inning-5-note")));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+        Open(cut, "away", 4, 5);
+        Assert.Equal("0", CheckedBases(cut, "away"));
+    }
+
+    [Fact]
+    public async Task Cells_with_no_bases_reached_draw_no_segments_and_older_notes_still_show()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 1, "6-3"));
+        var cut = RenderGame(game.Id);
+
+        Assert.Equal("K", Cell(cut, "away-slot-1-inning-1-note"));
+        Assert.Equal("6-3", Cell(cut, "away-slot-2-inning-1-note"));
+        Assert.Empty(cut.FindAll("#away-batting-grid svg.bases-diamond line"));
+        Assert.Empty(cut.FindAll("#home-batting-grid svg.bases-diamond line"));
     }
 }

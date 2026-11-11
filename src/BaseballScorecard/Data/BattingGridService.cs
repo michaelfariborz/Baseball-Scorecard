@@ -12,6 +12,8 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
 {
     public const int NoteMaxLength = 20;
     public const string NoteTooLongMessage = "A note can be up to 20 characters.";
+    public const int MaxBasesReached = 4;
+    public const string BasesReachedMessage = "Bases reached must be none, 1st, 2nd, 3rd or home.";
     public const string HitsLobMessage = "HITS and LOB must be whole numbers of 0 or more.";
     public const string SlotMessage = "That batting slot is not part of the lineup.";
     public const string InningMessage = "That inning is not part of this game.";
@@ -33,13 +35,21 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
         return await db.InningHitsLob.AsNoTracking().Where(t => t.GameId == gameId).ToListAsync();
     }
 
-    /// <summary>Saves the note for one slot's inning, trimmed. Blank (or null) clears the cell.</summary>
-    public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText)
+    /// <summary>
+    /// Saves the note and bases reached (0–4) for one slot's inning, note trimmed.
+    /// Blank (or null) note clears the cell, bases reached included.
+    /// </summary>
+    public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
+        int basesReached = 0)
     {
         var note = noteText?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
         {
             return NoteTooLongMessage;
+        }
+        if (basesReached < 0 || basesReached > MaxBasesReached)
+        {
+            return BasesReachedMessage;
         }
         if (battingOrder < 1 || battingOrder > LineupService.SlotCount)
         {
@@ -67,6 +77,7 @@ public class BattingGridService(IDbContextFactory<ScorecardDbContext> dbFactory)
                 GameId = gameId, RosterId = rosterId, BattingOrder = battingOrder, Inning = inning,
             }).Entity;
             row.Note = note;
+            row.BasesReached = basesReached;
         }
         return await SaveAsync(db);
     }

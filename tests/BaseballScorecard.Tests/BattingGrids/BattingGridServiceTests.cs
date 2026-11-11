@@ -150,4 +150,58 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         Assert.Empty(await _grid.ListHitsLobAsync(g.Id));
         Assert.Empty(await NotesAsync(g.Id));
     }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(4)]
+    public async Task Bases_reached_saves_with_the_note_and_reloads(int bases)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, "1B", bases));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("1B", bases), (note.Note, note.BasesReached));
+    }
+
+    [Fact]
+    public async Task Bases_reached_defaults_to_none_when_not_given()
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, "K"));
+
+        Assert.Equal(0, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
+    }
+
+    [Fact]
+    public async Task Saving_again_replaces_bases_reached_and_clearing_removes_it()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "2B", 2));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "2B", 3));
+        Assert.Equal(3, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "BB"));
+        Assert.Equal(0, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(5)]
+    public async Task Bases_reached_outside_0_to_4_is_refused(int bases)
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 1));
+
+        Assert.Equal(BattingGridService.BasesReachedMessage,
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "HR", bases));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("1B", 1), (note.Note, note.BasesReached));
+    }
 }
