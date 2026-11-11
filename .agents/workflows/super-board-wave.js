@@ -250,8 +250,8 @@ const TRUTH_SCHEMA = {
 const truthGatePrompt = (card) => [
   READ_FAILURE,
   `Truth-gate check for issue #${card.number} ("${card.title}"), a card in Review. Config: ${input.configPath}. You write nothing: no comments, labels, moves, worktrees or commits.`,
-  `Read truth_gate and truth_threshold (default 70) from the config. Find the open PR for branch issue-${card.number}-* and its labels, and count changed lines (additions + deletions) of its merge-base diff against config.base_branch.`,
-  `Rule (super-review → "Adversarial mode"): off → skip · always → fires · non-trivial (default) → fires when changed lines ≥ 10 or a label is security, migration, payments or auth; otherwise skip.`,
+  `Read truth_gate, truth_threshold (default 70) and truth_min_lines (default 10) from the config. Find the open PR for branch issue-${card.number}-* and its labels, and count changed lines (additions + deletions) of its merge-base diff against config.base_branch, leaving out test files (paths under a tests/ or test/ folder, or named *Tests.*, *.test.* or *.spec.*).`,
+  `Rule (super-review → "Adversarial mode"): off → skip · always → fires · non-trivial (default) → fires when those non-test changed lines ≥ truth_min_lines or a label is security, migration, payments or auth; otherwise skip.`,
   `fires → return pr, threshold, acs (the issue's Acceptance Criteria section, verbatim), diff (the exact local git command that prints the merge-base diff, after fetching both refs), claims (the PR's Solution block and the newest "[builder] [report]" PR comment, verbatim).`,
   `skip → return status skip and the reason in detail. Exit 79 on a required read → status halted.`,
 ].join('\n')
@@ -460,10 +460,12 @@ const results = await pipeline(
       at = 'Review'
     }
     if (at === 'Review') {
-      // Reviewer always on session model. No lane-level serialisation: the merge
-      // gate holds the mutex for the merge alone (see the note above).
+      // Reviewer follows the card's ladder rung like Build/QA; a card that entered
+      // past Ready (never classified) stays on the session model. Merge policy
+      // (money / auth / schema / size → human) is enforced by the gate, not the model.
+      // No lane-level serialisation: the merge gate holds the mutex for the merge alone.
       const truth = await runTruthCheck(card, history)
-      await runLane('review', card, undefined, history, truth)
+      await runLane('review', card, model, history, truth)
     }
     return { number: card.number, history }
   }

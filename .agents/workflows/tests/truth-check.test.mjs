@@ -147,6 +147,55 @@ test('a halted gate halts the run before any truth agent or Review', async () =>
 test('the gate agent gets the truth_gate rule and writes nothing', async () => {
   const { calls } = await wave({ gate: { status: 'skip', detail: 'trivial' } })
   const gate = calls.find((c) => c.label === 'truth-gate:#40').prompt
-  assert.ok(gate.includes('off → skip · always → fires · non-trivial (default) → fires when changed lines ≥ 10 or a label is security, migration, payments or auth; otherwise skip.'))
+  assert.ok(gate.includes('off → skip · always → fires · non-trivial (default) → fires when those non-test changed lines ≥ truth_min_lines or a label is security, migration, payments or auth; otherwise skip.'))
+  assert.ok(gate.includes('truth_min_lines (default 10)'))
+  assert.ok(gate.includes('leaving out test files'))
   assert.ok(gate.includes('You write nothing'))
+})
+
+// A Ready card runs Pre-flight, Classify, Build, QA, then Review: Review takes
+// the same ladder rung as Build/QA, not the session model.
+async function readyWave(complexity, tier) {
+  const calls = []
+  const agent = async (prompt, opts) => {
+    calls.push({ label: opts.label, model: opts.model })
+    if (opts.label.startsWith('preflight:')) return { verdicts: [{ number: 40, verdict: 'proceed', column: 'Ready', detail: 'ok' }] }
+    if (opts.label.startsWith('classify:')) return { kind: 'feature', complexity }
+    if (opts.label.startsWith('truth-gate:')) return { status: 'skip', detail: 'small' }
+    return { status: 'advanced', column: 'Done', detail: 'ok' }
+  }
+  const pipeline = async (items, ...stages) => Promise.all(items.map(async (item) => {
+    let prev
+    for (const stage of stages) prev = await stage(prev === undefined ? item : prev, item)
+    return prev
+  }))
+  const card = { number: 40, status: 'Ready', title: 't', lane: 'build', labels: ['feature'] }
+  await run({ configPath: 'c.json', cards: [card], ...(tier ? { tier } : {}) }, agent, pipeline, () => {})
+  return (label) => calls.find((c) => c.label === label)
+}
+
+test('Review uses the card\'s ladder model, like Build and QA', async () => {
+  const low = await readyWave('low')
+  assert.equal(low('build:#40').model, 'sonnet')
+  assert.equal(low('review:#40').model, 'sonnet')
+  const medium = await readyWave('medium')
+  assert.equal(medium('review:#40').model, 'opus')
+  const high = await readyWave('high')
+  assert.equal(high('review:#40').model, undefined)
+})
+
+test('a card that enters at Review (never classified) keeps the session model', async () => {
+  const calls = []
+  const agent = async (prompt, opts) => {
+    calls.push({ label: opts.label, model: opts.model })
+    if (opts.label.startsWith('truth-gate:')) return { status: 'skip', detail: 'small' }
+    return { status: 'advanced', column: 'Done', detail: 'ok' }
+  }
+  const pipeline = async (items, ...stages) => Promise.all(items.map(async (item) => {
+    let prev
+    for (const stage of stages) prev = await stage(prev === undefined ? item : prev, item)
+    return prev
+  }))
+  await run({ configPath: 'c.json', cards: [CARD] }, agent, pipeline, () => {})
+  assert.equal(calls.find((c) => c.label === 'review:#40').model, undefined)
 })

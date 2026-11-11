@@ -404,7 +404,7 @@ The standalone `super-truth` skill is removed (spec §10 item 8.9). The adversar
 
 Activated per `config.truth_gate`:
 - `off` — never adversarial.
-- `non-trivial` (default) — diff ≥10 lines OR labels in `{security, migration, payments, auth}` trigger adversarial.
+- `non-trivial` (default) — non-test diff ≥ `truth_min_lines` (default 10; test files excluded) OR labels in `{security, migration, payments, auth}` trigger adversarial.
 - `always` — every card.
 
 When activated, spawn 2 sub-agents in parallel:

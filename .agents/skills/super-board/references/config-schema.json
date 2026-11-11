@@ -241,8 +241,9 @@
 
   // Controls Reviewer's adversarial mode (folded-in super-truth pattern).
   //   "off"          — never adversarial.
-  //   "non-trivial"  — (default) activates on cards with diff ≥10 lines OR
-  //                    labels in {security, migration, payments, auth}.
+  //   "non-trivial"  — (default) activates on cards whose non-test diff is
+  //                    ≥ truth_min_lines OR labels in
+  //                    {security, migration, payments, auth}.
   //   "always"       — every card gets adversarial review
   //                    (cost: 2 sub-agent dispatches per card).
   "truth_gate": "non-trivial",
@@ -251,6 +252,10 @@
   // Default `70`. Below threshold, Reviewer must NOT approve; card moves to
   // Blocked with `🛡 truth-check failed (confidence X/100)`. See §7.
   "truth_threshold": 70,
+
+  // Changed lines, test files excluded (tests/ or test/ folders, *Tests.*,
+  // *.test.*, *.spec.*), at or above which "non-trivial" fires. Default 10.
+  "truth_min_lines": 10,
 
   // Shell commands proving the branch still BUILDS against the base branch as it
   // is right now. Run by super-board-merge-gate.sh from the root of a scratch
