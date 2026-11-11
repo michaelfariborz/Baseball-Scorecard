@@ -48,6 +48,28 @@ public class GamePageTests : BunitContext
     }
 
     [Fact]
+    public async Task Puts_the_away_pitchers_right_after_the_away_batting_table_and_home_pitchers_after_home_batting()
+    {
+        var rosters = new RosterService(new FixtureDbFactory(_fixture));
+        var away = new Roster { TeamName = $"Cubs {Guid.NewGuid():N}", Year = 2026 };
+        var home = new Roster { TeamName = $"Sox {Guid.NewGuid():N}", Year = 2026 };
+        Assert.Null(await rosters.SaveAsync(away));
+        Assert.Null(await rosters.SaveAsync(home));
+        var game = new Game
+        {
+            Year = 2026, Date = new DateOnly(2026, 4, 2),
+            AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 7,
+        };
+        Assert.Null(await Services.GetRequiredService<GameService>().CreateAsync(game));
+
+        var cut = Render<GamePage>(p => p.Add(x => x.Id, game.Id));
+
+        cut.WaitForAssertion(() => Assert.Equal(
+            new[] { "away-batting-grid", "away-pitchers", "home-batting-grid", "home-pitchers" },
+            cut.FindAll("section").Select(s => s.Id).Where(id => id is "away-batting-grid" or "away-pitchers" or "home-batting-grid" or "home-pitchers")));
+    }
+
+    [Fact]
     public void Missing_game_says_it_was_not_found()
     {
         var cut = Render<GamePage>(p => p.Add(x => x.Id, int.MaxValue));
