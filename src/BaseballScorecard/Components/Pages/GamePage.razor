@@ -21,9 +21,9 @@ else if (game is not null)
     <LineScore Game="game" />
 
     <BattingGrid Game="game" RosterId="game.AwayRosterId" Side="away" TeamName="@game.AwayRoster!.TeamName" />
-    <BattingGrid Game="game" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" />
-
     <PitchersTable GameId="game.Id" RosterId="game.AwayRosterId" Side="away" TeamName="@game.AwayRoster!.TeamName" />
+
+    <BattingGrid Game="game" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" />
     <PitchersTable GameId="game.Id" RosterId="game.HomeRosterId" Side="home" TeamName="@game.HomeRoster!.TeamName" />
 }
 
