@@ -17,7 +17,7 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     public const string BasesReachedMessage = "Bases reached must be none, 1st, 2nd, 3rd or home.";
     public const int FieldersMaxLength = 20;
     public const string FieldersMessage =
-        "Fielders must be position numbers 1–9 joined by hyphens, like 8, 6-3 or 4-6-3 (up to 20 characters).";
+        "Fielders must be position numbers 1–9, like 8, 63 or 4-6-3 (hyphens are optional, up to 20 characters once shown with hyphens).";
     public const string ErrorFielderMessage = "An error is charged to one fielder: a position number 1–9.";
     public const string MultiOutMessage = "Double or triple play must be none, DP or TP.";
     public const string ErrorMultiOutMessage = "An error is never a DP or TP.";
@@ -58,6 +58,10 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         }
         var fielders = fieldersText?.Trim() ?? "";
         var multiOut = multiOutText?.Trim() ?? "";
+        if (note != "" && AtBatResult.Find(note)?.Fielders == FielderEntry.Sequence)
+        {
+            fielders = HyphenateFielders(fielders);
+        }
         if (note != "" && CheckFielders(note, fielders, multiOut) is { } fieldersError)
         {
             return fieldersError;
@@ -165,6 +169,13 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
                 return fielders == "" && multiOut == "" ? null : NoFieldersMessage;
         }
     }
+
+    /// <summary>"463" and "46-3" become "4-6-3". Anything that is not digits 1–9 in hyphen-separated groups is left as typed, for the check to refuse.</summary>
+    private static string HyphenateFielders(string fielders) =>
+        FielderDigits().IsMatch(fielders) ? string.Join('-', fielders.Replace("-", "").ToCharArray()) : fielders;
+
+    [GeneratedRegex(@"^[1-9]+(-[1-9]+)*$")]
+    private static partial Regex FielderDigits();
 
     [GeneratedRegex(@"^[1-9](-[1-9])*$")]
     private static partial Regex FielderSequence();
