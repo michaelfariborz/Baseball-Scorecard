@@ -224,12 +224,30 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     }
 
     [Theory]
+    [InlineData("GO", "463", "4-6-3")]
+    [InlineData("GO", "4-6-3", "4-6-3")]
+    [InlineData("FO", "46-3", "4-6-3")]
+    [InlineData("SF", "8", "8")]
+    [InlineData("FC", " 63 ", "6-3")]
+    [InlineData("GO", "1234567891", "1-2-3-4-5-6-7-8-9-1")]
+    public async Task Fielders_typed_with_or_without_hyphens_save_hyphen_joined(string code, string typed, string saved)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, typed));
+
+        Assert.Equal(saved, Assert.Single(await _grid.ListNotesAsync(g.Id)).Fielders);
+    }
+
+    [Theory]
+    [InlineData("GO", "12345678912")]
     [InlineData("GO", "0")]
     [InlineData("GO", "10")]
     [InlineData("GO", "6-")]
     [InlineData("GO", "-3")]
     [InlineData("GO", "6--3")]
     [InlineData("GO", "6 3")]
+    [InlineData("GO", "4a3")]
     [InlineData("FO", "SS")]
     [InlineData("FC", "6/4")]
     [InlineData("SF", "1-2-3-4-5-6-7-8-9-1-2")]
