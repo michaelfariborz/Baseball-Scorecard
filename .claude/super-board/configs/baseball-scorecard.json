@@ -45,15 +45,16 @@
   "migrations": {
     "globs": ["supabase/migrations/**", "prisma/migrations/**", "drizzle/**",
               "**/migrations/*.sql", "db/migrate/**", "alembic/versions/**", "**/Migrations/*.cs"],
-    "allowed_envs": [],
+    "allowed_envs": ["staging"],
     "target_env": "staging",
-    "commands": {},
+    "commands": {"staging": "-"},
     "checks": {},
     "human_steps": []
   },
   "no_progress_cycles": 6,
   "truth_gate": "non-trivial",
   "truth_threshold": 70,
+  "truth_min_lines": 100,
   "usage_pause_pct": 95,
   "usage_fallback": "none",
   "verify_commands": [
