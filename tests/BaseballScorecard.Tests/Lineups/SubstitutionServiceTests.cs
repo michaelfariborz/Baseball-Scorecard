@@ -106,6 +106,17 @@ public class SubstitutionServiceTests(PostgresFixture fixture)
     }
 
     [Theory]
+    [InlineData(1)]
+    [InlineData(9)]
+    public async Task The_first_and_last_innings_of_the_game_are_accepted(int inning)
+    {
+        var s = await NewGameAsync();
+
+        Assert.Null(await _subs.AddAsync(s.Game.Id, s.RosterId, 6, s.Bench(1).Id, SubstitutionKind.PinchHitter, inning));
+        Assert.Equal([inning], (await _subs.ListAsync(s.Game.Id, s.RosterId)).Select(x => x.Inning));
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(10)]
     public async Task An_inning_outside_the_game_is_refused(int inning)
@@ -248,5 +259,19 @@ public class SlotPlayersTests
         Assert.Equal(100, SubstitutionService.OwnerAt(players, 5).PlayerId);
         Assert.Equal(200, SubstitutionService.OwnerAt(players, 6).PlayerId);
         Assert.Equal(200, SubstitutionService.OwnerAt(players, 9).PlayerId);
+    }
+
+    [Fact]
+    public void A_third_sub_in_the_same_inning_never_takes_back_an_at_bat_the_slot_already_had()
+    {
+        var players = SubstitutionService.SlotPlayers(Starter,
+        [
+            Sub(1, 200, SubstitutionKind.PinchRunner, 7), Sub(2, 300, SubstitutionKind.Defensive, 7),
+            Sub(3, 400, SubstitutionKind.Defensive, 7),
+        ]);
+
+        Assert.Equal([100, 200, 300, 400], players.Select(p => p.PlayerId));
+        Assert.Equal(100, SubstitutionService.OwnerAt(players, 7).PlayerId);
+        Assert.Equal(400, SubstitutionService.OwnerAt(players, 8).PlayerId);
     }
 }
