@@ -4,7 +4,8 @@ using Npgsql;
 namespace BaseballScorecard.Data;
 
 /// <summary>One player who held a batting slot: the starter (Inning null) or a substitute.</summary>
-/// <param name="Position">The Pos column: the starter's position, PH, PR, or for a defensive sub the starter's position.</param>
+/// <param name="Position">The Pos column: the starter's position, PH, PR, or for a defensive sub the position the
+/// player he replaces holds in his inning.</param>
 /// <param name="OwnsFrom">The first inning whose at bat is this player's.</param>
 public sealed record SlotPlayer(int PlayerId, string Position, int? Inning, int OwnsFrom, int? SubstitutionId);
 
@@ -31,6 +32,9 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
     public static string BeforeEnteredMessage(int entered) =>
         $"That player came into the game in inning {entered}: pick inning {entered} or later.";
 
+    public static string ReplacedChangesMessage(int inning) =>
+        $"The player being replaced changes position in inning {inning}: remove that change first.";
+
     /// <summary>The team's substitutions in this game, in the order they were added (empty with no saved lineup).</summary>
     public async Task<List<Substitution>> ListAsync(int gameId, int rosterId)
     {
@@ -43,7 +47,8 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
 
     /// <summary>
     /// Puts a bench player into a filled batting slot from the given inning. Refused when the player is a starter,
-    /// the DH lineup's starting pitcher, or already came in (so is in the game or has left it).
+    /// the DH lineup's starting pitcher, or already came in (so is in the game or has left it), or when the player he
+    /// replaces has a position change from that inning on.
     /// </summary>
     public async Task<string?> AddAsync(int gameId, int rosterId, int battingOrder, int playerId, SubstitutionKind kind,
         int inning)
@@ -76,6 +81,17 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
             || await db.Substitutions.AnyAsync(s => s.LineupId == lineup.Id && s.PlayerId == playerId))
         {
             return AlreadyInGameMessage;
+        }
+        // The new sub goes after every sub already in the slot by his inning, so he replaces the last of them.
+        var subs = await db.Substitutions.AsNoTracking().Where(s => s.LineupId == lineup.Id).ToListAsync();
+        var replaced = SlotPlayers(lineup.Slots.First(s => s.BattingOrder == battingOrder), subs)
+            .Last(p => (p.Inning ?? 0) <= inning);
+        var laterChange = await db.PositionChanges
+            .Where(c => c.LineupId == lineup.Id && c.PlayerId == replaced.PlayerId && c.Inning >= inning)
+            .OrderBy(c => c.Inning).Select(c => (int?)c.Inning).FirstOrDefaultAsync();
+        if (laterChange is { } changeInning)
+        {
+            return ReplacedChangesMessage(changeInning);
         }
 
         db.Substitutions.Add(new Substitution
@@ -203,15 +219,27 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
     /// The slot's players: its starter, then its substitutes in the order they took the slot (entry inning, then
     /// the order they were added). A PH or defensive sub owns at bats from his inning; a PR, or anyone coming in
     /// the same inning right after a PH or PR, from the next one, since the slot already batted that inning.
+    /// A defensive sub starts at the fielding position the slot holds in his inning: the starter's, as moved by the
+    /// position changes of whoever held the slot before him.
     /// </summary>
-    public static List<SlotPlayer> SlotPlayers(LineupSlot starter, IEnumerable<Substitution> substitutions)
+    public static List<SlotPlayer> SlotPlayers(LineupSlot starter, IEnumerable<Substitution> substitutions,
+        IEnumerable<PositionChange>? changes = null)
     {
         var starterPosition = starter.Position == 0 ? "" : Positions.Abbreviation(starter.Position);
         var players = new List<SlotPlayer> { new(starter.PlayerId, starterPosition, null, 1, null) };
+        var allChanges = changes?.ToList() ?? [];
+        var fielding = starterPosition;
         Substitution? previous = null;
         foreach (var s in substitutions.Where(s => s.BattingOrder == starter.BattingOrder)
                      .OrderBy(s => s.Inning).ThenBy(s => s.Id))
         {
+            var holder = players[^1].PlayerId;
+            var lastMove = allChanges.Where(c => c.PlayerId == holder && c.Inning <= s.Inning)
+                .OrderBy(c => c.Inning).ThenBy(c => c.Id).LastOrDefault();
+            if (lastMove is not null)
+            {
+                fielding = Positions.Abbreviation(lastMove.Position);
+            }
             var afterPinchInSameInning = previous is { Kind: SubstitutionKind.PinchHitter or SubstitutionKind.PinchRunner }
                 && previous.Inning == s.Inning;
             var ownsFrom = s.Kind == SubstitutionKind.PinchRunner || afterPinchInSameInning ? s.Inning + 1 : s.Inning;
@@ -219,8 +247,8 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
             {
                 SubstitutionKind.PinchHitter => Positions.Abbreviation(Position.PinchHitter),
                 SubstitutionKind.PinchRunner => Positions.Abbreviation(Position.PinchRunner),
-                // A defensive sub starts at the starter's position; a PositionChange moves him from there.
-                _ => starterPosition,
+                // A PH or PR leaves the slot's fielding position as it was; a defensive sub takes it.
+                _ => fielding,
             };
             players.Add(new SlotPlayer(s.PlayerId, position, s.Inning, Math.Max(ownsFrom, players[^1].OwnsFrom), s.Id));
             previous = s;

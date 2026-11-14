@@ -165,6 +165,24 @@ public class PositionChangeServiceTests(PostgresFixture fixture)
 
         Assert.Equal([(s.Players[0].Id, Position.RightField, 8)], await ChangesAsync(s));
     }
+
+    [Fact]
+    public async Task A_substitute_before_the_replaced_players_later_change_is_refused()
+    {
+        var s = await NewGameAsync();
+        // Slot 5's RF moves to LF from the 8th; then a PH for him in the 7th would leave that change behind.
+        Assert.Null(await _subs.AddPositionChangeAsync(s.Game.Id, s.RosterId, s.Players[4].Id, Position.LeftField, 8));
+
+        Assert.Equal(SubstitutionService.ReplacedChangesMessage(8),
+            await _subs.AddAsync(s.Game.Id, s.RosterId, 5, s.Bench(1).Id, SubstitutionKind.PinchHitter, 7));
+        Assert.Equal(SubstitutionService.ReplacedChangesMessage(8),
+            await _subs.AddAsync(s.Game.Id, s.RosterId, 5, s.Bench(1).Id, SubstitutionKind.Defensive, 8));
+        Assert.Empty(await _subs.ListAsync(s.Game.Id, s.RosterId));
+        Assert.Single(await ChangesAsync(s));
+
+        // After that change, the sub is fine.
+        Assert.Null(await _subs.AddAsync(s.Game.Id, s.RosterId, 5, s.Bench(1).Id, SubstitutionKind.Defensive, 9));
+    }
 }
 
 // The Pos column text of one player, from his first position and his changes; no database.

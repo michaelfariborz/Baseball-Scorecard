@@ -218,6 +218,24 @@ public class SlotPlayersTests
     }
 
     [Fact]
+    public void A_defensive_sub_takes_the_position_the_player_he_replaces_holds_in_his_inning()
+    {
+        PositionChange Change(int id, int playerId, Position position, int inning) =>
+            new() { Id = id, PlayerId = playerId, Position = position, Inning = inning };
+
+        // The RF starter moves to CF from the 5th; a defensive sub for him in the 7th plays CF.
+        var players = SubstitutionService.SlotPlayers(Starter, [Sub(1, 300, SubstitutionKind.Defensive, 7)],
+            [Change(1, 100, Position.CenterField, 5), Change(2, 999, Position.Pitcher, 5)]);
+        Assert.Equal(["RF", "CF"], players.Select(p => p.Position));
+
+        // A PH who stays in at 1B from the 8th; a defensive sub for him in the 9th plays 1B.
+        players = SubstitutionService.SlotPlayers(Starter,
+            [Sub(1, 200, SubstitutionKind.PinchHitter, 7), Sub(2, 300, SubstitutionKind.Defensive, 9)],
+            [Change(1, 200, Position.FirstBase, 8)]);
+        Assert.Equal(["RF", "PH", "1B"], players.Select(p => p.Position));
+    }
+
+    [Fact]
     public void Substitutes_list_in_the_order_they_took_the_slot_whatever_order_they_were_added()
     {
         var players = SubstitutionService.SlotPlayers(Starter,

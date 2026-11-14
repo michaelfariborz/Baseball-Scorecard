@@ -384,7 +384,7 @@
             newRows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
             {
                 var starter = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n) ?? new LineupSlot { BattingOrder = n };
-                return new BatterRow(n, SubstitutionService.SlotPlayers(starter, subs));
+                return new BatterRow(n, SubstitutionService.SlotPlayers(starter, subs, newChanges));
             }).ToList();
             newInGame = [.. lineup.Slots.Select(s => s.PlayerId), .. subs.Select(s => s.PlayerId)];
             if (lineup.StartingPitcherId is { } sp)
