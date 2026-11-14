@@ -14,6 +14,7 @@
     --color-focus: #C8102E;
     --color-header: #1F4D2B;
     --color-on-header: #FFFFFF;
+    --color-nav-current: #FF7A85;
     --color-hover: #EFEADF;
     --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --space-1: 0.25rem;
@@ -38,6 +39,7 @@
         --color-focus: #FF7A85;
         --color-header: #132A19;
         --color-on-header: #E8EDE6;
+        --color-nav-current: #FF7A85;
         --color-hover: #22352A;
     }
 }
@@ -108,7 +110,7 @@ a {
 
 .app-nav a[aria-current="page"] {
     font-weight: 700;
-    border-bottom-color: var(--color-accent);
+    border-bottom-color: var(--color-nav-current);
 }
 
 .app-main {
@@ -195,11 +197,16 @@ h1:focus {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid var(--color-link);
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+    outline: 1px solid var(--color-accent);
+}
+
+.valid.modified:not([type=checkbox]):focus-visible, .invalid:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
 }
 
 .validation-message {
@@ -346,6 +353,7 @@ h1:focus {
 
 .at-bat-close {
     float: right;
+    padding: 0;
     border: 0;
     background: none;
     color: inherit;

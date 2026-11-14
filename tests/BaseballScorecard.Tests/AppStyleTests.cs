@@ -11,6 +11,7 @@ public class AppStyleTests
     [
         "--color-bg", "--color-surface", "--color-text", "--color-muted", "--color-primary", "--color-on-primary",
         "--color-link", "--color-accent", "--color-border", "--color-focus", "--color-header", "--color-on-header",
+        "--color-nav-current",
     ];
 
     private static string Css()
@@ -106,6 +107,7 @@ public class AppStyleTests
     [InlineData("--color-border", "--color-surface", 3.0)]
     [InlineData("--color-focus", "--color-bg", 3.0)]
     [InlineData("--color-focus", "--color-surface", 3.0)]
+    [InlineData("--color-nav-current", "--color-header", 3.0)]
     public void Pairs_meet_wcag_aa_in_light_and_dark(string fg, string bg, double min)
     {
         foreach (var (name, set) in new[] { ("light", Light()), ("dark", Dark()) })
@@ -141,6 +143,35 @@ public class AppStyleTests
         Assert.Matches(@"outline:\s*\d+px solid var\(--color-focus\)", focus);
     }
 
+    // A later or more specific rule that sets an outline (Blazor's .valid.modified / .invalid field
+    // markers) would replace the focus ring on an edited field, so each one needs its own
+    // :focus-visible rule that puts the ring back.
+    [Fact]
+    public void Rules_that_set_an_outline_keep_the_focus_ring_when_focused()
+    {
+        var rules = Regex.Matches(Css(), @"([^{}]+)\{([^{}]*)\}")
+            .Select(m => (Selectors: m.Groups[1].Value.Split(',').Select(x => x.Trim()).ToArray(), Body: m.Groups[2].Value))
+            .ToList();
+        var outlined = rules
+            .Where(r => Regex.IsMatch(r.Body, @"(?<![-\w])outline\s*:"))
+            .SelectMany(r => r.Selectors)
+            .Where(sel => !sel.Contains(":focus"))
+            .ToList();
+        Assert.NotEmpty(outlined);
+        foreach (var sel in outlined)
+            Assert.True(
+                rules.Any(r => r.Selectors.Contains(sel + ":focus-visible")
+                    && Regex.IsMatch(r.Body, @"outline:\s*\d+px solid var\(--color-focus\)")),
+                $"{sel} sets an outline but has no {sel}:focus-visible rule restoring the focus ring");
+    }
+
+    [Fact]
+    public void Field_validation_outlines_take_their_colors_from_the_tokens()
+    {
+        Assert.Contains("var(--color-", Rule(".valid.modified:not([type=checkbox])"));
+        Assert.Contains("var(--color-", Rule(".invalid"));
+    }
+
     [Fact]
     public void Header_focus_outline_uses_the_header_text_color()
     {
@@ -150,7 +181,7 @@ public class AppStyleTests
     [Fact]
     public void Current_nav_link_is_marked_by_aria_current()
     {
-        Assert.Contains("var(--color-accent)", Rule(".app-nav a[aria-current=\"page\"]"));
+        Assert.Contains("var(--color-nav-current)", Rule(".app-nav a[aria-current=\"page\"]"));
     }
 
     [Fact]
