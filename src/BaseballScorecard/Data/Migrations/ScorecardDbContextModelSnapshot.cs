@@ -320,6 +320,36 @@ namespace BaseballScorecard.Data.Migrations
                     b.ToTable("Players");
                 });
 
+            modelBuilder.Entity("BaseballScorecard.Data.PositionChange", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Inning")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LineupId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PlayerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerId");
+
+                    b.HasIndex("LineupId", "PlayerId", "Inning")
+                        .IsUnique();
+
+                    b.ToTable("PositionChanges");
+                });
+
             modelBuilder.Entity("BaseballScorecard.Data.Roster", b =>
                 {
                     b.Property<int>("Id")
@@ -502,6 +532,21 @@ namespace BaseballScorecard.Data.Migrations
                     b.HasOne("BaseballScorecard.Data.Roster", null)
                         .WithMany()
                         .HasForeignKey("RosterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("BaseballScorecard.Data.PositionChange", b =>
+                {
+                    b.HasOne("BaseballScorecard.Data.Lineup", null)
+                        .WithMany()
+                        .HasForeignKey("LineupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BaseballScorecard.Data.Player", null)
+                        .WithMany()
+                        .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

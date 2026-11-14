@@ -25,6 +25,8 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
 
     public DbSet<Substitution> Substitutions => Set<Substitution>();
 
+    public DbSet<PositionChange> PositionChanges => Set<PositionChange>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Roster>()
@@ -81,6 +83,17 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Substitution>()
             .HasIndex(s => new { s.LineupId, s.PlayerId })
+            .IsUnique();
+
+        // One position change per player per inning; the row goes with its lineup, or with the player off the roster.
+        modelBuilder.Entity<PositionChange>()
+            .HasOne<Lineup>().WithMany().HasForeignKey(c => c.LineupId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<PositionChange>()
+            .HasOne<Player>().WithMany().HasForeignKey(c => c.PlayerId)
+            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<PositionChange>()
+            .HasIndex(c => new { c.LineupId, c.PlayerId, c.Inning })
             .IsUnique();
 
         // One runs cell per team per inning, removed with its game.

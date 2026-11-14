@@ -1,0 +1,187 @@
+{
+  "results": [
+    {
+      "ac": "AC4",
+      "name": "a game with no changes shows starting positions only",
+      "ok": true,
+      "detail": "[[\"1|Cub Player1|CF|\"],[\"6|Cub Player6|RF|\"]]"
+    },
+    {
+      "ac": "AC4",
+      "name": "no change list when there are no changes",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "Setup",
+      "name": "PH added for slot 6 in the 7th",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH|7\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "PH row shows \"PH, CF\"",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH, CF|7\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "no error after a valid change",
+      "ok": true,
+      "detail": "null"
+    },
+    {
+      "ac": "AC2",
+      "name": "starting CF row shows \"CF, RF\"",
+      "ok": true,
+      "detail": "[\"1|Cub Player1|CF, RF|\"]"
+    },
+    {
+      "ac": "AC2",
+      "name": "change list shows both changes",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "position list offers no PH or PR",
+      "ok": true,
+      "detail": "[\"P\",\"C\",\"1B\",\"2B\",\"3B\",\"SS\",\"LF\",\"CF\",\"RF\",\"DH\"]"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: replaced starter (Player6) in the 8th",
+      "ok": true,
+      "detail": "That player is not in the game in that inning."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: replaced starter (Player6) in the 8th",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: bench player who never came in (Spare)",
+      "ok": true,
+      "detail": "That player is not in the game in that inning."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: bench player who never came in (Spare)",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: inning 10 in a 9-inning game",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: inning 10 in a 9-inning game",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: inning 0",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: inning 0",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: PH before he came in (inning 6)",
+      "ok": true,
+      "detail": "That player came into the game in inning 7: pick inning 7 or later."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: PH before he came in (inning 6)",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: position PH",
+      "ok": true,
+      "detail": "Pick a fielding position or DH: PH and PR are not positions to move to."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: position PH",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "refused: position PR",
+      "ok": true,
+      "detail": "Pick a fielding position or DH: PH and PR are not positions to move to."
+    },
+    {
+      "ac": "AC3",
+      "name": "nothing saved: position PR",
+      "ok": true,
+      "detail": "2"
+    },
+    {
+      "ac": "AC3",
+      "name": "Pos column unchanged after refusals",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "ac": "AC4",
+      "name": "after reload both changes still show",
+      "ok": true,
+      "detail": "[[\"1|Cub Player1|CF, RF|\"],[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH, CF|7\"]]"
+    },
+    {
+      "ac": "AC4",
+      "name": "removing the change puts Player1 back to CF",
+      "ok": true,
+      "detail": "[\"1|Cub Player1|CF|\"]"
+    },
+    {
+      "ac": "AC4",
+      "name": "removal sticks after reload; PH change kept",
+      "ok": true,
+      "detail": "[[\"1|Cub Player1|CF|\"],[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH, CF|7\"]]"
+    },
+    {
+      "ac": "UI",
+      "name": "desktop: change-position form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1910px viewport=1920px"
+    },
+    {
+      "ac": "UI",
+      "name": "tablet: change-position form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1014px viewport=1024px"
+    },
+    {
+      "ac": "UI",
+      "name": "mobile: change-position form fits the viewport",
+      "ok": true,
+      "detail": "formRight=365px viewport=375px"
+    },
+    {
+      "ac": "Console",
+      "name": "no console errors, page errors, or 5xx/401/403",
+      "ok": true,
+      "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "bad": []
+}
