@@ -7,6 +7,7 @@
 @* One team's batting grid: an at-bat result per batting slot per inning, picked from a dialog, then HITS and LOB
    per inning, typed by the scorer and saved on change. Each slot lists its starter, then any substitutes with the
    inning they came in; the slot's at-bat cells span those rows and belong to whoever held the slot that inning.
+   Pos lists each player's positions in order: where he started, then each position change.
    Side ("away" / "home") prefixes every element id. *@
 <section id="@Side-batting-grid">
     <h2>@TeamName batting</h2>
@@ -38,7 +39,7 @@
                     <tr class="batter" data-slot="@slot">
                         <td class="player-cell">@Number(starter)</td>
                         <td class="player-cell">@Name(starter)</td>
-                        <td class="player-cell">@starter.Position</td>
+                        <td class="player-cell">@PositionText(starter)</td>
                         <td class="player-cell"></td>
                         @for (var inning = 1; inning <= Game.Innings; inning++)
                         {
@@ -78,7 +79,7 @@
                             <td><span class="player-cell">@Name(sub)</span>
                                 <button id="@Side-sub-@subId-remove" type="button" class="sub-remove"
                                         aria-label="Remove substitute @Name(sub)" @onclick="() => RemoveSubAsync(subId)">×</button></td>
-                            <td class="player-cell">@sub.Position</td>
+                            <td class="player-cell">@PositionText(sub)</td>
                             <td class="player-cell">@sub.Inning</td>
                         </tr>
                     }
@@ -132,6 +133,42 @@
             <label for="@Side-sub-inning">Inning</label>
             <input id="@Side-sub-inning" type="number" min="1" max="@Game.Innings" @bind="subInning" />
             <button id="@Side-sub-add" type="button" disabled="@(subPlayerId == 0)" @onclick="AddSubAsync">Add substitute</button>
+        </fieldset>
+
+        <fieldset id="@Side-change-pos" class="add-sub">
+            <legend>Change @TeamName position</legend>
+            <label for="@Side-pos-player">Player</label>
+            <select id="@Side-pos-player" @bind="posPlayerId">
+                <option value="0">Pick a player</option>
+                @foreach (var p in rows.SelectMany(r => r.Players).Where(p => players.ContainsKey(p.PlayerId)))
+                {
+                    <option value="@p.PlayerId">#@Number(p) @Name(p)</option>
+                }
+            </select>
+            <label for="@Side-pos-position">To</label>
+            <select id="@Side-pos-position" @bind="posPosition">
+                @foreach (var position in FieldingPositions)
+                {
+                    <option value="@position">@Positions.Abbreviation(position)</option>
+                }
+            </select>
+            <label for="@Side-pos-inning">From inning</label>
+            <input id="@Side-pos-inning" type="number" min="1" max="@Game.Innings" @bind="posInning" />
+            <button id="@Side-pos-add" type="button" disabled="@(posPlayerId == 0)" @onclick="AddPositionChangeAsync">Change position</button>
+            @if (positionChanges.Count > 0)
+            {
+                <ul id="@Side-pos-changes" class="pos-changes">
+                    @foreach (var c in positionChanges)
+                    {
+                        var changeId = c.Id;
+                        var who = players.TryGetValue(c.PlayerId, out var x) ? $"{x.FirstName} {x.LastName}" : "";
+                        <li @key="changeId">@who to @Positions.Abbreviation(c.Position) from inning @c.Inning
+                            <button id="@Side-pos-change-@changeId-remove" type="button" class="sub-remove"
+                                    aria-label="Remove position change of @who in inning @c.Inning"
+                                    @onclick="() => RemovePositionChangeAsync(changeId)">×</button></li>
+                    }
+                </ul>
+            }
         </fieldset>
     }
 
@@ -256,6 +293,11 @@
     private int subPlayerId;
     private SubstitutionKind subKind = SubstitutionKind.PinchHitter;
     private int? subInning;
+    // The team's position changes, and the change-position form.
+    private List<PositionChange> positionChanges = [];
+    private int posPlayerId;
+    private Position posPosition = Position.Pitcher;
+    private int? posInning;
     private bool loaded;
     // Saved notes keyed by (slot, inning); saved HITS / LOB keyed by inning.
     private Dictionary<(int, int), BattingNote> notes = [];
@@ -288,6 +330,10 @@
     // The bases a runner can be caught stealing: none, 2nd, 3rd, home (indexes into BaseNames).
     private static readonly int[] CaughtStealingBases = [0, 2, 3, 4];
 
+    // The positions a player can move to: 1–9 and DH, never PH or PR.
+    private static readonly Position[] FieldingPositions =
+        [.. Positions.All.Where(p => p is not (Position.PinchHitter or Position.PinchRunner))];
+
     private static readonly (string Value, string Label)[] MultiOuts = [("", "none"), ("DP", "DP"), ("TP", "TP")];
 
     // One diamond segment per base reached, in running order, on a 20×20 viewBox:
@@ -311,6 +357,8 @@
     // A slot whose player was removed from the roster shows blank; its notes stay with the slot.
     private string Number(SlotPlayer p) => players.TryGetValue(p.PlayerId, out var x) ? x.UniformNumber : "";
 
+    private string PositionText(SlotPlayer p) => SubstitutionService.PositionText(p, positionChanges);
+
     private string Name(SlotPlayer p) => players.TryGetValue(p.PlayerId, out var x) ? $"{x.FirstName} {x.LastName}" : "";
 
     // Runs on first render and again whenever the game page re-renders (a lineup was saved).
@@ -328,9 +376,11 @@
         var lineup = await LineupService.FindAsync(Game.Id, RosterId);
         List<BatterRow>? newRows = null;
         var newInGame = new HashSet<int>();
+        List<PositionChange> newChanges = [];
         if (lineup is not null)
         {
             var subs = await SubstitutionService.ListAsync(Game.Id, RosterId);
+            newChanges = await SubstitutionService.ListPositionChangesAsync(Game.Id, RosterId);
             newRows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
             {
                 var starter = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n) ?? new LineupSlot { BattingOrder = n };
@@ -345,6 +395,25 @@
         await LoadCellsAsync();
         rows = newRows;
         inGame = newInGame;
+        positionChanges = newChanges;
+    }
+
+    private async Task AddPositionChangeAsync()
+    {
+        error = await SubstitutionService.AddPositionChangeAsync(Game.Id, RosterId, posPlayerId, posPosition, posInning ?? 0);
+        if (error is not null)
+        {
+            return;
+        }
+        posPlayerId = 0;
+        await LoadRowsAsync();
+    }
+
+    private async Task RemovePositionChangeAsync(int positionChangeId)
+    {
+        await SubstitutionService.RemovePositionChangeAsync(Game.Id, positionChangeId);
+        error = null;
+        await LoadRowsAsync();
     }
 
     private async Task AddSubAsync()
