@@ -215,4 +215,38 @@ public class SlotPlayersTests
         Assert.Equal([100, 200, 300], players.Select(p => p.PlayerId));
         Assert.Equal(200, SubstitutionService.OwnerAt(players, 7).PlayerId);
     }
+
+    [Fact]
+    public void A_defensive_sub_for_a_pinch_hitter_in_his_inning_leaves_that_at_bat_with_the_pinch_hitter()
+    {
+        var players = SubstitutionService.SlotPlayers(Starter,
+            [Sub(1, 200, SubstitutionKind.PinchHitter, 7), Sub(2, 300, SubstitutionKind.Defensive, 7)]);
+
+        Assert.Equal([100, 200, 300], players.Select(p => p.PlayerId));
+        Assert.Equal(200, SubstitutionService.OwnerAt(players, 7).PlayerId);
+        Assert.Equal(300, SubstitutionService.OwnerAt(players, 8).PlayerId);
+    }
+
+    [Fact]
+    public void A_defensive_sub_for_a_pinch_runner_in_his_inning_owns_the_next_inning()
+    {
+        var players = SubstitutionService.SlotPlayers(Starter,
+            [Sub(1, 200, SubstitutionKind.PinchRunner, 7), Sub(2, 300, SubstitutionKind.Defensive, 7)]);
+
+        Assert.Equal([100, 200, 300], players.Select(p => p.PlayerId));
+        Assert.Equal(100, SubstitutionService.OwnerAt(players, 7).PlayerId);
+        Assert.Equal(300, SubstitutionService.OwnerAt(players, 8).PlayerId);
+    }
+
+    [Fact]
+    public void Substitutes_order_by_the_inning_they_came_in_even_when_a_later_one_was_added_first()
+    {
+        var players = SubstitutionService.SlotPlayers(Starter,
+            [Sub(1, 200, SubstitutionKind.PinchHitter, 6), Sub(2, 300, SubstitutionKind.PinchRunner, 5)]);
+
+        Assert.Equal([100, 300, 200], players.Select(p => p.PlayerId));
+        Assert.Equal(100, SubstitutionService.OwnerAt(players, 5).PlayerId);
+        Assert.Equal(200, SubstitutionService.OwnerAt(players, 6).PlayerId);
+        Assert.Equal(200, SubstitutionService.OwnerAt(players, 9).PlayerId);
+    }
 }

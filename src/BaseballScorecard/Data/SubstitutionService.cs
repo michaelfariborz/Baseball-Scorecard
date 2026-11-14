@@ -95,24 +95,32 @@ public class SubstitutionService(IDbContextFactory<ScorecardDbContext> dbFactory
             .ExecuteDeleteAsync();
     }
 
-    /// <summary>The first inning whose at bat is the substitute's. A pinch runner replaces a runner who already batted that inning, so his start is the next one.</summary>
-    public static int OwnsFrom(Substitution s) => s.Kind == SubstitutionKind.PinchRunner ? s.Inning + 1 : s.Inning;
-
-    /// <summary>The slot's players: its starter, then its substitutes in the order they took the slot.</summary>
+    /// <summary>
+    /// The slot's players: its starter, then its substitutes in the order they took the slot (entry inning, then
+    /// the order they were added). A PH or defensive sub owns at bats from his inning; a PR, or anyone coming in
+    /// the same inning right after a PH or PR, from the next one, since the slot already batted that inning.
+    /// </summary>
     public static List<SlotPlayer> SlotPlayers(LineupSlot starter, IEnumerable<Substitution> substitutions)
     {
         var starterPosition = starter.Position == 0 ? "" : Positions.Abbreviation(starter.Position);
         var players = new List<SlotPlayer> { new(starter.PlayerId, starterPosition, null, 1, null) };
-        players.AddRange(substitutions
-            .Where(s => s.BattingOrder == starter.BattingOrder)
-            .OrderBy(OwnsFrom).ThenBy(s => s.Id)
-            .Select(s => new SlotPlayer(s.PlayerId, s.Kind switch
+        Substitution? previous = null;
+        foreach (var s in substitutions.Where(s => s.BattingOrder == starter.BattingOrder)
+                     .OrderBy(s => s.Inning).ThenBy(s => s.Id))
+        {
+            var afterPinchInSameInning = previous is { Kind: SubstitutionKind.PinchHitter or SubstitutionKind.PinchRunner }
+                && previous.Inning == s.Inning;
+            var ownsFrom = s.Kind == SubstitutionKind.PinchRunner || afterPinchInSameInning ? s.Inning + 1 : s.Inning;
+            var position = s.Kind switch
             {
                 SubstitutionKind.PinchHitter => Positions.Abbreviation(Position.PinchHitter),
                 SubstitutionKind.PinchRunner => Positions.Abbreviation(Position.PinchRunner),
                 // ponytail: position changes after entry are the follow-up card; until then a defensive sub plays the starter's position.
                 _ => starterPosition,
-            }, s.Inning, OwnsFrom(s), s.Id)));
+            };
+            players.Add(new SlotPlayer(s.PlayerId, position, s.Inning, Math.Max(ownsFrom, players[^1].OwnsFrom), s.Id));
+            previous = s;
+        }
         return players;
     }
 
