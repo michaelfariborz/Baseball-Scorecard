@@ -1,17 +1,216 @@
+/* Design tokens. Baseball field palette: field green, scorecard paper, stitching red (accent only). */
+:root {
+    color-scheme: light dark;
+    --color-bg: #FAF7F0;
+    --color-surface: #FFFFFF;
+    --color-text: #1C1F1A;
+    --color-muted: #555A52;
+    --color-primary: #1F4D2B;
+    --color-primary-hover: #163A20;
+    --color-on-primary: #FFFFFF;
+    --color-link: #1F4D2B;
+    --color-accent: #C8102E;
+    --color-border: #7D8378;
+    --color-focus: #C8102E;
+    --color-header: #1F4D2B;
+    --color-on-header: #FFFFFF;
+    --color-nav-current: #FF7A85;
+    --color-hover: #EFEADF;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 1rem;
+    --space-4: 1.5rem;
+    --radius: 0.375rem;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #0F1A12;
+        --color-surface: #17261B;
+        --color-text: #E8EDE6;
+        --color-muted: #A9B5A8;
+        --color-primary: #2E6B3D;
+        --color-primary-hover: #3A7F4B;
+        --color-on-primary: #FFFFFF;
+        --color-link: #8FD19E;
+        --color-accent: #FF7A85;
+        --color-border: #6E7F70;
+        --color-focus: #FF7A85;
+        --color-header: #132A19;
+        --color-on-header: #E8EDE6;
+        --color-nav-current: #FF7A85;
+        --color-hover: #22352A;
+    }
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-body);
+    line-height: 1.5;
+    color: var(--color-text);
+    background: var(--color-bg);
+}
+
+h1, h2, h3 {
+    line-height: 1.2;
+    margin: var(--space-4) 0 var(--space-3);
+}
+
+a {
+    color: var(--color-link);
+    text-underline-offset: 0.15em;
+}
+
+:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+.app-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding: var(--space-2) var(--space-3);
+    background: var(--color-header);
+    color: var(--color-on-header);
+}
+
+.app-header :focus-visible {
+    outline-color: var(--color-on-header);
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.app-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+}
+
+.app-nav a {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 3px solid transparent;
+    color: var(--color-on-header);
+    text-decoration: none;
+}
+
+.app-nav a:hover {
+    text-decoration: underline;
+}
+
+.app-nav a[aria-current="page"] {
+    font-weight: 700;
+    border-bottom-color: var(--color-nav-current);
+}
+
+.app-main {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 0 var(--space-3) var(--space-4);
+}
+
+button, .button {
+    display: inline-block;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius);
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    font: inherit;
+    line-height: 1.25;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover, .button:hover {
+    background: var(--color-primary-hover);
+}
+
+button + a, .button + a {
+    margin-left: var(--space-2);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+input:not([type=checkbox]):not([type=radio]), select, textarea {
+    max-width: 100%;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+}
+
+input[type=checkbox], input[type=radio] {
+    accent-color: var(--color-primary);
+}
+
+label {
+    margin-right: var(--space-2);
+}
+
+fieldset {
+    border-color: var(--color-border);
+}
+
+table {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+ul.games, ul.rosters, #players {
+    padding: 0;
+    list-style: none;
+}
+
+ul.games li, ul.rosters li, #players li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-top-width: 0;
+    background: var(--color-surface);
+}
+
+ul.games li:first-child, ul.rosters li:first-child, #players li:first-child {
+    border-top-width: 1px;
+}
+
 h1:focus {
     outline: none;
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+    outline: 1px solid var(--color-link);
 }
 
 .invalid {
-    outline: 1px solid #e50000;
+    outline: 1px solid var(--color-accent);
+}
+
+.valid.modified:not([type=checkbox]):focus-visible, .invalid:focus-visible {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
 }
 
 .validation-message {
-    color: #e50000;
+    color: var(--color-accent);
 }
 
 .blazor-error-boundary {
@@ -95,12 +294,17 @@ h1:focus {
 }
 
 .at-bat-cell:hover {
-    background: rgb(0 0 0 / 0.05);
+    background: var(--color-hover);
 }
 
 /* A substitute's row sits under the player he replaced; the slot's at-bat cells span both. */
 .batting-grid tr.substitute td {
     font-style: italic;
+}
+
+.sub-remove:hover,
+.at-bat-close:hover {
+    background: none;
 }
 
 .sub-remove {
@@ -150,14 +354,16 @@ h1:focus {
     padding: 1rem 1.25rem;
     border: 1px solid currentColor;
     border-radius: 0.5rem;
-    background: var(--bs-body-bg, #fff);
-    color: var(--bs-body-color, #212529);
+    background: var(--color-surface);
+    color: var(--color-text);
 }
 
 .at-bat-close {
     float: right;
+    padding: 0;
     border: 0;
     background: none;
+    color: inherit;
     font-size: 1.5rem;
     line-height: 1;
     cursor: pointer;

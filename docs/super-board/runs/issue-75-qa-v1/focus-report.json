@@ -1,0 +1,66 @@
+{
+  "light /": {
+    "checked": 8,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(255, 255, 255)",
+      "solid 3px rgb(200, 16, 46)"
+    ]
+  },
+  "light /rosters": {
+    "checked": 6,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(255, 255, 255)",
+      "solid 3px rgb(200, 16, 46)"
+    ]
+  },
+  "light /rosters/1/edit": {
+    "checked": 29,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(255, 255, 255)",
+      "solid 3px rgb(200, 16, 46)"
+    ]
+  },
+  "light /games/new": {
+    "checked": 10,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(255, 255, 255)",
+      "solid 3px rgb(200, 16, 46)"
+    ]
+  },
+  "dark /": {
+    "checked": 8,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(232, 237, 230)",
+      "solid 3px rgb(255, 122, 133)"
+    ]
+  },
+  "dark /rosters": {
+    "checked": 6,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(232, 237, 230)",
+      "solid 3px rgb(255, 122, 133)"
+    ]
+  },
+  "dark /rosters/1/edit": {
+    "checked": 29,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(232, 237, 230)",
+      "solid 3px rgb(255, 122, 133)"
+    ]
+  },
+  "dark /games/new": {
+    "checked": 10,
+    "notVisible": [],
+    "outlines": [
+      "solid 3px rgb(232, 237, 230)",
+      "solid 3px rgb(255, 122, 133)"
+    ]
+  }
+}
