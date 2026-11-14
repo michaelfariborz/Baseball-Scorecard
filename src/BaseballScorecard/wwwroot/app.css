@@ -98,6 +98,32 @@ h1:focus {
     background: rgb(0 0 0 / 0.05);
 }
 
+/* A substitute's row sits under the player he replaced; the slot's at-bat cells span both. */
+.batting-grid tr.substitute td {
+    font-style: italic;
+}
+
+.sub-remove {
+    margin-left: 0.25rem;
+    padding: 0 0.25rem;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.add-sub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.add-sub input[type=number] {
+    width: 4rem;
+}
+
 .at-bat-backdrop {
     position: fixed;
     inset: 0;

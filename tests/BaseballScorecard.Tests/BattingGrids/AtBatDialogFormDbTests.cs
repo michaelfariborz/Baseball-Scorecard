@@ -28,6 +28,7 @@ public class AtBatDialogFormDbTests : BunitContext
         Services.AddScoped<LineScoreService>();
         Services.AddScoped<BattingGridService>();
         Services.AddScoped<PitchingService>();
+        Services.AddScoped<SubstitutionService>();
         _grid = new BattingGridService(new FixtureDbFactory(fixture));
     }
 

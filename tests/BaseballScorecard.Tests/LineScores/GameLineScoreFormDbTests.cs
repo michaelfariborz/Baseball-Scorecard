@@ -24,6 +24,7 @@ public class GameLineScoreFormDbTests : BunitContext
         Services.AddScoped<LineScoreService>();
         Services.AddScoped<BattingGridService>();
         Services.AddScoped<PitchingService>();
+        Services.AddScoped<SubstitutionService>();
         _lineScores = new LineScoreService(new FixtureDbFactory(fixture));
     }
 
