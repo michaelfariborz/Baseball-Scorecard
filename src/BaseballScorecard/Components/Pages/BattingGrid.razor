@@ -40,9 +40,10 @@
                             var id = $"{Side}-slot-{slot}-inning-{n}-note";
                             var note = CellText(slot, n);
                             var bases = Bases(slot, n);
+                            var cs = CaughtStealing(slot, n);
                             <td>
                                 <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
-                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}")"
+                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(cs is { } c ? $", caught stealing {BaseNames[c.CaughtStealingBase]} {c.CaughtStealingFielders}" : "")}")"
                                         @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">
                                     @if (bases > 0)
                                     {
@@ -55,6 +56,10 @@
                                         </svg>
                                     }
                                     <span class="at-bat-note">@note</span>
+                                    @if (cs is not null)
+                                    {
+                                        <span class="at-bat-cs">@AtBatResult.CaughtStealingText(cs)</span>
+                                    }
                                 </button>
                             </td>
                         }
@@ -151,6 +156,28 @@
                     </label>
                 }
             </fieldset>
+            <fieldset id="@Side-at-bat-cs" class="at-bat-bases">
+                <legend>Caught stealing</legend>
+                @foreach (var target in CaughtStealingBases)
+                {
+                    var t = target;
+                    <label>
+                        <input type="radio" name="@Side-at-bat-cs" value="@t"
+                               checked="@(csBaseChoice == t)" @onchange="() => csBaseChoice = t" />
+                        @BaseNames[t]
+                    </label>
+                }
+            </fieldset>
+            @if (csBaseChoice != 0)
+            {
+                <div class="at-bat-fielders">
+                    <label for="@Side-at-bat-cs-fielders">Caught stealing fielders</label>
+                    <input id="@Side-at-bat-cs-fielders" type="text" inputmode="numeric" size="10"
+                           maxlength="@BattingGridService.FieldersMaxLength" placeholder="2-6"
+                           aria-describedby="@Side-at-bat-cs-fielders-hint" @bind="csFieldersChoice" />
+                    <span id="@Side-at-bat-cs-fielders-hint" class="hint">Position numbers 1–9, like 26 or 2-6</span>
+                </div>
+            }
             @if (dialogError is not null)
             {
                 <p id="@Side-at-bat-error" class="validation-message" role="alert">@dialogError</p>
@@ -190,6 +217,9 @@
     // The fielders typed and the DP / TP picked ("" = none); saved only when the result records fielders.
     private string fieldersChoice = "";
     private string multiOutChoice = "";
+    // The caught-stealing target base (0 none, 2–4) and its fielders; the fielders are saved only with a base.
+    private int csBaseChoice;
+    private string csFieldersChoice = "";
     private string? dialogError;
     private ElementReference dialogRef;
     private readonly Dictionary<string, ElementReference> cellRefs = [];
@@ -199,6 +229,9 @@
 
     // Bases reached 0–4, as the dialog names them.
     private static readonly string[] BaseNames = ["none", "1st", "2nd", "3rd", "home"];
+
+    // The bases a runner can be caught stealing: none, 2nd, 3rd, home (indexes into BaseNames).
+    private static readonly int[] CaughtStealingBases = [0, 2, 3, 4];
 
     private static readonly (string Value, string Label)[] MultiOuts = [("", "none"), ("DP", "DP"), ("TP", "TP")];
 
@@ -213,6 +246,10 @@
         notes.TryGetValue((slot, inning), out var note) ? AtBatResult.CellText(note) : "";
 
     private int Bases(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.BasesReached : 0;
+
+    // The saved note when its cell records a caught stealing; null otherwise.
+    private BattingNote? CaughtStealing(int slot, int inning) =>
+        notes.TryGetValue((slot, inning), out var note) && note.CaughtStealingBase != 0 ? note : null;
 
     private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
 
@@ -258,6 +295,8 @@
         notes.TryGetValue((row.Slot, inning), out var saved);
         fieldersChoice = saved?.Fielders ?? "";
         multiOutChoice = saved?.MultiOut ?? "";
+        csBaseChoice = saved?.CaughtStealingBase ?? 0;
+        csFieldersChoice = saved?.CaughtStealingFielders ?? "";
         dialogError = null;
         focusDialog = true;
     }
@@ -291,11 +330,13 @@
         basesChoice = 0;
         fieldersChoice = "";
         multiOutChoice = "";
+        csBaseChoice = 0;
+        csFieldersChoice = "";
         dialogError = null;
     }
 
-    // Saves the picked result's code, bases reached and (when the result records them) fielders and DP / TP,
-    // or clears the cell when code is null. A refused save keeps the dialog open with the message.
+    // Saves the picked result's code, bases reached, (when the result records them) fielders and DP / TP, and the
+    // caught stealing, or clears the cell when code is null. A refused save keeps the dialog open with the message.
     private async Task SaveResultAsync(string? code, int bases)
     {
         if (dialog is not { } d)
@@ -306,7 +347,7 @@
         var fielders = entry == FielderEntry.None ? null : fieldersChoice;
         var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
         dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
-            fielders, multiOut);
+            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice);
         if (dialogError is not null)
         {
             return;

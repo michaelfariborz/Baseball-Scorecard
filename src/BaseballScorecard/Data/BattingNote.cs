@@ -37,4 +37,14 @@ public class BattingNote
     /// <summary><c>DP</c> or <c>TP</c> for a double or triple play; blank otherwise.</summary>
     [MaxLength(2)]
     public string MultiOut { get; set; } = "";
+
+    /// <summary>
+    /// The base the runner was going to when caught stealing: 0 none, 2 second, 3 third, 4 home. Always the next base
+    /// after <see cref="BasesReached"/>, which stays the base the runner held.
+    /// </summary>
+    public int CaughtStealingBase { get; set; }
+
+    /// <summary>Fielders on the caught-stealing throw, hyphen-joined (<c>2-6</c>); blank with no caught stealing.</summary>
+    [MaxLength(BattingGridService.FieldersMaxLength)]
+    public string CaughtStealingFielders { get; set; } = "";
 }
