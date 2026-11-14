@@ -69,20 +69,28 @@ if [ -f "$HERE/super-board-gh-guard.sh" ]; then
   sb_gh_guard_check 200 || exit $?
 fi
 
-MERGED=$(python3 "$HERE/super-board-github-read.py" --kind prs-merged -- pr list --repo "$REPO" --state merged --limit 100 --json number,title,body,url ) || exit $?
-OPEN=$(python3 "$HERE/super-board-github-read.py" --kind prs-open -- pr list --repo "$REPO" --state open --limit 100 --json number,title,body,url,headRefName,files ) || exit $?
-CLOSED=$(python3 "$HERE/super-board-github-read.py" --kind issues-closed -- issue list --repo "$REPO" --state closed --limit 100 --json number,title,body,stateReason ) || exit $?
-CARDS="[]"
-[ -n "$INFLIGHT" ] && CARDS=$(cat "$INFLIGHT")
+# The PR and issue lists carry full bodies (100 merged PR bodies run past 1 MB), so they
+# reach jq as files, never as --argjson: argv is capped by ARG_MAX, and these lists
+# outgrew it ("jq: Argument list too long", 2026-11-14).
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
 
-TARGETS="[]"
+python3 "$HERE/super-board-github-read.py" --kind prs-merged -- pr list --repo "$REPO" --state merged --limit 100 --json number,title,body,url > "$TMP/merged.json" || exit $?
+python3 "$HERE/super-board-github-read.py" --kind prs-open -- pr list --repo "$REPO" --state open --limit 100 --json number,title,body,url,headRefName,files > "$TMP/open.json" || exit $?
+python3 "$HERE/super-board-github-read.py" --kind issues-closed -- issue list --repo "$REPO" --state closed --limit 100 --json number,title,body,stateReason > "$TMP/closed.json" || exit $?
+if [ -n "$INFLIGHT" ]; then cp "$INFLIGHT" "$TMP/cards.json"; else echo '[]' > "$TMP/cards.json"; fi
+
+TARGET_FILES=()
 for n in ${ISSUES//,/ }; do
-  one=$(python3 "$HERE/super-board-github-read.py" --kind issue -- issue view "$n" --repo "$REPO" --json number,title,body ) || exit $?
-  TARGETS=$(jq -c --argjson one "$one" '. + [$one]' <<<"$TARGETS")
+  python3 "$HERE/super-board-github-read.py" --kind issue -- issue view "$n" --repo "$REPO" --json number,title,body > "$TMP/issue-$n.json" || exit $?
+  TARGET_FILES+=("$TMP/issue-$n.json")
 done
+jq -s . "${TARGET_FILES[@]}" > "$TMP/targets.json"
 
-jq -n --argjson targets "$TARGETS" --argjson merged "$MERGED" --argjson open "$OPEN" \
-      --argjson closed "$CLOSED" --argjson cards "$CARDS" --arg files "$FILES" \
+# --slurpfile binds each name to [<file contents>]; the program unwraps them after its defs.
+jq -n --slurpfile targets "$TMP/targets.json" --slurpfile merged "$TMP/merged.json" \
+      --slurpfile open "$TMP/open.json" --slurpfile closed "$TMP/closed.json" \
+      --slurpfile cards "$TMP/cards.json" --arg files "$FILES" \
       --argjson th "$THRESHOLD" '
   def stop: ["the","and","for","with","from","into","when","that","this","add","fix","make","use","should","not","are","can","new"];
   def toks: ascii_downcase | [scan("[a-z0-9]+")] | map(select(length > 2)) | . - stop | unique;
@@ -102,7 +110,9 @@ jq -n --argjson targets "$TARGETS" --argjson merged "$MERGED" --argjson open "$O
         | ([ $t | to_entries[] | select(.value | test("^##[ \t]")) | .key ] | first) as $e
         | (if $e == null then $t else $t[:$e] end) | any(.[]; test("^[ \t]*[-*][ \t]+\\S")) end;
 
-  [ $targets[] | . as $i | $i.number as $n
+  $targets[0] as $targets | $merged[0] as $merged | $open[0] as $open
+  | $closed[0] as $closed | $cards[0] as $cards
+  | [ $targets[] | . as $i | $i.number as $n
     | ($i | fps) as $myfp
     | (if $files == "" then ($i | paths) else ($files / ",") end) as $mine
     # Own branch = this card coming back (rebuild, rebase); never its own duplicate.
