@@ -89,6 +89,17 @@ public class PositionChangeServiceTests(PostgresFixture fixture)
         Assert.Empty(await ChangesAsync(s));
     }
 
+    [Theory]
+    [InlineData(1)]
+    [InlineData(9)]
+    public async Task The_first_and_last_inning_of_the_game_are_allowed(int inning)
+    {
+        var s = await NewGameAsync();
+
+        Assert.Null(await _subs.AddPositionChangeAsync(s.Game.Id, s.RosterId, s.Players[0].Id, Position.RightField, inning));
+        Assert.Equal([(s.Players[0].Id, Position.RightField, inning)], await ChangesAsync(s));
+    }
+
     [Fact]
     public async Task A_change_before_the_player_came_in_is_refused()
     {

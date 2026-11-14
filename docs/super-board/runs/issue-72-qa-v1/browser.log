@@ -1,0 +1,30 @@
+PASS AC4 a game with no changes shows starting positions only [["1|Cub Player1|CF|"],["6|Cub Player6|RF|"]]
+PASS AC4 no change list when there are no changes 
+PASS Setup PH added for slot 6 in the 7th ["6|Cub Player6|RF|","10|Bench Hitter|PH|7"]
+PASS AC1 PH row shows "PH, CF" ["6|Cub Player6|RF|","10|Bench Hitter|PH, CF|7"]
+PASS AC1 no error after a valid change null
+PASS AC2 starting CF row shows "CF, RF" ["1|Cub Player1|CF, RF|"]
+PASS AC2 change list shows both changes 2
+PASS AC3 position list offers no PH or PR ["P","C","1B","2B","3B","SS","LF","CF","RF","DH"]
+PASS AC3 refused: replaced starter (Player6) in the 8th That player is not in the game in that inning.
+PASS AC3 nothing saved: replaced starter (Player6) in the 8th 2
+PASS AC3 refused: bench player who never came in (Spare) That player is not in the game in that inning.
+PASS AC3 nothing saved: bench player who never came in (Spare) 2
+PASS AC3 refused: inning 10 in a 9-inning game The inning must be from 1 to 9.
+PASS AC3 nothing saved: inning 10 in a 9-inning game 2
+PASS AC3 refused: inning 0 The inning must be from 1 to 9.
+PASS AC3 nothing saved: inning 0 2
+PASS AC3 refused: PH before he came in (inning 6) That player came into the game in inning 7: pick inning 7 or later.
+PASS AC3 nothing saved: PH before he came in (inning 6) 2
+PASS AC3 refused: position PH Pick a fielding position or DH: PH and PR are not positions to move to.
+PASS AC3 nothing saved: position PH 2
+PASS AC3 refused: position PR Pick a fielding position or DH: PH and PR are not positions to move to.
+PASS AC3 nothing saved: position PR 2
+PASS AC3 Pos column unchanged after refusals 
+PASS AC4 after reload both changes still show [["1|Cub Player1|CF, RF|"],["6|Cub Player6|RF|","10|Bench Hitter|PH, CF|7"]]
+PASS AC4 removing the change puts Player1 back to CF ["1|Cub Player1|CF|"]
+PASS AC4 removal sticks after reload; PH change kept [["1|Cub Player1|CF|"],["6|Cub Player6|RF|","10|Bench Hitter|PH, CF|7"]]
+PASS UI desktop: change-position form fits the viewport formRight=1910px viewport=1920px
+PASS UI tablet: change-position form fits the viewport formRight=1014px viewport=1024px
+PASS UI mobile: change-position form fits the viewport formRight=365px viewport=375px
+PASS Console no console errors, page errors, or 5xx/401/403 {"consoleErrors":[],"pageErrors":[],"bad":[]}
