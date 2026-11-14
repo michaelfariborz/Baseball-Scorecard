@@ -1,0 +1,128 @@
+[
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats show unchanged with no CS line",
+    "ok": true,
+    "detail": "K/0/null|GO 4-6-3 DP/0/null|1B/2/null|BB/1/null|E6/1/null|HR/4/null"
+  },
+  {
+    "ac": "AC4",
+    "name": "old 1B cell reopens with caught stealing none and no CS fielders box",
+    "ok": true,
+    "detail": "[\"0\",false]"
+  },
+  {
+    "ac": "AC1",
+    "name": "caught stealing choice none/2nd/3rd/home; fielders box appears only after picking a base",
+    "ok": true,
+    "detail": "labels=none,2nd,3rd,home"
+  },
+  {
+    "ac": "AC1",
+    "name": "reopen shows 1B, reached 1st, CS 2nd, fielders 2-6",
+    "ok": true,
+    "detail": "1B|1|2|2-6"
+  },
+  {
+    "ac": "AC2",
+    "name": "cells show 1B + CS 2-6 (diamond 1 segment), 2B + CS 2-5 (2), 3B + CS 1-2 (3)",
+    "ok": true,
+    "detail": "1B/CS 2-6/1|2B/CS 2-5/2|3B/CS 1-2/3"
+  },
+  {
+    "ac": "AC2",
+    "name": "cell accessible name names the caught stealing",
+    "ok": true,
+    "detail": "aria=\"Batting slot 4, inning 2: 1B, reached 1st, caught stealing 2nd 2-6\""
+  },
+  {
+    "ac": "AC2",
+    "name": "after reload cells still show the same CS text and diamonds",
+    "ok": true,
+    "detail": "1B/CS 2-6/1|2B/CS 2-5/2|3B/CS 1-2/3"
+  },
+  {
+    "ac": "AC3",
+    "name": "K reached 0 CS 2 \"26\" (not on base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A caught stealing needs the batter on base: pick 1st, 2nd or 3rd for bases reached.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "HR reached 4 CS 4 \"26\" (scored) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A runner who scored cannot be caught stealing.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 3 \"26\" (skips 2nd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing must be the next base after bases reached: 2nd after 1st, 3rd after 2nd, home after 3rd.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "2B reached 2 CS 2 \"26\" (same base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing must be the next base after bases reached: 2nd after 1st, 3rd after 2nd, home after 3rd.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 2 \"20\" (fielder 0) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 2 \"2/6\" (slash) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 2 \"C-SS\" (letters) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 2 \"\" (blank fielders) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 CS 2 \"2-\" (trailing hyphen) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "refused edit on a saved cell keeps 1B / CS 2-6",
+    "ok": true,
+    "detail": "msg=\"Caught stealing must be the next base after bases reached: 2nd after 1st, 3rd after 2nd, home after 3rd.\""
+  },
+  {
+    "ac": "AC4",
+    "name": "saving 2B with caught stealing none removes the CS line",
+    "ok": true,
+    "detail": "cs=null"
+  },
+  {
+    "ac": "AC4",
+    "name": "Clear on 3B / CS 1-2: blank cell, no diamond after reload; reopens CS none",
+    "ok": true,
+    "detail": "|null|0 reopen=[\"0\",false]"
+  },
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats still unchanged after all edits and reloads",
+    "ok": true,
+    "detail": "K/0/null|GO 4-6-3 DP/0/null|1B/2/null|BB/1/null|E6/1/null|HR/4/null"
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]

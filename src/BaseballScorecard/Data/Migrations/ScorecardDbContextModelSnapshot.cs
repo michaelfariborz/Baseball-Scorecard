@@ -36,6 +36,14 @@ namespace BaseballScorecard.Data.Migrations
                     b.Property<int>("BattingOrder")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CaughtStealingBase")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CaughtStealingFielders")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<string>("Fielders")
                         .IsRequired()
                         .HasMaxLength(20)

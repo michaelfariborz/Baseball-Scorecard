@@ -18,7 +18,7 @@ namespace BaseballScorecard.Tests.Data;
 [Collection(PostgresCollection.Name)]
 public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifetime
 {
-    private static readonly string[] AllMigrations = ["20261024210657_AddRosters", "20261024213132_AddGames", "20261024223539_AddPlayers", "20261025014635_AddLineups", "20261028222906_AddInningRuns", "20261102011800_AddBattingGrid", "20261104032438_AddGamePitchers", "20261104144257_AddPitchingLines", "20261111020427_AddBasesReached", "20261111030303_AddFielders"];
+    private static readonly string[] AllMigrations = ["20261024210657_AddRosters", "20261024213132_AddGames", "20261024223539_AddPlayers", "20261025014635_AddLineups", "20261028222906_AddInningRuns", "20261102011800_AddBattingGrid", "20261104032438_AddGamePitchers", "20261104144257_AddPitchingLines", "20261111020427_AddBasesReached", "20261111030303_AddFielders", "20261114024603_AddCaughtStealing"];
 
     private readonly string _emptyDb = new NpgsqlConnectionStringBuilder(
         PostgresFixture.ReadConnectionString(Environment.GetEnvironmentVariable))

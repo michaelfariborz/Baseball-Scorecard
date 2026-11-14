@@ -339,4 +339,84 @@ public class BattingGridServiceTests(PostgresFixture fixture)
 
         Assert.Equal(expected, AtBatResult.CellText(note));
     }
+
+    [Theory]
+    [InlineData(1, 2, "26", "2-6")]
+    [InlineData(2, 3, "2-5", "2-5")]
+    [InlineData(3, 4, " 12 ", "1-2")]
+    [InlineData(1, 2, "2", "2")]
+    public async Task Caught_stealing_saves_the_target_base_and_hyphenated_fielders_and_reloads(int bases, int target,
+        string typed, string saved)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", bases,
+            caughtStealingBase: target, caughtStealingFieldersText: typed));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("1B", bases, target, saved), (note.Note, note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
+    }
+
+    [Fact]
+    public async Task Caught_stealing_defaults_to_none_and_its_fielders_are_dropped_without_a_base()
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 1, "1B", 1, caughtStealingFieldersText: "26"));
+
+        Assert.All(await _grid.ListNotesAsync(g.Id), n => Assert.Equal((0, ""), (n.CaughtStealingBase, n.CaughtStealingFielders)));
+    }
+
+    [Theory]
+    [InlineData("K", 0, 2, "26", BattingGridService.CaughtStealingNotOnBaseMessage)]
+    [InlineData("HR", 4, 2, "26", BattingGridService.CaughtStealingScoredMessage)]
+    [InlineData("1B", 1, 3, "26", BattingGridService.CaughtStealingBaseMessage)]
+    [InlineData("2B", 2, 2, "26", BattingGridService.CaughtStealingBaseMessage)]
+    [InlineData("1B", 1, 1, "26", BattingGridService.CaughtStealingBaseMessage)]
+    [InlineData("1B", 1, 5, "26", BattingGridService.CaughtStealingBaseMessage)]
+    [InlineData("1B", 1, 2, "", BattingGridService.CaughtStealingFieldersMessage)]
+    [InlineData("1B", 1, 2, "20", BattingGridService.CaughtStealingFieldersMessage)]
+    [InlineData("1B", 1, 2, "2/6", BattingGridService.CaughtStealingFieldersMessage)]
+    [InlineData("1B", 1, 2, "C-SS", BattingGridService.CaughtStealingFieldersMessage)]
+    [InlineData("1B", 1, 2, "12345678912", BattingGridService.CaughtStealingFieldersMessage)]
+    public async Task Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(string code, int bases,
+        int target, string fielders, string message)
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
+            caughtStealingBase: target, caughtStealingFieldersText: fielders));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("BB", 1, 0, ""), (note.Note, note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
+    }
+
+    [Fact]
+    public async Task Saving_without_caught_stealing_or_clearing_removes_it()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1));
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal((0, ""), (note.CaughtStealingBase, note.CaughtStealingFielders));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+    }
+
+    [Theory]
+    [InlineData(2, "2-6", "CS 2-6")]
+    [InlineData(4, "1-2", "CS 1-2")]
+    [InlineData(0, "", "")]
+    public void Caught_stealing_text_shows_CS_and_the_hyphenated_fielders(int target, string fielders, string expected)
+    {
+        var note = new BattingNote { Note = "1B", BasesReached = 1, CaughtStealingBase = target, CaughtStealingFielders = fielders };
+
+        Assert.Equal(expected, AtBatResult.CaughtStealingText(note));
+        Assert.Equal("1B", AtBatResult.CellText(note));
+    }
 }

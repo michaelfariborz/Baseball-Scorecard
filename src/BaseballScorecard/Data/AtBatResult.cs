@@ -40,4 +40,8 @@ public sealed record AtBatResult(string Code, string Label, FielderEntry Fielder
         Find(note.Note)?.Fielders == FielderEntry.Single
             ? note.Note + note.Fielders
             : string.Join(' ', new[] { note.Note, note.Fielders, note.MultiOut }.Where(s => s != ""));
+
+    /// <summary>What the cell shows under the result for a caught stealing: <c>CS 2-6</c>, or blank when there is none.</summary>
+    public static string CaughtStealingText(BattingNote note) =>
+        note.CaughtStealingBase == 0 ? "" : $"CS {note.CaughtStealingFielders}";
 }
