@@ -32,6 +32,53 @@ public class MainLayoutTests : BunitContext
         Assert.Equal("content", cut.Find("#body").TextContent);
     }
 
+    private IRenderedComponent<MainLayout> RenderAt(string uri)
+    {
+        Services.GetRequiredService<NavigationManager>().NavigateTo(uri);
+        return Render<MainLayout>(p => p.Add(l => l.Body, (RenderFragment)(b => b.AddMarkupContent(0, "<p>content</p>"))));
+    }
+
+    [Fact]
+    public void Header_shows_the_app_name_and_nav_links_to_home_rosters_and_new_game()
+    {
+        var cut = RenderAt("/");
+
+        var header = cut.Find("header.app-header");
+        Assert.Equal("Baseball Scorecard", header.QuerySelector(".brand")!.TextContent);
+        var links = header.QuerySelectorAll("nav.app-nav a").Select(a => (a.GetAttribute("href"), a.TextContent.Trim())).ToList();
+        Assert.Equal([("/", "Home"), ("rosters", "Rosters"), ("games/new", "New game")], links);
+    }
+
+    [Theory]
+    [InlineData("/", "/")]
+    [InlineData("rosters", "rosters")]
+    [InlineData("rosters/3/edit", "rosters")]
+    [InlineData("rosters/new", "rosters")]
+    [InlineData("games/new", "games/new")]
+    public void Only_the_current_page_link_is_marked_aria_current(string uri, string current)
+    {
+        var cut = RenderAt(uri);
+
+        var marked = cut.FindAll("nav.app-nav a[aria-current='page']").Select(a => a.GetAttribute("href")).ToList();
+        Assert.Equal([current], marked);
+    }
+
+    [Fact]
+    public void No_nav_link_is_marked_on_a_game_page()
+    {
+        var cut = RenderAt("games/5");
+
+        Assert.Empty(cut.FindAll("nav.app-nav a[aria-current]"));
+    }
+
+    [Fact]
+    public void Page_body_sits_in_a_main_landmark()
+    {
+        var cut = RenderAt("/");
+
+        Assert.Equal("content", cut.Find("main p").TextContent);
+    }
+
     [Theory]
     [InlineData(typeof(Components.Pages.Rosters))]
     [InlineData(typeof(RosterEdit))]

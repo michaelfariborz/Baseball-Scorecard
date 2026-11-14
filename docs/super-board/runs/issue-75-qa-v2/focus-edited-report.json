@@ -1,0 +1,208 @@
+{
+  "fields": [
+    {
+      "scheme": "light",
+      "case": "team-name edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(200, 16, 46)",
+      "color": "rgb(200, 16, 46)",
+      "width": "3px",
+      "bg": "rgb(250, 247, 240)",
+      "ringVsBg": 5.5,
+      "pass": true
+    },
+    {
+      "scheme": "light",
+      "case": "team-name cleared (invalid)",
+      "cls": "modified invalid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(200, 16, 46)",
+      "color": "rgb(200, 16, 46)",
+      "width": "3px",
+      "bg": "rgb(250, 247, 240)",
+      "ringVsBg": 5.5,
+      "pass": true
+    },
+    {
+      "scheme": "light",
+      "case": "innings edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(200, 16, 46)",
+      "color": "rgb(200, 16, 46)",
+      "width": "3px",
+      "bg": "rgb(250, 247, 240)",
+      "ringVsBg": 5.5,
+      "pass": true
+    },
+    {
+      "scheme": "light",
+      "case": "innings bad value (invalid)",
+      "cls": "modified invalid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(200, 16, 46)",
+      "color": "rgb(200, 16, 46)",
+      "width": "3px",
+      "bg": "rgb(250, 247, 240)",
+      "ringVsBg": 5.5,
+      "pass": true
+    },
+    {
+      "scheme": "light",
+      "case": "away select edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(200, 16, 46)",
+      "color": "rgb(200, 16, 46)",
+      "width": "3px",
+      "bg": "rgb(250, 247, 240)",
+      "ringVsBg": 5.5,
+      "pass": true
+    },
+    {
+      "scheme": "dark",
+      "case": "team-name edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "width": "3px",
+      "bg": "rgb(15, 26, 18)",
+      "ringVsBg": 7.12,
+      "pass": true
+    },
+    {
+      "scheme": "dark",
+      "case": "team-name cleared (invalid)",
+      "cls": "modified invalid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "width": "3px",
+      "bg": "rgb(15, 26, 18)",
+      "ringVsBg": 7.12,
+      "pass": true
+    },
+    {
+      "scheme": "dark",
+      "case": "innings edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "width": "3px",
+      "bg": "rgb(15, 26, 18)",
+      "ringVsBg": 7.12,
+      "pass": true
+    },
+    {
+      "scheme": "dark",
+      "case": "innings bad value (invalid)",
+      "cls": "modified invalid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "width": "3px",
+      "bg": "rgb(15, 26, 18)",
+      "ringVsBg": 7.12,
+      "pass": true
+    },
+    {
+      "scheme": "dark",
+      "case": "away select edited (valid.modified)",
+      "cls": "modified valid",
+      "focused": true,
+      "fv": true,
+      "outline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "width": "3px",
+      "bg": "rgb(15, 26, 18)",
+      "ringVsBg": 7.12,
+      "pass": true
+    }
+  ],
+  "nav": [
+    {
+      "scheme": "light",
+      "path": "/",
+      "text": "Home",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(31, 77, 43)",
+      "underlineVsHeader": 3.89,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    },
+    {
+      "scheme": "light",
+      "path": "/rosters",
+      "text": "Rosters",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(31, 77, 43)",
+      "underlineVsHeader": 3.89,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    },
+    {
+      "scheme": "light",
+      "path": "/games/new",
+      "text": "New game",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(31, 77, 43)",
+      "underlineVsHeader": 3.89,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    },
+    {
+      "scheme": "dark",
+      "path": "/",
+      "text": "Home",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(19, 42, 25)",
+      "underlineVsHeader": 6.1,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    },
+    {
+      "scheme": "dark",
+      "path": "/rosters",
+      "text": "Rosters",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(19, 42, 25)",
+      "underlineVsHeader": 6.1,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    },
+    {
+      "scheme": "dark",
+      "path": "/games/new",
+      "text": "New game",
+      "underline": "solid 3px rgb(255, 122, 133)",
+      "color": "rgb(255, 122, 133)",
+      "bg": "rgb(19, 42, 25)",
+      "underlineVsHeader": 6.1,
+      "othersUnderline": [
+        "rgba(0, 0, 0, 0)"
+      ]
+    }
+  ]
+}
