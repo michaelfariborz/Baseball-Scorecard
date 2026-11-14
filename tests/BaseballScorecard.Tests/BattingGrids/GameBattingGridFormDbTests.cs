@@ -30,6 +30,7 @@ public class GameBattingGridFormDbTests : BunitContext
         Services.AddScoped<LineScoreService>();
         Services.AddScoped<BattingGridService>();
         Services.AddScoped<PitchingService>();
+        Services.AddScoped<SubstitutionService>();
         _grid = new BattingGridService(new FixtureDbFactory(fixture));
     }
 
@@ -106,10 +107,10 @@ public class GameBattingGridFormDbTests : BunitContext
 
         var cut = RenderGame(s.Game.Id);
 
-        Assert.Equal(["#", "Name", "Pos", "1", "2", "3", "4", "5", "6", "7"],
+        Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "4", "5", "6", "7"],
             cut.FindAll("#away-batting-grid thead th").Select(th => th.TextContent.Trim()));
-        Assert.All(cut.FindAll("#away-batting-grid thead th").Skip(3), th => Assert.Contains("inning-header", th.ClassList));
-        Assert.All(cut.FindAll("#away-batting-grid thead th").Take(3), th => Assert.DoesNotContain("inning-header", th.ClassList));
+        Assert.All(cut.FindAll("#away-batting-grid thead th").Skip(4), th => Assert.Contains("inning-header", th.ClassList));
+        Assert.All(cut.FindAll("#away-batting-grid thead th").Take(4), th => Assert.DoesNotContain("inning-header", th.ClassList));
         var rows = cut.FindAll("#away-batting-grid tbody tr.batter");
         Assert.Equal(9, rows.Count);
         for (var i = 0; i < 9; i++)

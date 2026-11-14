@@ -1,0 +1,133 @@
+{
+  "results": [
+    {
+      "ac": "AC1",
+      "name": "grid header has Inn after Pos",
+      "ok": true,
+      "detail": "#,Name,Pos,Inn,1"
+    },
+    {
+      "ac": "AC1",
+      "name": "a: slot 6 lists starter, PH 7, defensive SS 7 in order",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|SS|\",\"10|Bench HitterA|PH|7\",\"11|Bench GloveA|SS|7\"]"
+    },
+    {
+      "ac": "AC2",
+      "name": "a: inning 6 starter, 7 the PH, 8 and 9 the defensive sub",
+      "ok": true,
+      "detail": "[\"Cub Player6\",\"Bench HitterA\",\"Bench GloveA\",\"Bench GloveA\"]"
+    },
+    {
+      "ac": "AC2",
+      "name": "a: saved inning-7 at bat stays on its cell (1B)",
+      "ok": true,
+      "detail": "1B"
+    },
+    {
+      "ac": "AC1",
+      "name": "b: slot 4 lists starter, PR 7, defensive 2B 7 in order",
+      "ok": true,
+      "detail": "[\"4|Cub Player4|2B|\",\"12|Bench RunnerB|PR|7\",\"13|Bench GloveB|2B|7\"]"
+    },
+    {
+      "ac": "AC2",
+      "name": "b: inning 7 stays with the batter, 8 is the defensive sub",
+      "ok": true,
+      "detail": "[\"Cub Player4\",\"Bench GloveB\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "c: slot 5 lists PR 5 before PH 6 though added after",
+      "ok": true,
+      "detail": "[\"5|Cub Player5|3B|\",\"15|Bench RunnerC|PR|5\",\"14|Bench HitterC|PH|6\"]"
+    },
+    {
+      "ac": "AC2",
+      "name": "c: inning 5 the batter, 6 and 9 the PH",
+      "ok": true,
+      "detail": "[\"Cub Player5\",\"Bench HitterC\",\"Bench HitterC\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "no error after valid adds",
+      "ok": true,
+      "detail": "null"
+    },
+    {
+      "ac": "AC3",
+      "name": "a sub already in the game is refused",
+      "ok": true,
+      "detail": "That player is already in this team's lineup or has left the game."
+    },
+    {
+      "ac": "AC3",
+      "name": "inning 10 is refused with a message",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC3",
+      "name": "refusals add nothing",
+      "ok": true,
+      "detail": "6"
+    },
+    {
+      "ac": "AC4",
+      "name": "after reload all three slots list the same rows",
+      "ok": true,
+      "detail": "[[\"6|Cub Player6|SS|\",\"10|Bench HitterA|PH|7\",\"11|Bench GloveA|SS|7\"],[\"4|Cub Player4|2B|\",\"12|Bench RunnerB|PR|7\",\"13|Bench GloveB|2B|7\"],[\"5|Cub Player5|3B|\",\"15|Bench RunnerC|PR|5\",\"14|Bench HitterC|PH|6\"]]"
+    },
+    {
+      "ac": "AC4",
+      "name": "saved at bats unchanged",
+      "ok": true,
+      "detail": "K|BB|2B|1B"
+    },
+    {
+      "ac": "AC4",
+      "name": "removing the PR leaves starter then PH 6; owners 5 starter, 6 PH",
+      "ok": true,
+      "detail": "[\"5|Cub Player5|3B|\",\"14|Bench HitterC|PH|6\"] [\"Cub Player5\",\"Bench HitterC\"]"
+    },
+    {
+      "ac": "AC4",
+      "name": "removing the defensive sub gives innings 7 and 8 back to the PH",
+      "ok": true,
+      "detail": "[\"Bench HitterA\",\"Bench HitterA\"]"
+    },
+    {
+      "ac": "AC4",
+      "name": "removals stick after reload",
+      "ok": true,
+      "detail": "[[\"6|Cub Player6|SS|\",\"10|Bench HitterA|PH|7\"],[\"5|Cub Player5|3B|\",\"14|Bench HitterC|PH|6\"]]"
+    },
+    {
+      "ac": "UI",
+      "name": "desktop: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1910px viewport=1920px"
+    },
+    {
+      "ac": "UI",
+      "name": "tablet: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1014px viewport=1024px"
+    },
+    {
+      "ac": "UI",
+      "name": "mobile: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=365px viewport=375px"
+    },
+    {
+      "ac": "Console",
+      "name": "no console errors, page errors, or 5xx/401/403",
+      "ok": true,
+      "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "bad": []
+}

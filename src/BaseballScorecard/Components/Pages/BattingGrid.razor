@@ -2,9 +2,12 @@
 @inject BattingGridService BattingGridService
 @inject LineupService LineupService
 @inject PlayerService PlayerService
+@inject SubstitutionService SubstitutionService
 
 @* One team's batting grid: an at-bat result per batting slot per inning, picked from a dialog, then HITS and LOB
-   per inning, typed by the scorer and saved on change. Side ("away" / "home") prefixes every element id. *@
+   per inning, typed by the scorer and saved on change. Each slot lists its starter, then any substitutes with the
+   inning they came in; the slot's at-bat cells span those rows and belong to whoever held the slot that inning.
+   Side ("away" / "home") prefixes every element id. *@
 <section id="@Side-batting-grid">
     <h2>@TeamName batting</h2>
 
@@ -20,6 +23,7 @@
                     <th scope="col">#</th>
                     <th scope="col">Name</th>
                     <th scope="col">Pos</th>
+                    <th scope="col">Inn</th>
                     @for (var inning = 1; inning <= Game.Innings; inning++)
                     {
                         <th scope="col" class="inning-header">@inning</th>
@@ -30,10 +34,12 @@
                 @foreach (var row in rows)
                 {
                     var slot = row.Slot;
-                    <tr class="batter">
-                        <td>@row.Number</td>
-                        <td>@row.Name</td>
-                        <td>@row.Position</td>
+                    var starter = row.Players[0];
+                    <tr class="batter" data-slot="@slot">
+                        <td class="player-cell">@Number(starter)</td>
+                        <td class="player-cell">@Name(starter)</td>
+                        <td class="player-cell">@starter.Position</td>
+                        <td class="player-cell"></td>
                         @for (var inning = 1; inning <= Game.Innings; inning++)
                         {
                             var n = inning;
@@ -41,7 +47,7 @@
                             var note = CellText(slot, n);
                             var bases = Bases(slot, n);
                             var cs = CaughtStealing(slot, n);
-                            <td>
+                            <td rowspan="@row.Players.Count">
                                 <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
                                         aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(cs is { } c ? $", caught stealing {BaseNames[c.CaughtStealingBase]} {c.CaughtStealingFielders}" : "")}")"
                                         @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">
@@ -64,9 +70,21 @@
                             </td>
                         }
                     </tr>
+                    @foreach (var sub in row.Players.Skip(1))
+                    {
+                        var subId = sub.SubstitutionId!.Value;
+                        <tr class="substitute" data-slot="@slot" @key="subId">
+                            <td class="player-cell">@Number(sub)</td>
+                            <td><span class="player-cell">@Name(sub)</span>
+                                <button id="@Side-sub-@subId-remove" type="button" class="sub-remove"
+                                        aria-label="Remove substitute @Name(sub)" @onclick="() => RemoveSubAsync(subId)">×</button></td>
+                            <td class="player-cell">@sub.Position</td>
+                            <td class="player-cell">@sub.Inning</td>
+                        </tr>
+                    }
                 }
                 <tr class="totals">
-                    <th scope="row" colspan="3">HITS / LOB</th>
+                    <th scope="row" colspan="4">HITS / LOB</th>
                     @for (var inning = 1; inning <= Game.Innings; inning++)
                     {
                         var n = inning;
@@ -87,6 +105,34 @@
                 </tr>
             </tbody>
         </table>
+
+        <fieldset id="@Side-add-sub" class="add-sub">
+            <legend>Add @TeamName substitute</legend>
+            <label for="@Side-sub-slot">Slot</label>
+            <select id="@Side-sub-slot" @bind="subSlot">
+                @foreach (var r in rows.Where(r => r.Players[0].PlayerId != 0))
+                {
+                    <option value="@r.Slot">@r.Slot</option>
+                }
+            </select>
+            <label for="@Side-sub-player">Player</label>
+            <select id="@Side-sub-player" @bind="subPlayerId">
+                <option value="0">Pick a player</option>
+                @foreach (var p in players.Values)
+                {
+                    <option value="@p.Id" disabled="@inGame.Contains(p.Id)">#@p.UniformNumber @p.FirstName @p.LastName</option>
+                }
+            </select>
+            <label for="@Side-sub-kind">As</label>
+            <select id="@Side-sub-kind" @bind="subKind">
+                <option value="@SubstitutionKind.PinchHitter">PH</option>
+                <option value="@SubstitutionKind.PinchRunner">PR</option>
+                <option value="@SubstitutionKind.Defensive">Defensive</option>
+            </select>
+            <label for="@Side-sub-inning">Inning</label>
+            <input id="@Side-sub-inning" type="number" min="1" max="@Game.Innings" @bind="subInning" />
+            <button id="@Side-sub-add" type="button" disabled="@(subPlayerId == 0)" @onclick="AddSubAsync">Add substitute</button>
+        </fieldset>
     }
 
     @if (error is not null)
@@ -197,10 +243,19 @@
     [Parameter, EditorRequired] public string Side { get; set; } = "";
     [Parameter, EditorRequired] public string TeamName { get; set; } = "";
 
-    private sealed record BatterRow(int Slot, string Number, string Name, string Position);
+    // One batting slot: its starter, then its substitutes in the order they took the slot.
+    private sealed record BatterRow(int Slot, List<SlotPlayer> Players);
 
     // The 9 batting slots of the saved lineup; null when the team has no saved lineup.
     private List<BatterRow>? rows;
+    // The roster by player id, and the players already in the game (starters, DH lineup's pitcher, substitutes).
+    private Dictionary<int, Player> players = [];
+    private HashSet<int> inGame = [];
+    // The add-substitute form.
+    private int subSlot = 1;
+    private int subPlayerId;
+    private SubstitutionKind subKind = SubstitutionKind.PinchHitter;
+    private int? subInning;
     private bool loaded;
     // Saved notes keyed by (slot, inning); saved HITS / LOB keyed by inning.
     private Dictionary<(int, int), BattingNote> notes = [];
@@ -253,28 +308,61 @@
 
     private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
 
+    // A slot whose player was removed from the roster shows blank; its notes stay with the slot.
+    private string Number(SlotPlayer p) => players.TryGetValue(p.PlayerId, out var x) ? x.UniformNumber : "";
+
+    private string Name(SlotPlayer p) => players.TryGetValue(p.PlayerId, out var x) ? $"{x.FirstName} {x.LastName}" : "";
+
     // Runs on first render and again whenever the game page re-renders (a lineup was saved).
-    // The rows go on screen only together with their saved cells, so a box never shows blank before it loads.
     protected override async Task OnParametersSetAsync()
+    {
+        players = (await PlayerService.ListAsync(RosterId)).ToDictionary(p => p.Id);
+        await LoadRowsAsync();
+        typed = [];
+        loaded = true;
+    }
+
+    // The rows go on screen only together with their saved cells, so a box never shows blank before it loads.
+    private async Task LoadRowsAsync()
     {
         var lineup = await LineupService.FindAsync(Game.Id, RosterId);
         List<BatterRow>? newRows = null;
+        var newInGame = new HashSet<int>();
         if (lineup is not null)
         {
-            var players = (await PlayerService.ListAsync(RosterId)).ToDictionary(p => p.Id);
-            // A slot whose player was removed from the roster shows blank; its notes stay with the slot.
+            var subs = await SubstitutionService.ListAsync(Game.Id, RosterId);
             newRows = Enumerable.Range(1, LineupService.SlotCount).Select(n =>
             {
-                var s = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n);
-                return s is not null && players.TryGetValue(s.PlayerId, out var p)
-                    ? new BatterRow(n, p.UniformNumber, $"{p.FirstName} {p.LastName}", Positions.Abbreviation(s.Position))
-                    : new BatterRow(n, "", "", "");
+                var starter = lineup.Slots.FirstOrDefault(s => s.BattingOrder == n) ?? new LineupSlot { BattingOrder = n };
+                return new BatterRow(n, SubstitutionService.SlotPlayers(starter, subs));
             }).ToList();
+            newInGame = [.. lineup.Slots.Select(s => s.PlayerId), .. subs.Select(s => s.PlayerId)];
+            if (lineup.StartingPitcherId is { } sp)
+            {
+                newInGame.Add(sp);
+            }
         }
         await LoadCellsAsync();
         rows = newRows;
-        typed = [];
-        loaded = true;
+        inGame = newInGame;
+    }
+
+    private async Task AddSubAsync()
+    {
+        error = await SubstitutionService.AddAsync(Game.Id, RosterId, subSlot, subPlayerId, subKind, subInning ?? 0);
+        if (error is not null)
+        {
+            return;
+        }
+        subPlayerId = 0;
+        await LoadRowsAsync();
+    }
+
+    private async Task RemoveSubAsync(int substitutionId)
+    {
+        await SubstitutionService.RemoveAsync(Game.Id, substitutionId);
+        error = null;
+        await LoadRowsAsync();
     }
 
     private async Task LoadCellsAsync()
@@ -286,9 +374,11 @@
     }
 
     // A cell holding older free text (or nothing) opens with no result selected.
+    // The dialog names whoever held the slot in that inning.
     private void Open(string cellId, BatterRow row, int inning)
     {
-        var batter = row.Name == "" ? $"Batting slot {row.Slot}" : row.Name;
+        var owner = Name(SubstitutionService.OwnerAt(row.Players, inning));
+        var batter = owner == "" ? $"Batting slot {row.Slot}" : owner;
         dialog = new AtBatDialog(cellId, row.Slot, inning, batter);
         choice = AtBatResult.Find(Note(row.Slot, inning))?.Code;
         basesChoice = Bases(row.Slot, inning);

@@ -1,0 +1,169 @@
+{
+  "results": [
+    {
+      "ac": "AC1",
+      "name": "grid header has the new Inn column after Pos",
+      "ok": true,
+      "detail": "#,Name,Pos,Inn,1"
+    },
+    {
+      "ac": "AC4",
+      "name": "pre-migration lineup shows starters only, Inn blank",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\"]"
+    },
+    {
+      "ac": "AC4",
+      "name": "pre-migration at bats show unchanged",
+      "ok": true,
+      "detail": "K|1B|GO 6-4-3 DP|2B|BB|1B"
+    },
+    {
+      "ac": "AC1",
+      "name": "PH: slot 6 shows starter then Bench Hitter, Pos PH, Inn 7",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH|7\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "PR: slot 2 shows starter then Bench Runner, Pos PR, Inn 1",
+      "ok": true,
+      "detail": "[\"2|Cub Player2|C|\",\"11|Bench Runner|PR|1\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "Defensive: slot 9 shows starter then Bench Glove, Pos SS (replaced player), Inn 4",
+      "ok": true,
+      "detail": "[\"9|Cub Player9|SS|\",\"12|Bench Glove|SS|4\"]"
+    },
+    {
+      "ac": "AC1",
+      "name": "no error after valid adds",
+      "ok": true,
+      "detail": "null"
+    },
+    {
+      "ac": "AC1",
+      "name": "slot 6 at-bat cells span both rows (one cell per inning)",
+      "ok": true,
+      "detail": "rowspan=2"
+    },
+    {
+      "ac": "AC2",
+      "name": "PH in inning 7: inning 6 is the starter, 7 and 9 are the PH",
+      "ok": true,
+      "detail": "Cub Player6, inning 6 / Bench Hitter, inning 7 / Bench Hitter, inning 9"
+    },
+    {
+      "ac": "AC2",
+      "name": "PR in inning 1: inning 1 stays with the batter, inning 2 is the PR",
+      "ok": true,
+      "detail": "Cub Player2, inning 1 / Bench Runner, inning 2"
+    },
+    {
+      "ac": "AC2",
+      "name": "Defensive in inning 4: inning 3 starter, inning 4 the sub",
+      "ok": true,
+      "detail": "Cub Player9, inning 3 / Bench Glove, inning 4"
+    },
+    {
+      "ac": "AC2",
+      "name": "existing inning-7 at bat in slot 6 stays on its cell (1B)",
+      "ok": true,
+      "detail": "1B"
+    },
+    {
+      "ac": "AC3",
+      "name": "players already in the game are disabled in the picker",
+      "ok": true,
+      "detail": "1,2,3,4,5,6,7,8,9,10,11,12"
+    },
+    {
+      "ac": "AC3",
+      "name": "a starter (in the lineup) is refused with a message",
+      "ok": true,
+      "detail": "That player is already in this team's lineup or has left the game."
+    },
+    {
+      "ac": "AC3",
+      "name": "a substitute already in the game is refused",
+      "ok": true,
+      "detail": "That player is already in this team's lineup or has left the game."
+    },
+    {
+      "ac": "AC3",
+      "name": "a player taken out of the game (replaced starter) is refused",
+      "ok": true,
+      "detail": "That player is already in this team's lineup or has left the game."
+    },
+    {
+      "ac": "AC3",
+      "name": "inning 0 is refused with a message",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC3",
+      "name": "inning 10 is refused with a message",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC3",
+      "name": "inning blank is refused with a message",
+      "ok": true,
+      "detail": "The inning must be from 1 to 9."
+    },
+    {
+      "ac": "AC4",
+      "name": "subs still show after a reload",
+      "ok": true,
+      "detail": "[[\"6|Cub Player6|RF|\",\"10|Bench Hitter|PH|7\"],[\"2|Cub Player2|C|\",\"11|Bench Runner|PR|1\"],[\"9|Cub Player9|SS|\",\"12|Bench Glove|SS|4\"]]"
+    },
+    {
+      "ac": "AC4",
+      "name": "removing the PH puts slot 6 back to the starter (rows and inning-7 owner)",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\"] / Cub Player6, inning 7"
+    },
+    {
+      "ac": "AC4",
+      "name": "the removed sub is offered again in the picker",
+      "ok": true,
+      "detail": "disabled=false"
+    },
+    {
+      "ac": "AC4",
+      "name": "after reload the removal stuck and old at bats are unchanged",
+      "ok": true,
+      "detail": "[\"6|Cub Player6|RF|\"] K|1B|GO 6-4-3 DP|2B|BB|1B"
+    },
+    {
+      "ac": "UI",
+      "name": "desktop: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1910px viewport=1920px"
+    },
+    {
+      "ac": "UI",
+      "name": "tablet: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=1014px viewport=1024px"
+    },
+    {
+      "ac": "UI",
+      "name": "mobile: add-substitute form fits the viewport",
+      "ok": true,
+      "detail": "formRight=365px viewport=375px"
+    },
+    {
+      "ac": "Console",
+      "name": "no console errors, page errors, or 5xx/401/403",
+      "ok": true,
+      "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "bad": []
+}

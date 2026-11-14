@@ -14,6 +14,7 @@ builder.Services.AddScoped<LineupService>();
 builder.Services.AddScoped<LineScoreService>();
 builder.Services.AddScoped<BattingGridService>();
 builder.Services.AddScoped<PitchingService>();
+builder.Services.AddScoped<SubstitutionService>();
 
 var app = builder.Build();
 
