@@ -1,0 +1,27 @@
+PASS AC1 grid header has the new Inn column after Pos #,Name,Pos,Inn,1
+PASS AC4 pre-migration lineup shows starters only, Inn blank ["6|Cub Player6|RF|"]
+PASS AC4 pre-migration at bats show unchanged K|1B|GO 6-4-3 DP|2B|BB|1B
+PASS AC1 PH: slot 6 shows starter then Bench Hitter, Pos PH, Inn 7 ["6|Cub Player6|RF|","10|Bench Hitter|PH|7"]
+PASS AC1 PR: slot 2 shows starter then Bench Runner, Pos PR, Inn 1 ["2|Cub Player2|C|","11|Bench Runner|PR|1"]
+PASS AC1 Defensive: slot 9 shows starter then Bench Glove, Pos SS (replaced player), Inn 4 ["9|Cub Player9|SS|","12|Bench Glove|SS|4"]
+PASS AC1 no error after valid adds null
+PASS AC1 slot 6 at-bat cells span both rows (one cell per inning) rowspan=2
+PASS AC2 PH in inning 7: inning 6 is the starter, 7 and 9 are the PH Cub Player6, inning 6 / Bench Hitter, inning 7 / Bench Hitter, inning 9
+PASS AC2 PR in inning 1: inning 1 stays with the batter, inning 2 is the PR Cub Player2, inning 1 / Bench Runner, inning 2
+PASS AC2 Defensive in inning 4: inning 3 starter, inning 4 the sub Cub Player9, inning 3 / Bench Glove, inning 4
+PASS AC2 existing inning-7 at bat in slot 6 stays on its cell (1B) 1B
+PASS AC3 players already in the game are disabled in the picker 1,2,3,4,5,6,7,8,9,10,11,12
+PASS AC3 a starter (in the lineup) is refused with a message That player is already in this team's lineup or has left the game.
+PASS AC3 a substitute already in the game is refused That player is already in this team's lineup or has left the game.
+PASS AC3 a player taken out of the game (replaced starter) is refused That player is already in this team's lineup or has left the game.
+PASS AC3 inning 0 is refused with a message The inning must be from 1 to 9.
+PASS AC3 inning 10 is refused with a message The inning must be from 1 to 9.
+PASS AC3 inning blank is refused with a message The inning must be from 1 to 9.
+PASS AC4 subs still show after a reload [["6|Cub Player6|RF|","10|Bench Hitter|PH|7"],["2|Cub Player2|C|","11|Bench Runner|PR|1"],["9|Cub Player9|SS|","12|Bench Glove|SS|4"]]
+PASS AC4 removing the PH puts slot 6 back to the starter (rows and inning-7 owner) ["6|Cub Player6|RF|"] / Cub Player6, inning 7
+PASS AC4 the removed sub is offered again in the picker disabled=false
+PASS AC4 after reload the removal stuck and old at bats are unchanged ["6|Cub Player6|RF|"] K|1B|GO 6-4-3 DP|2B|BB|1B
+PASS UI desktop: add-substitute form fits the viewport formRight=1910px viewport=1920px
+PASS UI tablet: add-substitute form fits the viewport formRight=1014px viewport=1024px
+PASS UI mobile: add-substitute form fits the viewport formRight=365px viewport=375px
+PASS Console no console errors, page errors, or 5xx/401/403 {"consoleErrors":[],"pageErrors":[],"bad":[]}
