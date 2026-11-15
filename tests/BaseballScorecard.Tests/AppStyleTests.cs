@@ -222,4 +222,13 @@ public class AppStyleTests
         Assert.Contains("var(--color-on-header)", rule);
         Assert.Contains("background: transparent", rule);
     }
+
+    // Hover must show a visible change: the header colors swap, which keeps AA in both modes.
+    [Fact]
+    public void Theme_toggle_hover_inverts_the_header_colors()
+    {
+        var rule = Rule(".theme-toggle:hover");
+        Assert.Contains("background: var(--color-on-header)", rule);
+        Assert.Contains("color: var(--color-header)", rule);
+    }
 }

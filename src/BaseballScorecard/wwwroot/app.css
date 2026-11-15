@@ -124,8 +124,8 @@ a {
 }
 
 .theme-toggle:hover {
-    background: var(--color-header);
-    text-decoration: underline;
+    background: var(--color-on-header);
+    color: var(--color-header);
 }
 
 .brand {

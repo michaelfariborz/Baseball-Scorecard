@@ -1,5 +1,5 @@
 // Light/dark toggle. The inline script in App.razor <head> applies a saved choice before first paint;
-// this file handles clicks and keeps the button label right, including after Blazor's enhanced navigation.
+// this file handles clicks, keeps the button label right and re-applies the theme after enhanced navigation.
 (function () {
     var KEY = "theme";
     var root = document.documentElement;
@@ -37,6 +37,9 @@
 
     document.addEventListener("DOMContentLoaded", sync);
     if (document.readyState !== "loading") sync();
+    // With no saved choice, keep the label right when the OS setting changes.
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", sync);
+    // App.razor loads this after blazor.web.js, so window.Blazor exists. Enhanced navigation's DOM sync
+    // removes data-theme from <html> (the server markup has none); enhancedload puts it back.
     if (window.Blazor) window.Blazor.addEventListener("enhancedload", sync);
-    else document.addEventListener("enhancedload", sync);
 })();
