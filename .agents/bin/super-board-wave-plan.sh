@@ -145,6 +145,11 @@ echo "$ITEMS" | jq --argjson cols "$COLUMNS" --argjson cap "$MAX_WORKERS" --argj
     else "build" end;
   # Unknown to the graph (closed, or beyond the fetch limit) is not "free".
   def free($n): (dep($n) | if . == null then false else .runnable end);
+  # A card a human moved to Ready: `blocked-by: -` only means "a person clears
+  # this", and the move is that person clearing it. Numbered blockers still
+  # gate it. Blocked cards keep using free(), so the sweep never frees them.
+  def ready_free($n): (dep($n) | if . == null then false
+    else .runnable or (.parseable and .humanGated and ((.openBlockers | length) == 0)) end);
 
   [ .items[]
     | select(.content.type == "Issue")
@@ -159,7 +164,7 @@ echo "$ITEMS" | jq --argjson cols "$COLUMNS" --argjson cap "$MAX_WORKERS" --argj
   | [ $cols[] as $c | $all[] | select(.status == $c and $c != "Ready") ] as $flight
 
   # Ready: only the ones the graph says are actually free.
-  | [ $all[] | select(.status == "Ready") | select(free(.number)) ] as $ready
+  | [ $all[] | select(.status == "Ready") | select(ready_free(.number)) ] as $ready
 
   # Downstream-first, so work already begun finishes before new work starts.
   | ($flight + $ready) as $picked
