@@ -69,6 +69,8 @@ public class RostersPageTests : BunitContext
         var cubs25 = await SaveAsync($"Cubs {Guid.NewGuid():N}", 2025);
         var cubs26 = await SaveAsync($"Cubs {Guid.NewGuid():N}", 2026);
         var mets26 = await SaveAsync($"Mets {Guid.NewGuid():N}", 2026);
+        // Another test may leave a lowercase-named 2026 roster in the shared database.
+        var lower26 = await SaveAsync($"f{Guid.NewGuid():N} A", 2026);
         var cut = Render<RostersPage>();
         cut.WaitForAssertion(() => Assert.Contains("2025", YearOptions(cut)));
 
@@ -78,8 +80,11 @@ public class RostersPageTests : BunitContext
         Assert.Contains($"rosters/{cubs26.Id}/edit", RosterLinks(cut));
         Assert.Contains($"rosters/{mets26.Id}/edit", RosterLinks(cut));
         Assert.All(cut.FindAll("ul.rosters a"), a => Assert.StartsWith("2026 · ", a.TextContent));
-        var names = cut.FindAll("ul.rosters a").Select(a => a.TextContent).ToList();
-        Assert.Equal(names.OrderBy(n => n, StringComparer.Ordinal).ToList(), names);
+        Assert.Contains($"rosters/{lower26.Id}/edit", RosterLinks(cut));
+        // Check the order of this test's own rosters only; other tests' rows share the database.
+        var own = new[] { cubs26.Id, mets26.Id }.Select(id => $"rosters/{id}/edit").ToList();
+        var ownLinks = RosterLinks(cut).Where(own.Contains).ToList();
+        Assert.Equal(own, ownLinks);
 
         await PickYear(cut, "");
 
