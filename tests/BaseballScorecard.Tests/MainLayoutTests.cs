@@ -49,6 +49,52 @@ public class MainLayoutTests : BunitContext
         Assert.Equal([("/", "Home"), ("rosters", "Rosters"), ("games/new", "New game")], links);
     }
 
+    [Fact]
+    public void Header_has_a_theme_toggle_button_named_for_the_mode_it_switches_to()
+    {
+        var cut = RenderAt("/");
+
+        var toggle = cut.Find("header.app-header button.theme-toggle");
+        Assert.Equal("button", toggle.GetAttribute("type"));
+        Assert.Equal("Switch to dark mode", toggle.GetAttribute("aria-label"));
+        Assert.Contains("mode", toggle.TextContent);
+    }
+
+    [Fact]
+    public void Document_applies_a_saved_theme_before_first_paint_and_loads_theme_js()
+    {
+        var html = File.ReadAllText(Path.Combine(RepoRoot(), "src", "BaseballScorecard", "Components", "App.razor"));
+        var head = html[..html.IndexOf("</head>", StringComparison.Ordinal)];
+
+        Assert.Contains("localStorage.getItem(\"theme\")", head);
+        Assert.Contains("dataset.theme", head);
+        Assert.Contains("theme.js", html);
+        Assert.True(File.Exists(Path.Combine(RepoRoot(), "src", "BaseballScorecard", "wwwroot", "theme.js")));
+    }
+
+    // Blazor sends enhancedload only through Blazor.addEventListener, so theme.js must load after
+    // blazor.web.js and register there; enhanced navigation's DOM sync drops data-theme otherwise.
+    [Fact]
+    public void Theme_js_loads_after_blazor_and_reapplies_the_theme_on_enhanced_navigation()
+    {
+        var html = File.ReadAllText(Path.Combine(RepoRoot(), "src", "BaseballScorecard", "Components", "App.razor"));
+        var js = File.ReadAllText(Path.Combine(RepoRoot(), "src", "BaseballScorecard", "wwwroot", "theme.js"));
+
+        Assert.True(html.IndexOf("blazor.web.js", StringComparison.Ordinal) < html.IndexOf("theme.js", StringComparison.Ordinal),
+            "theme.js must load after blazor.web.js so window.Blazor exists");
+        Assert.Contains("Blazor.addEventListener(\"enhancedload\", sync)", js);
+        Assert.DoesNotContain("document.addEventListener(\"enhancedload\"", js);
+        Assert.Contains("addEventListener(\"change\", sync)", js);
+    }
+
+    private static string RepoRoot()
+    {
+        var dir = new DirectoryInfo(AppContext.BaseDirectory);
+        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "src", "BaseballScorecard", "wwwroot", "app.css")))
+            dir = dir.Parent;
+        return dir!.FullName;
+    }
+
     [Theory]
     [InlineData("/", "/")]
     [InlineData("rosters", "rosters")]

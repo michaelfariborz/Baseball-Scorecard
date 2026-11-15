@@ -1,0 +1,177 @@
+{
+ "a_home_initial": {
+  "path": "/",
+  "theme": null,
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": null,
+  "marker": false
+ },
+ "a_after_click": {
+  "path": "/",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": "dark",
+  "marker": true
+ },
+ "a_nav_rosters": {
+  "path": "/rosters",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": "dark",
+  "marker": true
+ },
+ "a_nav_newgame": {
+  "path": "/games/new",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": "dark",
+  "marker": true
+ },
+ "a_nav_home": {
+  "path": "/",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": "dark",
+  "marker": true
+ },
+ "a_toggle_after_nav": {
+  "path": "/rosters",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "a_light_nav": {
+  "path": "/games/new",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "a_reload": {
+  "path": "/games/new",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": "dark",
+  "marker": false
+ },
+ "b_home": {
+  "path": "/",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "b_nav_rosters": {
+  "path": "/rosters",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "b_nav_newgame": {
+  "path": "/games/new",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "b_nav_home": {
+  "path": "/",
+  "theme": "light",
+  "bg": "rgb(250, 247, 240)",
+  "label": "Switch to dark mode",
+  "ls": "light",
+  "marker": true
+ },
+ "c_os_dark": {
+  "path": "/",
+  "theme": null,
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": null,
+  "marker": false
+ },
+ "c_os_dark_nav": {
+  "path": "/rosters",
+  "theme": null,
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to light mode",
+  "ls": null,
+  "marker": false
+ },
+ "d_firstpaint": {
+  "path": "/rosters",
+  "theme": "dark",
+  "bg": "rgb(15, 26, 18)",
+  "label": "Switch to dark mode",
+  "ls": "dark",
+  "marker": false
+ },
+ "e_light_desktop": {
+  "focused": true,
+  "color": "rgb(255, 255, 255)",
+  "hdr": "rgb(31, 77, 43)",
+  "outline": "3px solid",
+  "sw": 1920,
+  "cw": 1920,
+  "contrast": 9.75
+ },
+ "e_light_tablet": {
+  "focused": true,
+  "color": "rgb(255, 255, 255)",
+  "hdr": "rgb(31, 77, 43)",
+  "outline": "3px solid",
+  "sw": 1024,
+  "cw": 1024,
+  "contrast": 9.75
+ },
+ "e_light_mobile": {
+  "focused": true,
+  "color": "rgb(255, 255, 255)",
+  "hdr": "rgb(31, 77, 43)",
+  "outline": "3px solid",
+  "sw": 375,
+  "cw": 375,
+  "contrast": 9.75
+ },
+ "e_dark_desktop": {
+  "focused": true,
+  "color": "rgb(232, 237, 230)",
+  "hdr": "rgb(19, 42, 25)",
+  "outline": "3px solid",
+  "sw": 1920,
+  "cw": 1920,
+  "contrast": 12.88
+ },
+ "e_dark_tablet": {
+  "focused": true,
+  "color": "rgb(232, 237, 230)",
+  "hdr": "rgb(19, 42, 25)",
+  "outline": "3px solid",
+  "sw": 1024,
+  "cw": 1024,
+  "contrast": 12.88
+ },
+ "e_dark_mobile": {
+  "focused": true,
+  "color": "rgb(232, 237, 230)",
+  "hdr": "rgb(19, 42, 25)",
+  "outline": "3px solid",
+  "sw": 375,
+  "cw": 375,
+  "contrast": 12.88
+ },
+ "fails": []
+}

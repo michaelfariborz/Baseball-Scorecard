@@ -36,8 +36,15 @@ public class AppStyleTests
 
     private static Dictionary<string, string> Dark()
     {
-        var m = Regex.Match(Css(), @"@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*:root\s*\{([^}]*)\}");
+        var m = Regex.Match(Css(), @"@media\s*\(prefers-color-scheme:\s*dark\)\s*\{\s*:root:not\(\[data-theme=""light""\]\)\s*\{([^}]*)\}");
         Assert.True(m.Success, "no prefers-color-scheme: dark :root rule");
+        return Vars(m.Groups[1].Value);
+    }
+
+    private static Dictionary<string, string> Forced(string theme)
+    {
+        var m = Regex.Match(Css(), @"(?m)^:root\[data-theme=""" + theme + @"""\]\s*\{([^}]*)\}");
+        Assert.True(m.Success, $"no :root[data-theme=\"{theme}\"] rule");
         return Vars(m.Groups[1].Value);
     }
 
@@ -190,5 +197,38 @@ public class AppStyleTests
         var dialog = Rule(".at-bat-dialog");
         Assert.Contains("background: var(--color-surface)", dialog);
         Assert.Contains("color: var(--color-text)", dialog);
+    }
+
+    // The toggle sets data-theme on <html>; it must pick the same token sets the OS setting does.
+    [Fact]
+    public void Forced_dark_theme_has_the_same_tokens_as_the_OS_dark_set()
+    {
+        var forced = Forced("dark");
+        foreach (var token in Tokens.Append("--color-hover"))
+            Assert.Equal(Dark()[token], forced[token]);
+        Assert.Matches(@":root\[data-theme=""dark""\]\s*\{\s*color-scheme:\s*dark;", Css());
+    }
+
+    [Fact]
+    public void Forced_light_theme_pins_the_light_color_scheme()
+    {
+        Assert.Matches(@":root\[data-theme=""light""\]\s*\{\s*color-scheme:\s*light;", Css());
+    }
+
+    [Fact]
+    public void Theme_toggle_takes_its_colors_from_the_header_tokens()
+    {
+        var rule = Rule(".theme-toggle");
+        Assert.Contains("var(--color-on-header)", rule);
+        Assert.Contains("background: transparent", rule);
+    }
+
+    // Hover must show a visible change: the header colors swap, which keeps AA in both modes.
+    [Fact]
+    public void Theme_toggle_hover_inverts_the_header_colors()
+    {
+        var rule = Rule(".theme-toggle:hover");
+        Assert.Contains("background: var(--color-on-header)", rule);
+        Assert.Contains("color: var(--color-header)", rule);
     }
 }
