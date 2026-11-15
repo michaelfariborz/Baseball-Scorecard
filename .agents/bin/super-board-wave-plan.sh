@@ -7,7 +7,9 @@
 #
 # A wave is no longer a fixed number of slots. It is:
 #
-#   every Ready card whose `## Blocked by` list is fully closed,
+#   every Ready card whose `## Blocked by` list is fully closed (a Ready card
+#   whose only gate is `blocked-by: -` counts as free: the human's move to
+#   Ready is what clears it; numbered blockers still gate it),
 #   plus every card already in flight in QA or Review,
 #   minus anything already claimed by an assignee.
 #
