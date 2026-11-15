@@ -11,13 +11,20 @@ public class RosterService(IDbContextFactory<ScorecardDbContext> dbFactory)
     public const string BlankNameMessage = "Team Name is required.";
     public const string DuplicateMessage = "A roster with this Team Name and Year already exists.";
 
-    public async Task<List<Roster>> ListAsync()
+    /// <summary>Every roster, or only <paramref name="year"/>'s when given; newest year first, then by team name.</summary>
+    public async Task<List<Roster>> ListAsync(int? year = null)
     {
         await using var db = await dbFactory.CreateDbContextAsync();
-        return await db.Rosters.AsNoTracking()
-            .OrderByDescending(r => r.Year)
-            .ThenBy(r => r.TeamName)
-            .ToListAsync();
+        var query = db.Rosters.AsNoTracking();
+        if (year is { } y) query = query.Where(r => r.Year == y);
+        return await query.OrderByDescending(r => r.Year).ThenBy(r => r.TeamName).ToListAsync();
+    }
+
+    /// <summary>Years that have at least one roster, newest first.</summary>
+    public async Task<List<int>> YearsAsync()
+    {
+        await using var db = await dbFactory.CreateDbContextAsync();
+        return await db.Rosters.Select(r => r.Year).Distinct().OrderByDescending(y => y).ToListAsync();
     }
 
     public async Task<Roster?> FindAsync(int id)
