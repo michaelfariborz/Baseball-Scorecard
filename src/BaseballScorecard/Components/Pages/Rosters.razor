@@ -1,4 +1,5 @@
 @page "/rosters"
+@rendermode InteractiveServer
 @using BaseballScorecard.Data
 @inject RosterService RosterService
 
@@ -7,6 +8,17 @@
 <h1>Rosters</h1>
 
 <p><a class="button" href="rosters/new">New roster</a></p>
+
+<p>
+    <label for="year-filter">Year</label>
+    <select id="year-filter" @bind="yearFilter" @bind:after="LoadRostersAsync">
+        <option value="">All</option>
+        @foreach (var year in years)
+        {
+            <option value="@year">@year</option>
+        }
+    </select>
+</p>
 
 @if (rosters.Count == 0)
 {
@@ -23,7 +35,24 @@ else
 }
 
 @code {
+    private List<int> years = [];
     private List<Roster> rosters = [];
+    // "" is "All".
+    private string yearFilter = "";
+    private int loadNumber;
 
-    protected override async Task OnInitializedAsync() => rosters = await RosterService.ListAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        years = await RosterService.YearsAsync();
+        await LoadRostersAsync();
+    }
+
+    // A load that finishes after a newer one started is stale (an older filter) and is thrown away.
+    private async Task LoadRostersAsync()
+    {
+        var load = ++loadNumber;
+        var loaded = await RosterService.ListAsync(int.TryParse(yearFilter, out var year) ? year : null);
+        if (load != loadNumber) return;
+        rosters = loaded;
+    }
 }

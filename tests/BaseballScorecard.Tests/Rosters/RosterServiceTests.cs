@@ -135,4 +135,22 @@ public class RosterServiceTests(PostgresFixture fixture)
 
         await Assert.ThrowsAsync<DbUpdateException>(() => db2.SaveChangesAsync());
     }
+
+    [Fact]
+    public async Task List_by_year_returns_only_that_year_sorted_by_team_name_and_years_lists_each_once_newest_first()
+    {
+        var b = UniqueName("B");
+        var a = UniqueName("A");
+        foreach (var (n, y) in new[] { (b, 2031), (a, 2031), (UniqueName("C"), 2030) })
+            Assert.Null(await _service.SaveAsync(new Roster { TeamName = n, Year = y }));
+
+        var in2031 = await _service.ListAsync(2031);
+
+        Assert.All(in2031, r => Assert.Equal(2031, r.Year));
+        Assert.Equal([a, b], in2031.Select(r => r.TeamName).Where(n => n == a || n == b).ToList());
+        var years = await _service.YearsAsync();
+        Assert.Equal(years.Distinct().OrderByDescending(y => y).ToList(), years);
+        Assert.Contains(2031, years);
+        Assert.Contains(2030, years);
+    }
 }
