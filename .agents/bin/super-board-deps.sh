@@ -51,7 +51,10 @@
 # `needsYouDone` — verified by super-board-approval.py: a trusted human replied
 # done after a pinned request for the current PR head. Labels are never authority.
 # Saved --from payloads stay offline and cannot assert verified human approval.
-# A 🙋 card stays humanGated either way — only the resume path moves it.
+# A 🙋 card stays humanGated either way — only the resume path moves it out of
+# Blocked. A human who drags it to Ready clears the gate themselves: the wave
+# planner (ready_free) plans a Ready card that is humanGated with no open
+# numbered blockers. This script never looks at the card's column.
 #
 # `runnable` is true only when the line parses, no blocker is still open, AND the
 # card is not human-gated. `humanGated` comes from `blocked-by: -`, which means

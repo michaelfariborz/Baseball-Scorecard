@@ -1,0 +1,33 @@
+== mutant A: Ready filter back to free() ==
+ .agents/bin/super-board-wave-plan.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ok 1 - deps still reports blocked-by: - as human-gated, column-blind
+not ok 2 - Ready card whose newest comment is blocked-by: - is planned with its lane
+ok 3 - Blocked card with blocked-by: - stays out of sweep and cards
+ok 4 - Ready card naming an open blocker stays out of cards
+ok 5 - a gated Ready card is not flagged as unreadable
+# pass 4
+# fail 1
+== mutant B: sweep uses ready_free() ==
+ .agents/bin/super-board-wave-plan.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ok 1 - deps still reports blocked-by: - as human-gated, column-blind
+ok 2 - Ready card whose newest comment is blocked-by: - is planned with its lane
+not ok 3 - Blocked card with blocked-by: - stays out of sweep and cards
+ok 4 - Ready card naming an open blocker stays out of cards
+ok 5 - a gated Ready card is not flagged as unreadable
+# pass 4
+# fail 1
+== mutant C: ready_free ignores openBlockers (runnable or parseable) ==
+ .agents/bin/super-board-wave-plan.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+ok 1 - deps still reports blocked-by: - as human-gated, column-blind
+ok 2 - Ready card whose newest comment is blocked-by: - is planned with its lane
+ok 3 - Blocked card with blocked-by: - stays out of sweep and cards
+not ok 4 - Ready card naming an open blocker stays out of cards
+ok 5 - a gated Ready card is not flagged as unreadable
+# pass 4
+# fail 1
+== restored ==
+# pass 5
+# fail 0

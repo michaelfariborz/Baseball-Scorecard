@@ -1,0 +1,22 @@
+== A: Ready filter back to free() (pre-fix)
+not ok 2 - Ready card whose newest comment is blocked-by: - is planned with its lane
+# pass 4
+# fail 1
+== B: sweep uses ready_free()
+not ok 3 - Blocked card with blocked-by: - stays out of sweep and cards
+# pass 4
+# fail 1
+== C: drop open-blocker check in ready_free
+# pass 5
+# fail 0
+== D: drop humanGated check in ready_free
+# pass 5
+# fail 0
+== notes
+A, B killed (AC1, AC2 tests red). C, D survive but are equivalent mutants:
+super-board-deps.sh sets humanGated only for `blocked-by: -` / empty, which always
+yields blockers [] so openBlockers [] (C); and runnable == parseable && !humanGated
+&& no open blockers, so `parseable && no open blockers` == ready_free (D).
+No observable behaviour differs, so no test can kill them. AC3 is guarded by
+runnable=false for `blocked-by: 12` with #12 open (v1 mutant C: `runnable or parseable`, killed).
+Every mutant reverted; plan script restored before commit (git diff empty).
