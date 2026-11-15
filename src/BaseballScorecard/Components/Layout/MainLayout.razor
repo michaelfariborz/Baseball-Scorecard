@@ -2,11 +2,15 @@
 
 <header class="app-header">
     <span class="brand">Baseball Scorecard</span>
-    <nav class="app-nav" aria-label="Main">
-        <NavLink href="/" Match="NavLinkMatch.All">Home</NavLink>
-        <NavLink href="rosters">Rosters</NavLink>
-        <NavLink href="games/new">New game</NavLink>
-    </nav>
+    <div class="header-end">
+        <nav class="app-nav" aria-label="Main">
+            <NavLink href="/" Match="NavLinkMatch.All">Home</NavLink>
+            <NavLink href="rosters">Rosters</NavLink>
+            <NavLink href="games/new">New game</NavLink>
+        </nav>
+        @* A plain button: theme.js flips data-theme on <html> and keeps the label current. *@
+        <button type="button" class="theme-toggle" aria-label="Switch to dark mode">Dark mode</button>
+    </div>
 </header>
 
 <main class="app-main">
