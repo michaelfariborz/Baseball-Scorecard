@@ -39,6 +39,7 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     public const string HitsLobMessage = "HITS and LOB must be whole numbers of 0 or more.";
     public const string SlotMessage = "That batting slot is not part of the lineup.";
     public const string InningMessage = "That inning is not part of this game.";
+    public const string ColumnMessage = "An at bat goes in column 1 of its inning or an extra column after it.";
     public const string TeamNotInGameMessage = "This team is not playing in this game.";
     public const string SavedElsewhereMessage =
         "Another save of this cell finished first. Reload the page to see it, then save again.";
@@ -63,11 +64,12 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     /// saves them blank. A caught stealing (target base 2–4, 0 none) needs the batter on base short of home and is
     /// at the next base; its fielders are saved only with a target base. Stolen bases (2–4) are saved as a sorted set,
     /// each past the base the play reached, short of the caught-stealing base and at or below bases reached.
-    /// Blank (or null) note clears the cell, everything else included.
+    /// Blank (or null) note clears the cell, everything else included. <paramref name="column"/> is the inning's column
+    /// (1 the first, 2 or more an extra one), each saved apart.
     /// </summary>
     public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
         int basesReached = 0, string? fieldersText = null, string? multiOutText = null,
-        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null)
+        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null, int column = 1)
     {
         var note = noteText?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
@@ -102,6 +104,10 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         {
             return SlotMessage;
         }
+        if (column < 1)
+        {
+            return ColumnMessage;
+        }
 
         await using var db = await dbFactory.CreateDbContextAsync();
         if (await CheckCellAsync(db, gameId, rosterId, inning) is { } error)
@@ -109,7 +115,7 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
             return error;
         }
         var row = await db.BattingNotes.FirstOrDefaultAsync(n =>
-            n.GameId == gameId && n.RosterId == rosterId && n.BattingOrder == battingOrder && n.Inning == inning);
+            n.GameId == gameId && n.RosterId == rosterId && n.BattingOrder == battingOrder && n.Inning == inning && n.Column == column);
         if (note == "")
         {
             if (row is not null)
@@ -121,7 +127,7 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         {
             row ??= db.BattingNotes.Add(new BattingNote
             {
-                GameId = gameId, RosterId = rosterId, BattingOrder = battingOrder, Inning = inning,
+                GameId = gameId, RosterId = rosterId, BattingOrder = battingOrder, Inning = inning, Column = column,
             }).Entity;
             row.Note = note;
             row.BasesReached = basesReached;

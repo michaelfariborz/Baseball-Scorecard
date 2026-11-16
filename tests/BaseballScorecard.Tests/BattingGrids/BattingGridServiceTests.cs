@@ -503,4 +503,43 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         Assert.Equal(expected, AtBatResult.StolenBasesText(note));
         Assert.Equal("1B", AtBatResult.CellText(note));
     }
+
+    [Fact]
+    public async Task A_second_at_bat_in_an_extra_column_saves_apart_from_the_first()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, "1B", 1));
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, "GO", 0, "6-3", column: 2));
+
+        var notes = (await _grid.ListNotesAsync(g.Id)).OrderBy(n => n.Column).ToList();
+        Assert.Equal(2, notes.Count);
+        Assert.True(notes[0] is { Column: 1, Note: "1B", BasesReached: 1, Fielders: "" });
+        Assert.True(notes[1] is { Column: 2, Note: "GO", BasesReached: 0, Fielders: "6-3", Inning: 3, BattingOrder: 1 });
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, null, column: 2));
+        Assert.Equal(1, Assert.Single(await _grid.ListNotesAsync(g.Id)).Column);
+    }
+
+    [Fact]
+    public async Task A_note_saved_without_a_column_goes_in_the_first_column()
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "K"));
+
+        Assert.Equal(1, Assert.Single(await _grid.ListNotesAsync(g.Id)).Column);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task A_column_below_1_is_refused(int column)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Equal(BattingGridService.ColumnMessage,
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "K", column: column));
+        Assert.Empty(await _grid.ListNotesAsync(g.Id));
+    }
 }
