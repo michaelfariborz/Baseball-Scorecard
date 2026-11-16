@@ -542,4 +542,113 @@ public class BattingGridServiceTests(PostgresFixture fixture)
             await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "K", column: column));
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
+
+    [Theory]
+    [InlineData("1B", 3, new[] { 3, 2 }, new int[0], new[] { 2, 3 }, new int[0])]
+    [InlineData("1B", 3, new[] { 2 }, new[] { 3 }, new[] { 2 }, new[] { 3 })]
+    [InlineData("BB", 4, new int[0], new[] { 4, 2, 2 }, new int[0], new[] { 2, 4 })]
+    [InlineData("2B", 3, new[] { 3 }, new int[0], new[] { 3 }, new int[0])]
+    [InlineData("K", 1, new[] { 1 }, new int[0], new[] { 1 }, new int[0])]
+    [InlineData("ꓘ", 2, new int[0], new[] { 1 }, new int[0], new[] { 1 })]
+    [InlineData("K", 3, new[] { 1, 3 }, new[] { 2 }, new[] { 1, 3 }, new[] { 2 })]
+    public async Task Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(string code, int bases,
+        int[] wildPitches, int[] passedBalls, int[] savedWp, int[] savedPb)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
+            wildPitchBases: wildPitches, passedBallBases: passedBalls));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal((code, bases), (note.Note, note.BasesReached));
+        Assert.Equal(savedWp, note.WildPitchBases);
+        Assert.Equal(savedPb, note.PassedBallBases);
+    }
+
+    [Fact]
+    public async Task Wild_pitches_and_passed_balls_go_with_a_steal_and_a_later_caught_stealing()
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 3,
+            caughtStealingBase: 4, caughtStealingFieldersText: "12", stolenBases: [2],
+            wildPitchBases: [3]));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(4, note.CaughtStealingBase);
+        Assert.Equal([2], note.StolenBases);
+        Assert.Equal([3], note.WildPitchBases);
+        Assert.Empty(note.PassedBallBases);
+    }
+
+    [Theory]
+    [InlineData("1B", 2, new[] { 0 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallRangeMessage)]
+    [InlineData("1B", 4, new int[0], new[] { 5 }, new int[0], 0, BattingGridService.WildPitchPassedBallRangeMessage)]
+    [InlineData("1B", 1, new[] { 1 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallFirstMessage)]
+    [InlineData("BB", 1, new int[0], new[] { 1 }, new int[0], 0, BattingGridService.WildPitchPassedBallFirstMessage)]
+    [InlineData("GO", 1, new[] { 1 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallFirstMessage)]
+    [InlineData("2B", 2, new[] { 2 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallOnHitMessage)]
+    [InlineData("3B", 4, new int[0], new[] { 3 }, new int[0], 0, BattingGridService.WildPitchPassedBallOnHitMessage)]
+    [InlineData("1B", 2, new[] { 2, 3 }, new int[0], new int[0], 3, BattingGridService.WildPitchPassedBallCaughtMessage)]
+    [InlineData("1B", 3, new int[0], new[] { 4 }, new int[0], 4, BattingGridService.WildPitchPassedBallCaughtMessage)]
+    [InlineData("1B", 1, new[] { 2 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallNotReachedMessage)]
+    [InlineData("K", 0, new[] { 1 }, new int[0], new int[0], 0, BattingGridService.WildPitchPassedBallNotReachedMessage)]
+    [InlineData("ꓘ", 1, new int[0], new[] { 1, 2 }, new int[0], 0, BattingGridService.WildPitchPassedBallNotReachedMessage)]
+    [InlineData("1B", 3, new[] { 2 }, new int[0], new[] { 2 }, 0, BattingGridService.WildPitchPassedBallTwiceMessage)]
+    [InlineData("1B", 3, new int[0], new[] { 3 }, new[] { 3 }, 0, BattingGridService.WildPitchPassedBallTwiceMessage)]
+    [InlineData("1B", 3, new[] { 2 }, new[] { 2 }, new int[0], 0, BattingGridService.WildPitchPassedBallTwiceMessage)]
+    [InlineData("K", 1, new[] { 1 }, new[] { 1 }, new int[0], 0, BattingGridService.WildPitchPassedBallTwiceMessage)]
+    public async Task Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(string code,
+        int bases, int[] wildPitches, int[] passedBalls, int[] stolen, int csBase, string message)
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
+            caughtStealingBase: csBase, caughtStealingFieldersText: csBase == 0 ? null : "26", stolenBases: stolen,
+            wildPitchBases: wildPitches, passedBallBases: passedBalls));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("BB", 1), (note.Note, note.BasesReached));
+        Assert.Empty(note.WildPitchBases);
+        Assert.Empty(note.PassedBallBases);
+    }
+
+    [Fact]
+    public async Task Wild_pitches_and_passed_balls_default_to_none_and_saving_without_them_or_clearing_removes_them()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, "1B", 1));
+        var plain = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Empty(plain.WildPitchBases);
+        Assert.Empty(plain.PassedBallBases);
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, wildPitchBases: [2], passedBallBases: [3]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3));
+        var resaved = (await _grid.ListNotesAsync(g.Id)).Single(n => n.BattingOrder == 1);
+        Assert.Empty(resaved.WildPitchBases);
+        Assert.Empty(resaved.PassedBallBases);
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, wildPitchBases: [2], passedBallBases: [3]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.DoesNotContain(await _grid.ListNotesAsync(g.Id), n => n.BattingOrder == 1);
+    }
+
+    [Theory]
+    [InlineData("1B", new[] { 2 }, new int[0], "1B", "WP 2", "")]
+    [InlineData("1B", new int[0], new[] { 3, 4 }, "1B", "", "PB 3,4")]
+    [InlineData("1B", new[] { 2 }, new[] { 3 }, "1B", "WP 2", "PB 3")]
+    [InlineData("K", new[] { 1 }, new int[0], "K WP", "", "")]
+    [InlineData("ꓘ", new int[0], new[] { 1 }, "ꓘ PB", "", "")]
+    [InlineData("K", new[] { 1, 3 }, new[] { 2 }, "K WP", "WP 3", "PB 2")]
+    [InlineData("1B", new int[0], new int[0], "1B", "", "")]
+    public void Wild_pitch_and_passed_ball_text_shows_the_marks(string code, int[] wildPitches, int[] passedBalls,
+        string cell, string wp, string pb)
+    {
+        var note = new BattingNote { Note = code, BasesReached = 4, WildPitchBases = wildPitches, PassedBallBases = passedBalls };
+
+        Assert.Equal(cell, AtBatResult.CellText(note));
+        Assert.Equal(wp, AtBatResult.WildPitchText(note));
+        Assert.Equal(pb, AtBatResult.PassedBallText(note));
+    }
 }

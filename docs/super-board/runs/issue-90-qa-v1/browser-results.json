@@ -1,0 +1,188 @@
+[
+  {
+    "ac": "AC5",
+    "name": "pre-migration at bats show unchanged with no WP / PB line",
+    "ok": true,
+    "detail": "K/null/null/null/null/0|1B/SB 2,3/null/null/null/3|GO 6-3/null/null/null/null/0|BB/null/null/null/CS 2-6/1|HR/null/null/null/null/4|ꓘ/null/null/null/null/0"
+  },
+  {
+    "ac": "AC5",
+    "name": "old 1B / SB 2,3 cell reopens with steals ticked and no WP / PB ticked",
+    "ok": true,
+    "detail": "2,3||"
+  },
+  {
+    "ac": "AC1",
+    "name": "dialog has \"Wild pitch\" and \"Passed ball\" choices of 1st, 2nd, 3rd, home, none ticked",
+    "ok": true,
+    "detail": "Wild pitch:1st,2nd,3rd,home / Passed ball:1st,2nd,3rd,home"
+  },
+  {
+    "ac": "AC1",
+    "name": "reopen ticks: WP 2; SB 2 + PB 3,4; WP 2 + PB 3; ticked-then-unticked none",
+    "ok": true,
+    "detail": "|2| ; 2||3,4 ; |2|3 ; ||"
+  },
+  {
+    "ac": "AC3",
+    "name": "reopen ticks: K WP 1st; ꓘ PB 1st; K PB 1st + WP 2nd",
+    "ok": true,
+    "detail": "|1| ; ||1 ; |2|1"
+  },
+  {
+    "ac": "AC2",
+    "name": "cells: 1B+WP 2; 1B+SB 2+PB 3,4; BB+WP 2+PB 3; 1B+WP 2+CS; 1B alone; diamonds still to bases reached",
+    "ok": true,
+    "detail": "1B/null/WP 2/null/null/2|1B/SB 2/null/PB 3,4/null/4|BB/null/WP 2/PB 3/null/3|1B/null/WP 2/null/CS 2-5/2|1B/null/null/null/null/1"
+  },
+  {
+    "ac": "AC3",
+    "name": "cells: K WP; ꓘ PB; K PB + WP 2; ꓘ WP",
+    "ok": true,
+    "detail": "K WP/null/null/null/null/1|ꓘ PB/null/null/null/null/1|K PB/null/WP 2/null/null/2|ꓘ WP/null/null/null/null/1"
+  },
+  {
+    "ac": "AC2",
+    "name": "cell order is result, SB, WP/PB, CS",
+    "ok": true,
+    "detail": "at-bat-note,at-bat-sb,at-bat-pb / at-bat-note,at-bat-wp,at-bat-cs"
+  },
+  {
+    "ac": "AC2",
+    "name": "cell accessible name names the wild pitch and passed ball",
+    "ok": true,
+    "detail": "aria=\"Batting slot 6, inning 2: BB, reached 3rd, wild pitch 2nd, passed ball 3rd\""
+  },
+  {
+    "ac": "AC2",
+    "name": "after reload cells show the same WP / PB / K WP text and diamonds",
+    "ok": true,
+    "detail": "1B/null/WP 2/null/null/2|1B/SB 2/null/PB 3,4/null/4|BB/null/WP 2/PB 3/null/3|1B/null/WP 2/null/CS 2-5/2|1B/null/null/null/null/1|K WP/null/null/null/null/1|ꓘ PB/null/null/null/null/1|K PB/null/WP 2/null/null/2|ꓘ WP/null/null/null/null/1"
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":1,\"wp\":[2]} (WP above bases reached) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must be at or below bases reached: the runner never got there.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":2,\"pb\":[3]} (PB 3rd above bases reached 2nd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must be at or below bases reached: the runner never got there.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"K\",\"b\":0,\"wp\":[1]} (K WP 1st but bases reached 0) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must be at or below bases reached: the runner never got there.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":1,\"wp\":[1]} (1st on a single) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"BB\",\"b\":1,\"pb\":[1]} (1st on a walk) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":2,\"pb\":[1]} (PB 1st on a single) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"2B\",\"b\":2,\"wp\":[2]} (2nd on a double) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, not on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"3B\",\"b\":4,\"pb\":[3]} (3rd on a triple) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, not on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"HR\",\"b\":4,\"wp\":[4]} (home on a home run) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, not on a wild pitch or passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":2,\"wp\":[3],\"cs\":3} (WP at the CS base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must come before the caught-stealing base.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":3,\"pb\":[4],\"cs\":4} (PB home at CS home) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must come before the caught-stealing base.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":2,\"wp\":[4],\"cs\":3} (WP past the CS base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must come before the caught-stealing base.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":3,\"sb\":[2],\"wp\":[2]} (stolen and WP on 2nd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A base is taken one way only: stolen, on a wild pitch or on a passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":3,\"sb\":[3],\"pb\":[3]} (stolen and PB on 3rd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A base is taken one way only: stolen, on a wild pitch or on a passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"1B\",\"b\":3,\"wp\":[3],\"pb\":[3]} (WP and PB on 3rd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A base is taken one way only: stolen, on a wild pitch or on a passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "{\"code\":\"K\",\"b\":1,\"wp\":[1],\"pb\":[1]} (K WP and PB on 1st) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A base is taken one way only: stolen, on a wild pitch or on a passed ball.\" cell=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "lowering bases reached below a saved PB 4 is refused and keeps 1B / SB 2 / PB 3,4",
+    "ok": true,
+    "detail": "msg=\"A wild pitch or passed ball base must be at or below bases reached: the runner never got there.\""
+  },
+  {
+    "ac": "AC4",
+    "name": "changing a saved K WP to 1B with WP 1st still ticked is refused and keeps K WP",
+    "ok": true,
+    "detail": "msg=\"Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball.\""
+  },
+  {
+    "ac": "AC5",
+    "name": "Clear on BB/WP 2/PB 3 and K PB/WP 2: blank cells, no WP/PB, no diamond after reload; reopen with nothing ticked",
+    "ok": true,
+    "detail": "/null/null/null/null/0|/null/null/null/null/0 reopen=\"|\" \"|\""
+  },
+  {
+    "ac": "AC5",
+    "name": "pre-migration at bats still unchanged after all edits and reloads",
+    "ok": true,
+    "detail": "K/null/null/null/null/0|1B/SB 2,3/null/null/null/3|GO 6-3/null/null/null/null/0|BB/null/null/null/CS 2-6/1|HR/null/null/null/null/4|ꓘ/null/null/null/null/0"
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]
