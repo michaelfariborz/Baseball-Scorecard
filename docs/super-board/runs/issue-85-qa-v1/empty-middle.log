@@ -1,0 +1,2 @@
+after reload headers=#,Name,Pos,Inn,1,2,3,3,4,5,6,6,6,7,8,9 column2-text=""
+remove inning 6 -> "That column holds at-bats. Clear them before removing it."; column 2 still there=true

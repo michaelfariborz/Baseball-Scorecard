@@ -1,0 +1,20 @@
+PASS AC5 pre-migration at bats show unchanged in their cells K/0|GO 4-6-3 DP/0|1B/3|BB/1|HR/4
+PASS AC5 pre-migration game shows one column per inning on both grids #,Name,Pos,Inn,1,2,3,4,5,6,7,8,9
+PASS AC5 old at bat edits in place (K to BB) and survives a reload BB
+PASS AC1 away headers gain a second "3" right after inning 3 #,Name,Pos,Inn,1,2,3,3,4,5,6,7,8,9
+PASS AC1 every slot gets an inning-3 column-2 cell 
+PASS AC1 any inning works: inning 7 also gains a column #,Name,Pos,Inn,1,2,3,3,4,5,6,7,7,8,9
+PASS AC3 home grid of the same game keeps one column per inning #,Name,Pos,Inn,1,2,3,4,5,6,7,8,9
+PASS AC2 extra-column dialog opens empty and names inning 3, column 2 title="Cub Batter1, inning 3, column 2" ticked=0
+PASS AC2 slot 1 shows 2B in column 1 and GO 6-3 in column 2; slot 2 shows 1B in column 2 2B|GO 6-3|1B
+PASS AC5 HITS and LOB for inning 3 are one box spanning 2 columns; inning 4 spans 1; 9 HITS boxes hits3=2 lob3=2 hits4=1 boxes=9
+PASS AC4 empty extra column in inning 5 is removed added=true
+PASS AC4 removing inning 3 column 2 (holds at bats) is refused with a message, column stays msg="That column holds at-bats. Clear them before removing it."
+PASS AC2 after a reload both inning-3 at bats show in their own columns 2B|GO 6-3|1B
+PASS AC4 after a reload the column holding at bats still shows and the empty inning-5 one is gone #,Name,Pos,Inn,1,2,3,3,4,5,6,7,8,9
+PASS AC5 inning 3 HITS 4 / LOB 2 kept after reload as one value each 4/2
+PASS AC3 home grid still one column per inning after reload #,Name,Pos,Inn,1,2,3,4,5,6,7,8,9
+PASS AC3 game 1 away and home grids keep one column per inning #,Name,Pos,Inn,1,2,3,4,5,6,7,8,9
+PASS EDGE empty column 2 between column 1 and a saved column 3 (observation, not an AC gate) headers after reload=#,Name,Pos,Inn,1,2,3,3,4,5,6,6,6,7,8,9
+PASS EDGE remove on inning 6 refers to the last column (holds K), message shown msg="That column holds at-bats. Clear them before removing it."
+PASS ALL no page errors, no console errors, no 5xx {"pageErrors":[],"consoleErrors":[],"bad":[]}
