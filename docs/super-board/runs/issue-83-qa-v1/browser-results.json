@@ -1,0 +1,128 @@
+[
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats show unchanged with no SB line",
+    "ok": true,
+    "detail": "K/0/null/null|GO 4-6-3 DP/0/null/null|1B/2/null/null|BB/1/null/CS 2-6|E6/1/null/null|HR/4/null/null"
+  },
+  {
+    "ac": "AC4",
+    "name": "old 1B (reached 2nd) cell reopens with no stolen base ticked",
+    "ok": true,
+    "detail": "ticked=\"\""
+  },
+  {
+    "ac": "AC1",
+    "name": "dialog has a \"Stolen bases\" choice of 2nd, 3rd, home, none ticked",
+    "ok": true,
+    "detail": "legend=Stolen bases labels=2nd,3rd,home"
+  },
+  {
+    "ac": "AC1",
+    "name": "reopen shows saved steals: 1B ticks 2nd+3rd; 1B/CS ticks 2nd; ticked-then-unticked ticks none",
+    "ok": true,
+    "detail": "1B|2,3 / 2 / \"\""
+  },
+  {
+    "ac": "AC2",
+    "name": "cells show 1B+SB 2,3; 1B+SB 2+CS 3-6; BB+SB 2,3,4; 2B+SB 3; 1B alone; diamonds still to bases reached",
+    "ok": true,
+    "detail": "1B/SB 2,3/null/3|1B/SB 2/CS 3-6/2|BB/SB 2,3,4/null/4|2B/SB 3/null/3|1B/null/null/2"
+  },
+  {
+    "ac": "AC2",
+    "name": "cell order is result, SB, CS",
+    "ok": true,
+    "detail": "at-bat-note,at-bat-sb,at-bat-cs"
+  },
+  {
+    "ac": "AC2",
+    "name": "cell accessible name names the steal before the caught stealing",
+    "ok": true,
+    "detail": "aria=\"Batting slot 4, inning 2: 1B, reached 2nd, stole 2nd, caught stealing 3rd 3-6\""
+  },
+  {
+    "ac": "AC2",
+    "name": "after reload cells show the same SB / CS text and diamonds",
+    "ok": true,
+    "detail": "1B/SB 2,3/null/3|1B/SB 2/CS 3-6/2|BB/SB 2,3,4/null/4|2B/SB 3/null/3|1B/null/null/2"
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 1 SB 2 CS 0 (above bases reached) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 2 SB 2,3 CS 0 (3rd above bases reached 2nd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "K reached 0 SB 2 CS 0 (not on base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "2B reached 2 SB 2 CS 0 (2nd on a double) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, so it was not stolen.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "2B reached 3 SB 2,3 CS 0 (2nd on a double with 3rd) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, so it was not stolen.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "3B reached 4 SB 3 CS 0 (3rd on a triple) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, so it was not stolen.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "HR reached 4 SB 4 CS 0 (home on a home run) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"The batter reached that base on the hit itself, so it was not stolen.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 2 SB 2,3 CS 3 (steal at the CS base) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A stolen base must come before the caught-stealing base.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "1B reached 3 SB 4 CS 4 (home at CS home) refused, dialog stays open, cell blank",
+    "ok": true,
+    "detail": "msg=\"A stolen base must come before the caught-stealing base.\" cell=\"\""
+  },
+  {
+    "ac": "AC3",
+    "name": "lowering bases reached below a saved steal is refused and keeps 1B / SB 2,3",
+    "ok": true,
+    "detail": "msg=\"A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.\""
+  },
+  {
+    "ac": "AC4",
+    "name": "Clear on BB / SB 2,3,4: blank cell, no SB, no diamond after reload; reopens with no steal ticked",
+    "ok": true,
+    "detail": "|null|0 reopen=\"\""
+  },
+  {
+    "ac": "AC4",
+    "name": "pre-migration at bats still unchanged after all edits and reloads",
+    "ok": true,
+    "detail": "K/0/null/null|GO 4-6-3 DP/0/null/null|1B/2/null/null|BB/1/null/CS 2-6|E6/1/null/null|HR/4/null/null"
+  },
+  {
+    "ac": "green",
+    "name": "no console errors / page errors / 5xx / 401 / 403",
+    "ok": true,
+    "detail": "{\"consoleErrors\":[],\"pageErrors\":[],\"bad\":[]}"
+  }
+]

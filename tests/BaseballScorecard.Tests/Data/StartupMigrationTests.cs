@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -130,6 +131,37 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         Assert.Equal(["20261024210657_AddRosters"], await check.Database.GetAppliedMigrationsAsync());
         Assert.Contains(_logs.Entries, e => e.Level == LogLevel.Information && e.Message.Contains("20261024210657_AddRosters"));
         Assert.DoesNotContain(_logs.Entries, e => e.Message.Contains("Applied migration 20261024213132_AddGames"));
+    }
+
+    [Fact]
+    public async Task At_bats_saved_before_AddStolenBases_load_unchanged_with_no_steals_after_it_applies()
+    {
+        await using var services = Services(_emptyDb);
+        await services.MigrateScorecardDbAsync();
+        var factory = services.GetRequiredService<IDbContextFactory<ScorecardDbContext>>();
+        var away = new Roster { TeamName = "Cubs", Year = 2026 };
+        var home = new Roster { TeamName = "Sox", Year = 2026 };
+        Assert.Null(await new RosterService(factory).SaveAsync(away));
+        Assert.Null(await new RosterService(factory).SaveAsync(home));
+        var game = new Game { Year = 2026, Date = new DateOnly(2026, 4, 2), AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9 };
+        Assert.Null(await new GameService(factory).CreateAsync(game));
+        var grid = new BattingGridService(factory);
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, "2B", 2));
+        // Back to the schema before this change: the rows now have no StolenBases column at all.
+        await using (var db = ContextOn(_emptyDb))
+        {
+            await db.GetService<IMigrator>().MigrateAsync("20261114155814_AddPositionChanges");
+            Assert.Equal(["20261116002642_AddStolenBases"], await db.Database.GetPendingMigrationsAsync());
+        }
+
+        await services.MigrateScorecardDbAsync();
+
+        var notes = (await grid.ListNotesAsync(game.Id)).OrderBy(n => n.BattingOrder).ToList();
+        Assert.Equal([("1B", 1, 2, "2-6"), ("2B", 2, 0, "")],
+            notes.Select(n => (n.Note, n.BasesReached, n.CaughtStealingBase, n.CaughtStealingFielders)));
+        Assert.All(notes, n => Assert.Empty(n.StolenBases));
+        Assert.All(notes, n => Assert.Equal("", AtBatResult.StolenBasesText(n)));
     }
 
     [Fact]
