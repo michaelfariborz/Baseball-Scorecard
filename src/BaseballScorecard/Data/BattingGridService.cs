@@ -29,6 +29,13 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         "Caught stealing must be the next base after bases reached: 2nd after 1st, 3rd after 2nd, home after 3rd.";
     public const string CaughtStealingFieldersMessage =
         "Caught stealing fielders must be position numbers 1–9, like 26 or 2-6.";
+    public const string StolenBaseRangeMessage = "Stolen bases must be 2nd, 3rd or home.";
+    public const string StolenBaseOnHitMessage =
+        "The batter reached that base on the hit itself, so it was not stolen.";
+    public const string StolenBaseCaughtMessage =
+        "A stolen base must come before the caught-stealing base.";
+    public const string StolenBaseNotReachedMessage =
+        "A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.";
     public const string HitsLobMessage = "HITS and LOB must be whole numbers of 0 or more.";
     public const string SlotMessage = "That batting slot is not part of the lineup.";
     public const string InningMessage = "That inning is not part of this game.";
@@ -54,12 +61,13 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     /// Saves the note, bases reached (0–4), fielders, DP / TP and caught stealing for one slot's inning, text trimmed.
     /// Fielders go only with a result that records them (<see cref="AtBatResult.Fielders"/>); leaving them out
     /// saves them blank. A caught stealing (target base 2–4, 0 none) needs the batter on base short of home and is
-    /// at the next base; its fielders are saved only with a target base. Blank (or null) note clears the cell,
-    /// everything else included.
+    /// at the next base; its fielders are saved only with a target base. Stolen bases (2–4) are saved as a sorted set,
+    /// each past the base the play reached, short of the caught-stealing base and at or below bases reached.
+    /// Blank (or null) note clears the cell, everything else included.
     /// </summary>
     public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
         int basesReached = 0, string? fieldersText = null, string? multiOutText = null,
-        int caughtStealingBase = 0, string? caughtStealingFieldersText = null)
+        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null)
     {
         var note = noteText?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
@@ -84,6 +92,11 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         if (note != "" && caughtStealingBase != 0 && CheckCaughtStealing(basesReached, caughtStealingBase, csFielders) is { } csError)
         {
             return csError;
+        }
+        int[] steals = [.. (stolenBases ?? []).Distinct().Order()];
+        if (note != "" && CheckStolenBases(note, basesReached, caughtStealingBase, steals) is { } sbError)
+        {
+            return sbError;
         }
         if (battingOrder < 1 || battingOrder > LineupService.SlotCount)
         {
@@ -116,6 +129,7 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
             row.MultiOut = multiOut;
             row.CaughtStealingBase = caughtStealingBase;
             row.CaughtStealingFielders = csFielders;
+            row.StolenBases = steals;
         }
         return await SaveAsync(db);
     }
@@ -203,6 +217,24 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
             return CaughtStealingBaseMessage;
         }
         return fielders.Length <= FieldersMaxLength && FielderSequence().IsMatch(fielders) ? null : CaughtStealingFieldersMessage;
+    }
+
+    /// <summary>The message when a stolen base does not fit the play, the caught stealing or bases reached; null when all fit.</summary>
+    private static string? CheckStolenBases(string note, int basesReached, int caughtStealingBase, int[] steals)
+    {
+        if (steals.Any(b => b < 2 || b > MaxBasesReached))
+        {
+            return StolenBaseRangeMessage;
+        }
+        if (steals.Any(b => b <= AtBatResult.BaseOnPlay(note)))
+        {
+            return StolenBaseOnHitMessage;
+        }
+        if (caughtStealingBase != 0 && steals.Any(b => b >= caughtStealingBase))
+        {
+            return StolenBaseCaughtMessage;
+        }
+        return steals.Any(b => b > basesReached) ? StolenBaseNotReachedMessage : null;
     }
 
     /// <summary>"463" and "46-3" become "4-6-3". Anything that is not digits 1–9 in hyphen-separated groups is left as typed, for the check to refuse.</summary>

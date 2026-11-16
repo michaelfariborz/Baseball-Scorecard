@@ -68,6 +68,10 @@ namespace BaseballScorecard.Data.Migrations
                     b.Property<int>("RosterId")
                         .HasColumnType("integer");
 
+                    b.PrimitiveCollection<int[]>("StolenBases")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RosterId");

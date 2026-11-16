@@ -47,4 +47,10 @@ public class BattingNote
     /// <summary>Fielders on the caught-stealing throw, hyphen-joined (<c>2-6</c>); blank with no caught stealing.</summary>
     [MaxLength(BattingGridService.FieldersMaxLength)]
     public string CaughtStealingFielders { get; set; } = "";
+
+    /// <summary>
+    /// The bases the runner stole, sorted: 2 second, 3 third, 4 home. Each is at or below <see cref="BasesReached"/>,
+    /// past the base the hit itself reached, and short of any <see cref="CaughtStealingBase"/>. Empty with no steals.
+    /// </summary>
+    public int[] StolenBases { get; set; } = [];
 }

@@ -44,4 +44,11 @@ public sealed record AtBatResult(string Code, string Label, FielderEntry Fielder
     /// <summary>What the cell shows under the result for a caught stealing: <c>CS 2-6</c>, or blank when there is none.</summary>
     public static string CaughtStealingText(BattingNote note) =>
         note.CaughtStealingBase == 0 ? "" : $"CS {note.CaughtStealingFielders}";
+
+    /// <summary>What the cell shows for stolen bases: <c>SB 2</c> or <c>SB 2,3</c>, or blank when there are none.</summary>
+    public static string StolenBasesText(BattingNote note) =>
+        note.StolenBases.Length == 0 ? "" : $"SB {string.Join(',', note.StolenBases)}";
+
+    /// <summary>The base the batter reached on the play itself: 2 on a double, 3 on a triple, 4 on a home run, else 1.</summary>
+    public static int BaseOnPlay(string note) => note switch { "2B" => 2, "3B" => 3, "HR" => 4, _ => 1 };
 }

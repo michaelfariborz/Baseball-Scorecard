@@ -593,4 +593,126 @@ public class AtBatDialogFormDbTests : BunitContext
         Assert.Equal("0", CheckedCaughtStealing(cut, "home"));
         Assert.Empty(cut.FindAll("#home-at-bat-cs-fielders"));
     }
+
+    private static string[] CheckedSteals(IRenderedComponent<GamePage> cut, string side) =>
+        [.. cut.FindAll($"#{side}-at-bat-sb input[type=checkbox]").Where(c => c.HasAttribute("checked")).Select(c => c.GetAttribute("value")!)];
+
+    private static void ToggleSteal(IRenderedComponent<GamePage> cut, string side, int target)
+    {
+        var box = cut.FindAll($"#{side}-at-bat-sb input[type=checkbox]").Single(c => c.GetAttribute("value") == $"{target}");
+        var wasChecked = box.HasAttribute("checked");
+        box.Change(!wasChecked);
+        cut.WaitForAssertion(() => Assert.Equal(!wasChecked, CheckedSteals(cut, side).Contains($"{target}")));
+    }
+
+    [Fact]
+    public async Task Dialog_offers_stolen_bases_2nd_3rd_home_none_checked()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+
+        Open(cut, "away", 1, 1);
+
+        Assert.Equal(["2", "3", "4"], cut.FindAll("#away-at-bat-sb input[type=checkbox]").Select(c => c.GetAttribute("value")));
+        Assert.Contains("Stolen bases", cut.Find("#away-at-bat-sb").TextContent);
+        Assert.Empty(CheckedSteals(cut, "away"));
+    }
+
+    [Fact]
+    public async Task Saving_a_single_and_a_steal_of_2nd_shows_SB_2_after_reload_and_on_reopen()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 3, 2);
+        Pick(cut, "away", "1B");
+        PickBases(cut, "away", 2);
+        ToggleSteal(cut, "away", 2);
+
+        cut.Find("#away-at-bat-save").Click();
+
+        WaitClosed(cut, "away");
+        const string cell = "away-slot-3-inning-2-note";
+        cut.WaitForAssertion(() => Assert.Equal("SB 2", CellPart(cut, cell, "at-bat-sb")));
+        Assert.Equal("1B", CellPart(cut, cell, "at-bat-note"));
+        Assert.Equal(Diamond[..2], Segments(cut, cell));
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal(("1B", "SB 2"), (CellPart(reloaded, cell, "at-bat-note"), CellPart(reloaded, cell, "at-bat-sb")));
+        Assert.Contains("stole 2nd", reloaded.Find($"#{cell}").GetAttribute("aria-label"));
+        Open(reloaded, "away", 3, 2);
+        Assert.Equal(["2"], CheckedSteals(reloaded, "away"));
+    }
+
+    [Fact]
+    public async Task A_steal_of_2nd_then_caught_stealing_3rd_shows_the_result_SB_and_CS_in_that_order()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 2, 3);
+        Pick(cut, "home", "1B");
+        PickBases(cut, "home", 2);
+        ToggleSteal(cut, "home", 2);
+        PickCaughtStealing(cut, "home", 3);
+        cut.WaitForElement("#home-at-bat-cs-fielders").Change("36");
+
+        cut.Find("#home-at-bat-save").Click();
+
+        WaitClosed(cut, "home");
+        const string cell = "home-slot-2-inning-3-note";
+        cut.WaitForAssertion(() => Assert.Equal("SB 2", CellPart(cut, cell, "at-bat-sb")));
+        Assert.Equal(["at-bat-note", "at-bat-sb", "at-bat-cs"],
+            cut.FindAll($"#{cell} span").Select(e => e.ClassName));
+        Assert.Equal(("1B", "CS 3-6"), (CellPart(cut, cell, "at-bat-note"), CellPart(cut, cell, "at-bat-cs")));
+    }
+
+    [Theory]
+    [InlineData("1B", 1, new[] { 2 }, 0, BattingGridService.StolenBaseNotReachedMessage)]
+    [InlineData("2B", 2, new[] { 2 }, 0, BattingGridService.StolenBaseOnHitMessage)]
+    [InlineData("1B", 2, new[] { 2, 3 }, 3, BattingGridService.StolenBaseCaughtMessage)]
+    public async Task Stolen_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(string code, int bases,
+        int[] steals, int csBase, string message)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 1, 1);
+        Pick(cut, "home", code);
+        PickBases(cut, "home", bases);
+        foreach (var steal in steals)
+        {
+            ToggleSteal(cut, "home", steal);
+        }
+        if (csBase != 0)
+        {
+            PickCaughtStealing(cut, "home", csBase);
+            cut.WaitForElement("#home-at-bat-cs-fielders").Change("25");
+        }
+
+        cut.Find("#home-at-bat-save").Click();
+
+        cut.WaitForAssertion(() => Assert.Equal(message, cut.Find("#home-at-bat-error").TextContent));
+        Assert.NotEmpty(cut.FindAll("#home-at-bat-dialog"));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+    }
+
+    [Fact]
+    public async Task Clear_removes_stolen_bases_and_older_at_bats_show_unchanged()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, "1B", 3, stolenBases: [2, 3]));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, "1B", 2));
+        var cut = RenderGame(game.Id);
+        Assert.Equal("SB 2,3", CellPart(cut, "home-slot-4-inning-5-note", "at-bat-sb"));
+        Assert.Empty(cut.FindAll("#home-slot-5-inning-5-note .at-bat-sb"));
+        Assert.Equal("1B", Cell(cut, "home-slot-5-inning-5-note"));
+
+        Open(cut, "home", 4, 5);
+        Assert.Equal(["2", "3"], CheckedSteals(cut, "home"));
+        cut.Find("#home-at-bat-clear").Click();
+
+        WaitClosed(cut, "home");
+        cut.WaitForAssertion(() => Assert.Equal("", Cell(cut, "home-slot-4-inning-5-note")));
+        Assert.Empty(cut.FindAll("#home-slot-4-inning-5-note .at-bat-sb"));
+        Assert.Equal("1B", Assert.Single(await _grid.ListNotesAsync(game.Id)).Note);
+        Open(cut, "home", 4, 5);
+        Assert.Empty(CheckedSteals(cut, "home"));
+    }
 }

@@ -419,4 +419,88 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         Assert.Equal(expected, AtBatResult.CaughtStealingText(note));
         Assert.Equal("1B", AtBatResult.CellText(note));
     }
+
+    [Theory]
+    [InlineData("1B", 2, new[] { 2 }, new[] { 2 })]
+    [InlineData("1B", 3, new[] { 3, 2 }, new[] { 2, 3 })]
+    [InlineData("BB", 4, new[] { 2, 3, 4, 3 }, new[] { 2, 3, 4 })]
+    [InlineData("2B", 3, new[] { 3 }, new[] { 3 })]
+    [InlineData("3B", 4, new[] { 4 }, new[] { 4 })]
+    public async Task Stolen_bases_save_as_a_sorted_set_and_reload(string code, int bases, int[] stolen, int[] saved)
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases, stolenBases: stolen));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal((code, bases), (note.Note, note.BasesReached));
+        Assert.Equal(saved, note.StolenBases);
+    }
+
+    [Fact]
+    public async Task Stolen_bases_go_with_a_caught_stealing_at_a_later_base()
+    {
+        var g = await NewGameAsync();
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 2,
+            caughtStealingBase: 3, caughtStealingFieldersText: "26", stolenBases: [2]));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal((2, 3, "2-6"), (note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
+        Assert.Equal([2], note.StolenBases);
+    }
+
+    [Theory]
+    [InlineData("1B", 1, new[] { 1 }, 0, BattingGridService.StolenBaseRangeMessage)]
+    [InlineData("1B", 4, new[] { 5 }, 0, BattingGridService.StolenBaseRangeMessage)]
+    [InlineData("K", 0, new[] { 2 }, 0, BattingGridService.StolenBaseNotReachedMessage)]
+    [InlineData("1B", 1, new[] { 2 }, 0, BattingGridService.StolenBaseNotReachedMessage)]
+    [InlineData("1B", 2, new[] { 2, 3 }, 0, BattingGridService.StolenBaseNotReachedMessage)]
+    [InlineData("2B", 2, new[] { 2 }, 0, BattingGridService.StolenBaseOnHitMessage)]
+    [InlineData("3B", 4, new[] { 3 }, 0, BattingGridService.StolenBaseOnHitMessage)]
+    [InlineData("HR", 4, new[] { 4 }, 0, BattingGridService.StolenBaseOnHitMessage)]
+    [InlineData("1B", 2, new[] { 2, 3 }, 3, BattingGridService.StolenBaseCaughtMessage)]
+    [InlineData("1B", 3, new[] { 4 }, 4, BattingGridService.StolenBaseCaughtMessage)]
+    public async Task Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(string code, int bases,
+        int[] stolen, int csBase, string message)
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
+            caughtStealingBase: csBase, caughtStealingFieldersText: csBase == 0 ? null : "26", stolenBases: stolen));
+
+        var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
+        Assert.Equal(("BB", 1), (note.Note, note.BasesReached));
+        Assert.Empty(note.StolenBases);
+    }
+
+    [Fact]
+    public async Task Stolen_bases_default_to_none_and_saving_without_them_or_clearing_removes_them()
+    {
+        var g = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, "1B", 1));
+        Assert.Empty(Assert.Single(await _grid.ListNotesAsync(g.Id)).StolenBases);
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, stolenBases: [2, 3]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3));
+        Assert.Empty((await _grid.ListNotesAsync(g.Id)).Single(n => n.BattingOrder == 1).StolenBases);
+
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, stolenBases: [2, 3]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.DoesNotContain(await _grid.ListNotesAsync(g.Id), n => n.BattingOrder == 1);
+    }
+
+    [Theory]
+    [InlineData(new[] { 2 }, "SB 2")]
+    [InlineData(new[] { 2, 3 }, "SB 2,3")]
+    [InlineData(new[] { 2, 3, 4 }, "SB 2,3,4")]
+    [InlineData(new int[0], "")]
+    public void Stolen_bases_text_shows_SB_and_the_bases(int[] stolen, string expected)
+    {
+        var note = new BattingNote { Note = "1B", BasesReached = 4, StolenBases = stolen };
+
+        Assert.Equal(expected, AtBatResult.StolenBasesText(note));
+        Assert.Equal("1B", AtBatResult.CellText(note));
+    }
 }
