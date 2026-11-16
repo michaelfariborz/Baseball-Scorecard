@@ -1,0 +1,19 @@
+  Determining projects to restore...
+  Restored <repo>/src/BaseballScorecard/BaseballScorecard.csproj (in 507 ms).
+  Restored <repo>/tests/BaseballScorecard.Tests/BaseballScorecard.Tests.csproj (in 507 ms).
+  BaseballScorecard -> <repo>/src/BaseballScorecard/bin/Debug/net10.0/BaseballScorecard.dll
+  BaseballScorecard.Tests -> <repo>/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:09.91
+Test run for <repo>/tests/BaseballScorecard.Tests/bin/Debug/net10.0/BaseballScorecard.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.2 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+Results File: <scratch>/results.trx
+
+Passed!  - Failed:     0, Passed:   572, Skipped:     0, Total:   572, Duration: 37 s - BaseballScorecard.Tests.dll (net10.0)
