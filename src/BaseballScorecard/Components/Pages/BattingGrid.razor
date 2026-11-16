@@ -8,6 +8,9 @@
    per inning, typed by the scorer and saved on change. Each slot lists its starter, then any substitutes with the
    inning they came in; the slot's at-bat cells span those rows and belong to whoever held the slot that inning.
    Pos lists each player's positions in order: where he started, then each position change.
+   An inning shows column 1, each column holding a saved at-bat, and any the scorer added this visit, in order and
+   numbered by position; the scorer can add an extra column when the team bats around, and remove an empty one wherever
+   it sits. HITS and LOB span all of an inning's columns.
    Side ("away" / "home") prefixes every element id. *@
 <section id="@Side-batting-grid">
     <h2>@TeamName batting</h2>
@@ -27,7 +30,10 @@
                     <th scope="col">Inn</th>
                     @for (var inning = 1; inning <= Game.Innings; inning++)
                     {
-                        <th scope="col" class="inning-header">@inning</th>
+                        foreach (var _ in ColumnsOf(inning))
+                        {
+                            <th scope="col" class="inning-header">@inning</th>
+                        }
                     }
                 </tr>
             </thead>
@@ -43,37 +49,44 @@
                         <td class="player-cell"></td>
                         @for (var inning = 1; inning <= Game.Innings; inning++)
                         {
-                            var n = inning;
-                            var id = $"{Side}-slot-{slot}-inning-{n}-note";
-                            var note = CellText(slot, n);
-                            var bases = Bases(slot, n);
-                            var cs = CaughtStealing(slot, n);
-                            var sb = StolenBases(slot, n);
-                            <td rowspan="@row.Players.Count">
-                                <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
-                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(sb.Length == 0 ? "" : $", stole {string.Join(", ", sb.Select(b => BaseNames[b]))}")}{(cs is { } c ? $", caught stealing {BaseNames[c.CaughtStealingBase]} {c.CaughtStealingFielders}" : "")}")"
-                                        @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">
-                                    @if (bases > 0)
-                                    {
-                                        <svg class="bases-diamond" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-                                            @for (var i = 0; i < bases; i++)
-                                            {
-                                                var (x1, y1, x2, y2) = DiamondSegments[i];
-                                                <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" />
-                                            }
-                                        </svg>
-                                    }
-                                    <span class="at-bat-note">@note</span>
-                                    @if (sb.Length > 0)
-                                    {
-                                        <span class="at-bat-sb">@AtBatResult.StolenBasesText(notes[(slot, n)])</span>
-                                    }
-                                    @if (cs is not null)
-                                    {
-                                        <span class="at-bat-cs">@AtBatResult.CaughtStealingText(cs)</span>
-                                    }
-                                </button>
-                            </td>
+                            var columns = ColumnsOf(inning);
+                            for (var col = 0; col < columns.Count; col++)
+                            {
+                                var n = inning;
+                                var c = columns[col];
+                                var pos = col + 1;
+                                var key = (slot, n, c);
+                                var id = CellId(slot, n, pos);
+                                var note = CellText(key);
+                                var bases = Bases(key);
+                                var cs = CaughtStealing(key);
+                                var sb = StolenBases(key);
+                                <td rowspan="@row.Players.Count">
+                                    <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
+                                            aria-label="@($"Batting slot {slot}, inning {n}{ColumnText(pos)}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(sb.Length == 0 ? "" : $", stole {string.Join(", ", sb.Select(b => BaseNames[b]))}")}{(cs is { } x ? $", caught stealing {BaseNames[x.CaughtStealingBase]} {x.CaughtStealingFielders}" : "")}")"
+                                            @ref="cellRefs[id]" @onclick="() => Open(id, row, n, c, pos)">
+                                        @if (bases > 0)
+                                        {
+                                            <svg class="bases-diamond" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                                                @for (var i = 0; i < bases; i++)
+                                                {
+                                                    var (x1, y1, x2, y2) = DiamondSegments[i];
+                                                    <line x1="@x1" y1="@y1" x2="@x2" y2="@y2" />
+                                                }
+                                            </svg>
+                                        }
+                                        <span class="at-bat-note">@note</span>
+                                        @if (sb.Length > 0)
+                                        {
+                                            <span class="at-bat-sb">@AtBatResult.StolenBasesText(notes[key])</span>
+                                        }
+                                        @if (cs is not null)
+                                        {
+                                            <span class="at-bat-cs">@AtBatResult.CaughtStealingText(cs)</span>
+                                        }
+                                    </button>
+                                </td>
+                            }
                         }
                     </tr>
                     @foreach (var sub in row.Players.Skip(1))
@@ -97,7 +110,7 @@
                         var hitsId = $"{Side}-inning-{n}-hits";
                         var lobId = $"{Side}-inning-{n}-lob";
                         saved.TryGetValue(n, out var t);
-                        <td>
+                        <td colspan="@ColumnsOf(n).Count">
                             <input id="@hitsId" type="text" inputmode="numeric" size="2"
                                    aria-label="@TeamName HITS, inning @n"
                                    value="@Text(hitsId, t?.Hits?.ToString())"
@@ -111,6 +124,14 @@
                 </tr>
             </tbody>
         </table>
+
+        <fieldset id="@Side-extra-column" class="add-sub">
+            <legend>@TeamName batted around</legend>
+            <label for="@Side-extra-inning">Inning</label>
+            <input id="@Side-extra-inning" type="number" min="1" max="@Game.Innings" @bind="extraInning" />
+            <button id="@Side-extra-add" type="button" @onclick="AddColumn">Add column</button>
+            <button id="@Side-extra-remove" type="button" @onclick="RemoveColumn">Remove empty column</button>
+        </fieldset>
 
         <fieldset id="@Side-add-sub" class="add-sub">
             <legend>Add @TeamName substitute</legend>
@@ -188,7 +209,7 @@
         <div id="@Side-at-bat-dialog" class="at-bat-dialog" role="dialog" aria-modal="true"
              aria-labelledby="@Side-at-bat-title" tabindex="-1" @ref="dialogRef" @onkeydown="OnDialogKeyDown">
             <button id="@Side-at-bat-close" type="button" class="at-bat-close" aria-label="Close" @onclick="Close">×</button>
-            <h3 id="@Side-at-bat-title">@d.Batter, inning @d.Inning</h3>
+            <h3 id="@Side-at-bat-title">@d.Batter, inning @d.Inning@ColumnText(d.Position)</h3>
             <fieldset class="at-bat-results">
                 <legend>Result</legend>
                 @foreach (var r in AtBatResult.All)
@@ -316,15 +337,20 @@
     private Position posPosition = Position.Pitcher;
     private int? posInning;
     private bool loaded;
-    // Saved notes keyed by (slot, inning); saved HITS / LOB keyed by inning.
-    private Dictionary<(int, int), BattingNote> notes = [];
+    // Saved notes keyed by (slot, inning, column); saved HITS / LOB keyed by inning.
+    private Dictionary<(int Slot, int Inning, int Column), BattingNote> notes = [];
+    // Saved column numbers the scorer added (or kept while scoring) per inning; never saved, so an empty one goes on
+    // reload.
+    private Dictionary<int, SortedSet<int>> shownColumns = [];
+    private int? extraInning;
     private Dictionary<int, InningHitsLob> saved = [];
     // What a rejected input shows instead, keyed by element id: the text that was typed, so the scorer can fix it.
     private Dictionary<string, string> typed = [];
     private string? error;
 
     // The open at-bat dialog: which cell it edits, and the result picked so far (null = none).
-    private sealed record AtBatDialog(string CellId, int Slot, int Inning, string Batter);
+    // Column is the saved column number; Position is where it shows among the inning's columns.
+    private sealed record AtBatDialog(string CellId, int Slot, int Inning, int Column, int Position, string Batter);
     private AtBatDialog? dialog;
     private string? choice;
     private int basesChoice;
@@ -363,19 +389,78 @@
     private static readonly (int X1, int Y1, int X2, int Y2)[] DiamondSegments =
         [(10, 18, 18, 10), (18, 10, 10, 2), (10, 2, 2, 10), (2, 10, 10, 18)];
 
-    private string Note(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.Note : "";
+    // The inning's saved column numbers in order: column 1, each holding an at-bat, and each the scorer has shown.
+    // Gaps left by an empty column close up, since columns show by position.
+    private List<int> ColumnsOf(int inning)
+    {
+        var columns = new SortedSet<int>(notes.Keys.Where(k => k.Inning == inning).Select(k => k.Column)) { 1 };
+        if (shownColumns.TryGetValue(inning, out var shown))
+        {
+            columns.UnionWith(shown);
+        }
+        return [.. columns];
+    }
 
-    private string CellText(int slot, int inning) =>
-        notes.TryGetValue((slot, inning), out var note) ? AtBatResult.CellText(note) : "";
+    // The first column keeps the ids it always had; an extra one adds its position.
+    private string CellId(int slot, int inning, int position) =>
+        position == 1 ? $"{Side}-slot-{slot}-inning-{inning}-note" : $"{Side}-slot-{slot}-inning-{inning}-col-{position}-note";
 
-    private int Bases(int slot, int inning) => notes.TryGetValue((slot, inning), out var note) ? note.BasesReached : 0;
+    private static string ColumnText(int position) => position == 1 ? "" : $", column {position}";
+
+    private void Show(int inning, int column)
+    {
+        if (!shownColumns.TryGetValue(inning, out var shown))
+        {
+            shownColumns[inning] = shown = [];
+        }
+        shown.Add(column);
+    }
+
+    private string CellText((int, int, int) key) => notes.TryGetValue(key, out var note) ? AtBatResult.CellText(note) : "";
+
+    private int Bases((int, int, int) key) => notes.TryGetValue(key, out var note) ? note.BasesReached : 0;
 
     // The saved note when its cell records a caught stealing; null otherwise.
-    private BattingNote? CaughtStealing(int slot, int inning) =>
-        notes.TryGetValue((slot, inning), out var note) && note.CaughtStealingBase != 0 ? note : null;
+    private BattingNote? CaughtStealing((int, int, int) key) =>
+        notes.TryGetValue(key, out var note) && note.CaughtStealingBase != 0 ? note : null;
 
-    private int[] StolenBases(int slot, int inning) =>
-        notes.TryGetValue((slot, inning), out var note) ? note.StolenBases : [];
+    private int[] StolenBases((int, int, int) key) => notes.TryGetValue(key, out var note) ? note.StolenBases : [];
+
+    // Shows one more column for the inning picked in the batted-around form.
+    private void AddColumn()
+    {
+        if (extraInning is not { } n || n < 1 || n > Game.Innings)
+        {
+            error = BattingGridService.InningMessage;
+            return;
+        }
+        error = null;
+        Show(n, ColumnsOf(n)[^1] + 1);
+    }
+
+    // Hides the inning's last extra column with no at-bats saved in it, wherever it sits.
+    private void RemoveColumn()
+    {
+        if (extraInning is not { } n || n < 1 || n > Game.Innings)
+        {
+            error = BattingGridService.InningMessage;
+            return;
+        }
+        var columns = ColumnsOf(n);
+        if (columns.Count == 1)
+        {
+            error = $"Inning {n} has no extra column to remove.";
+            return;
+        }
+        var empty = columns.Skip(1).LastOrDefault(c => !notes.Keys.Any(k => k.Inning == n && k.Column == c));
+        if (empty == 0)
+        {
+            error = "That column holds at-bats. Clear them before removing it.";
+            return;
+        }
+        error = null;
+        shownColumns[n].Remove(empty);
+    }
 
     private void ToggleSteal(int b)
     {
@@ -470,21 +555,21 @@
     private async Task LoadCellsAsync()
     {
         notes = (await BattingGridService.ListNotesAsync(Game.Id))
-            .Where(x => x.RosterId == RosterId).ToDictionary(x => (x.BattingOrder, x.Inning));
+            .Where(x => x.RosterId == RosterId).ToDictionary(x => (x.BattingOrder, x.Inning, x.Column));
         saved = (await BattingGridService.ListHitsLobAsync(Game.Id))
             .Where(x => x.RosterId == RosterId).ToDictionary(x => x.Inning);
     }
 
     // A cell holding older free text (or nothing) opens with no result selected.
     // The dialog names whoever held the slot in that inning.
-    private void Open(string cellId, BatterRow row, int inning)
+    private void Open(string cellId, BatterRow row, int inning, int column, int position)
     {
         var owner = Name(SubstitutionService.OwnerAt(row.Players, inning));
         var batter = owner == "" ? $"Batting slot {row.Slot}" : owner;
-        dialog = new AtBatDialog(cellId, row.Slot, inning, batter);
-        choice = AtBatResult.Find(Note(row.Slot, inning))?.Code;
-        basesChoice = Bases(row.Slot, inning);
-        notes.TryGetValue((row.Slot, inning), out var saved);
+        dialog = new AtBatDialog(cellId, row.Slot, inning, column, position, batter);
+        notes.TryGetValue((row.Slot, inning, column), out var saved);
+        choice = AtBatResult.Find(saved?.Note ?? "")?.Code;
+        basesChoice = saved?.BasesReached ?? 0;
         fieldersChoice = saved?.Fielders ?? "";
         multiOutChoice = saved?.MultiOut ?? "";
         csBaseChoice = saved?.CaughtStealingBase ?? 0;
@@ -542,11 +627,13 @@
         var fielders = entry == FielderEntry.None ? null : fieldersChoice;
         var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
         dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
-            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice);
+            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice, d.Column);
         if (dialogError is not null)
         {
             return;
         }
+        // Clearing the last at-bat of an extra column keeps the column on screen until the page reloads.
+        Show(d.Inning, d.Column);
         await LoadCellsAsync();
         Close();
     }

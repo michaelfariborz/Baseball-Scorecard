@@ -115,7 +115,7 @@ public class ScorecardDbContext(DbContextOptions<ScorecardDbContext> options) : 
             .HasOne<Roster>().WithMany().HasForeignKey(n => n.RosterId)
             .OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<BattingNote>()
-            .HasIndex(n => new { n.GameId, n.RosterId, n.BattingOrder, n.Inning })
+            .HasIndex(n => new { n.GameId, n.RosterId, n.BattingOrder, n.Inning, n.Column })
             .IsUnique();
         modelBuilder.Entity<InningHitsLob>()
             .HasOne<Game>().WithMany().HasForeignKey(t => t.GameId)

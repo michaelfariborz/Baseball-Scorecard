@@ -44,6 +44,9 @@ namespace BaseballScorecard.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<int>("Column")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Fielders")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -76,7 +79,7 @@ namespace BaseballScorecard.Data.Migrations
 
                     b.HasIndex("RosterId");
 
-                    b.HasIndex("GameId", "RosterId", "BattingOrder", "Inning")
+                    b.HasIndex("GameId", "RosterId", "BattingOrder", "Inning", "Column")
                         .IsUnique();
 
                     b.ToTable("BattingNotes");

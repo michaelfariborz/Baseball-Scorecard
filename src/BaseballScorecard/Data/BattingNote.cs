@@ -3,9 +3,9 @@ using System.ComponentModel.DataAnnotations;
 namespace BaseballScorecard.Data;
 
 /// <summary>
-/// The scorer's free-text note (<c>1B</c>, <c>K</c>, <c>6-3</c>) for one batting-order slot in one inning.
+/// The scorer's free-text note (<c>1B</c>, <c>K</c>, <c>6-3</c>) for one batting-order slot in one column of one inning.
 /// Keyed by slot, not player, so a note stays with its slot when the lineup changes. A blank cell has no row.
-/// The (GameId, RosterId, BattingOrder, Inning) quadruple is unique.
+/// The (GameId, RosterId, BattingOrder, Inning, Column) quintuple is unique.
 /// </summary>
 public class BattingNote
 {
@@ -20,6 +20,12 @@ public class BattingNote
 
     /// <summary>1 to the game's Innings.</summary>
     public int Inning { get; set; }
+
+    /// <summary>
+    /// Which of the inning's columns the at bat sits in: 1 the first, 2 or more an extra column for a team that batted
+    /// around. The grid shows as many columns for an inning as its highest saved column.
+    /// </summary>
+    public int Column { get; set; } = 1;
 
     [MaxLength(BattingGridService.NoteMaxLength)]
     public string Note { get; set; } = "";
