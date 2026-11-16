@@ -326,10 +326,12 @@ h1:focus {
 }
 
 .at-bat-note,
+.at-bat-sb,
 .at-bat-cs {
     position: relative;
 }
 
+.at-bat-sb,
 .at-bat-cs {
     display: block;
     font-size: 0.75rem;

@@ -48,9 +48,10 @@
                             var note = CellText(slot, n);
                             var bases = Bases(slot, n);
                             var cs = CaughtStealing(slot, n);
+                            var sb = StolenBases(slot, n);
                             <td rowspan="@row.Players.Count">
                                 <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
-                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(cs is { } c ? $", caught stealing {BaseNames[c.CaughtStealingBase]} {c.CaughtStealingFielders}" : "")}")"
+                                        aria-label="@($"Batting slot {slot}, inning {n}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(sb.Length == 0 ? "" : $", stole {string.Join(", ", sb.Select(b => BaseNames[b]))}")}{(cs is { } c ? $", caught stealing {BaseNames[c.CaughtStealingBase]} {c.CaughtStealingFielders}" : "")}")"
                                         @ref="cellRefs[id]" @onclick="() => Open(id, row, n)">
                                     @if (bases > 0)
                                     {
@@ -63,6 +64,10 @@
                                         </svg>
                                     }
                                     <span class="at-bat-note">@note</span>
+                                    @if (sb.Length > 0)
+                                    {
+                                        <span class="at-bat-sb">@AtBatResult.StolenBasesText(notes[(slot, n)])</span>
+                                    }
                                     @if (cs is not null)
                                     {
                                         <span class="at-bat-cs">@AtBatResult.CaughtStealingText(cs)</span>
@@ -239,6 +244,18 @@
                     </label>
                 }
             </fieldset>
+            <fieldset id="@Side-at-bat-sb" class="at-bat-bases">
+                <legend>Stolen bases</legend>
+                @foreach (var stolen in StealableBases)
+                {
+                    var b = stolen;
+                    <label>
+                        <input type="checkbox" name="@Side-at-bat-sb" value="@b"
+                               checked="@sbChoice.Contains(b)" @onchange="() => ToggleSteal(b)" />
+                        @BaseNames[b]
+                    </label>
+                }
+            </fieldset>
             <fieldset id="@Side-at-bat-cs" class="at-bat-bases">
                 <legend>Caught stealing</legend>
                 @foreach (var target in CaughtStealingBases)
@@ -317,6 +334,8 @@
     // The caught-stealing target base (0 none, 2–4) and its fielders; the fielders are saved only with a base.
     private int csBaseChoice;
     private string csFieldersChoice = "";
+    // The bases ticked as stolen (2–4).
+    private SortedSet<int> sbChoice = [];
     private string? dialogError;
     private ElementReference dialogRef;
     private readonly Dictionary<string, ElementReference> cellRefs = [];
@@ -329,6 +348,9 @@
 
     // The bases a runner can be caught stealing: none, 2nd, 3rd, home (indexes into BaseNames).
     private static readonly int[] CaughtStealingBases = [0, 2, 3, 4];
+
+    // The bases a runner can steal: 2nd, 3rd, home (indexes into BaseNames).
+    private static readonly int[] StealableBases = [2, 3, 4];
 
     // The positions a player can move to: 1–9 and DH, never PH or PR.
     private static readonly Position[] FieldingPositions =
@@ -351,6 +373,17 @@
     // The saved note when its cell records a caught stealing; null otherwise.
     private BattingNote? CaughtStealing(int slot, int inning) =>
         notes.TryGetValue((slot, inning), out var note) && note.CaughtStealingBase != 0 ? note : null;
+
+    private int[] StolenBases(int slot, int inning) =>
+        notes.TryGetValue((slot, inning), out var note) ? note.StolenBases : [];
+
+    private void ToggleSteal(int b)
+    {
+        if (!sbChoice.Remove(b))
+        {
+            sbChoice.Add(b);
+        }
+    }
 
     private string Text(string id, string? savedText) => typed.TryGetValue(id, out var t) ? t : savedText ?? "";
 
@@ -456,6 +489,7 @@
         multiOutChoice = saved?.MultiOut ?? "";
         csBaseChoice = saved?.CaughtStealingBase ?? 0;
         csFieldersChoice = saved?.CaughtStealingFielders ?? "";
+        sbChoice = [.. saved?.StolenBases ?? []];
         dialogError = null;
         focusDialog = true;
     }
@@ -491,11 +525,13 @@
         multiOutChoice = "";
         csBaseChoice = 0;
         csFieldersChoice = "";
+        sbChoice = [];
         dialogError = null;
     }
 
-    // Saves the picked result's code, bases reached, (when the result records them) fielders and DP / TP, and the
-    // caught stealing, or clears the cell when code is null. A refused save keeps the dialog open with the message.
+    // Saves the picked result's code, bases reached, (when the result records them) fielders and DP / TP, the
+    // stolen bases and the caught stealing, or clears the cell when code is null. A refused save keeps the dialog open
+    // with the message.
     private async Task SaveResultAsync(string? code, int bases)
     {
         if (dialog is not { } d)
@@ -506,7 +542,7 @@
         var fielders = entry == FielderEntry.None ? null : fieldersChoice;
         var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
         dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
-            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice);
+            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice);
         if (dialogError is not null)
         {
             return;
