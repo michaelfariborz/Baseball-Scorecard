@@ -32,9 +32,9 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "6-3"));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 9, 9, " BB "));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("6-3")));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 9, 9, new(" BB ")));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("K")));
 
         var notes = await NotesAsync(g.Id);
         Assert.Equal(3, notes.Count);
@@ -47,9 +47,9 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Saving_a_cell_again_replaces_its_note()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 3, "1B"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 3, new("1B")));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 3, "2B"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 3, new("2B")));
 
         Assert.Equal("2B", Assert.Single(await NotesAsync(g.Id)).Value);
     }
@@ -61,10 +61,10 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Blank_note_clears_the_cell(string? blank)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 4, 2, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 4, 2, new("K")));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 4, 2, blank));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 4, 2, blank));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 4, 2, new(blank)));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 4, 2, new(blank)));
 
         Assert.Empty(await NotesAsync(g.Id));
     }
@@ -75,9 +75,9 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         var g = await NewGameAsync();
         var twenty = new string('x', 20);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, twenty));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(twenty)));
         Assert.Equal(BattingGridService.NoteTooLongMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, twenty + "y"));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(twenty + "y")));
 
         Assert.Equal(twenty, Assert.Single(await NotesAsync(g.Id)).Value);
     }
@@ -91,7 +91,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync(innings: 7);
 
-        Assert.NotNull(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, slot, inning, "K"));
+        Assert.NotNull(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, slot, inning, new("K")));
 
         Assert.Empty(await NotesAsync(g.Id));
     }
@@ -145,7 +145,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
 
         Assert.Equal(BattingGridService.InningMessage, await _grid.SaveHitsAsync(g.Id, g.AwayRosterId, 8, "1"));
         Assert.Equal(BattingGridService.TeamNotInGameMessage, await _grid.SaveLobAsync(g.Id, other.HomeRosterId, 1, "1"));
-        Assert.Equal(BattingGridService.TeamNotInGameMessage, await _grid.SaveNoteAsync(g.Id, other.AwayRosterId, 1, 1, "K"));
+        Assert.Equal(BattingGridService.TeamNotInGameMessage, await _grid.SaveNoteAsync(g.Id, other.AwayRosterId, 1, 1, new("K")));
 
         Assert.Empty(await _grid.ListHitsLobAsync(g.Id));
         Assert.Empty(await NotesAsync(g.Id));
@@ -159,7 +159,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, "1B", bases));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, new("1B", bases)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("1B", bases), (note.Note, note.BasesReached));
@@ -170,7 +170,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, new("K")));
 
         Assert.Equal(0, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
     }
@@ -179,14 +179,14 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Saving_again_replaces_bases_reached_and_clearing_removes_it()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "2B", 2));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("2B", 2)));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "2B", 3));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("2B", 3)));
         Assert.Equal(3, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new(null)));
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "BB"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("BB")));
         Assert.Equal(0, Assert.Single(await _grid.ListNotesAsync(g.Id)).BasesReached);
     }
 
@@ -196,10 +196,10 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Bases_reached_outside_0_to_4_is_refused(int bases)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("1B", 1)));
 
         Assert.Equal(BattingGridService.BasesReachedMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "HR", bases));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("HR", bases)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("1B", 1), (note.Note, note.BasesReached));
@@ -217,7 +217,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, code, 0, $" {fielders} ", multiOut));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 3, 2, new(code, 0, $" {fielders} ", multiOut)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal((code, fielders, multiOut ?? ""), (note.Note, note.Fielders, note.MultiOut));
@@ -234,7 +234,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, typed));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, 0, typed)));
 
         Assert.Equal(saved, Assert.Single(await _grid.ListNotesAsync(g.Id)).Fielders);
     }
@@ -254,10 +254,10 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(string code, string fielders)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "GO", 0, "6-3"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("GO", 0, "6-3")));
 
         Assert.Equal(BattingGridService.FieldersMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, fielders));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, 0, fielders)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("GO", "6-3"), (note.Note, note.Fielders));
@@ -273,7 +273,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         var g = await NewGameAsync();
 
         Assert.Equal(BattingGridService.ErrorFielderMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "E", 0, fielder));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("E", 0, fielder)));
 
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
@@ -287,7 +287,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, "6", multiOut));
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, 0, "6", multiOut)));
 
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
@@ -301,7 +301,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         var g = await NewGameAsync();
 
         Assert.Equal(BattingGridService.NoFieldersMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, 0, "8"));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, 0, "8")));
 
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
@@ -310,16 +310,16 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Saving_a_result_without_fielders_or_clearing_removes_saved_fielders()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "GO", 0, "4-6-3", "DP"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("GO", 0, "4-6-3", "DP")));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 1)));
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("1B", "", ""), (note.Note, note.Fielders, note.MultiOut));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "FO", 0, "8", "DP"));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("FO", 0, "8", "DP")));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new(null)));
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "GO"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("GO")));
         note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("", ""), (note.Fielders, note.MultiOut));
     }
@@ -350,8 +350,8 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", bases,
-            caughtStealingBase: target, caughtStealingFieldersText: typed));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("1B", bases,
+            CaughtStealingBase: target, CaughtStealingFielders: typed)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("1B", bases, target, saved), (note.Note, note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
@@ -362,8 +362,8 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 1));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 1, "1B", 1, caughtStealingFieldersText: "26"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("1B", 1)));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 2, 1, new("1B", 1, CaughtStealingFielders: "26")));
 
         Assert.All(await _grid.ListNotesAsync(g.Id), n => Assert.Equal((0, ""), (n.CaughtStealingBase, n.CaughtStealingFielders)));
     }
@@ -384,10 +384,10 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         int target, string fielders, string message)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("BB", 1)));
 
-        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
-            caughtStealingBase: target, caughtStealingFieldersText: fielders));
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, bases,
+            CaughtStealingBase: target, CaughtStealingFielders: fielders)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("BB", 1, 0, ""), (note.Note, note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
@@ -397,14 +397,14 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Saving_without_caught_stealing_or_clearing_removes_it()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 1, CaughtStealingBase: 2, CaughtStealingFielders: "26")));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 1)));
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal((0, ""), (note.CaughtStealingBase, note.CaughtStealingFielders));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 1, CaughtStealingBase: 2, CaughtStealingFielders: "26")));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new(null)));
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
 
@@ -430,7 +430,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases, stolenBases: stolen));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, bases, StolenBases: stolen)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal((code, bases), (note.Note, note.BasesReached));
@@ -442,8 +442,8 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 2,
-            caughtStealingBase: 3, caughtStealingFieldersText: "26", stolenBases: [2]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("1B", 2,
+            CaughtStealingBase: 3, CaughtStealingFielders: "26", StolenBases: [2])));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal((2, 3, "2-6"), (note.BasesReached, note.CaughtStealingBase, note.CaughtStealingFielders));
@@ -465,10 +465,10 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         int[] stolen, int csBase, string message)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("BB", 1)));
 
-        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
-            caughtStealingBase: csBase, caughtStealingFieldersText: csBase == 0 ? null : "26", stolenBases: stolen));
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, bases,
+            CaughtStealingBase: csBase, CaughtStealingFielders: csBase == 0 ? null : "26", StolenBases: stolen)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("BB", 1), (note.Note, note.BasesReached));
@@ -479,15 +479,15 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Stolen_bases_default_to_none_and_saving_without_them_or_clearing_removes_them()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, new("1B", 1)));
         Assert.Empty(Assert.Single(await _grid.ListNotesAsync(g.Id)).StolenBases);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, stolenBases: [2, 3]));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3, StolenBases: [2, 3])));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3)));
         Assert.Empty((await _grid.ListNotesAsync(g.Id)).Single(n => n.BattingOrder == 1).StolenBases);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, stolenBases: [2, 3]));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3, StolenBases: [2, 3])));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new(null)));
         Assert.DoesNotContain(await _grid.ListNotesAsync(g.Id), n => n.BattingOrder == 1);
     }
 
@@ -508,16 +508,16 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task A_second_at_bat_in_an_extra_column_saves_apart_from_the_first()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, new("1B", 1)));
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, "GO", 0, "6-3", column: 2));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, new("GO", 0, "6-3"), column: 2));
 
         var notes = (await _grid.ListNotesAsync(g.Id)).OrderBy(n => n.Column).ToList();
         Assert.Equal(2, notes.Count);
         Assert.True(notes[0] is { Column: 1, Note: "1B", BasesReached: 1, Fielders: "" });
         Assert.True(notes[1] is { Column: 2, Note: "GO", BasesReached: 0, Fielders: "6-3", Inning: 3, BattingOrder: 1 });
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, null, column: 2));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 3, new(null), column: 2));
         Assert.Equal(1, Assert.Single(await _grid.ListNotesAsync(g.Id)).Column);
     }
 
@@ -526,7 +526,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("K")));
 
         Assert.Equal(1, Assert.Single(await _grid.ListNotesAsync(g.Id)).Column);
     }
@@ -539,7 +539,7 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         var g = await NewGameAsync();
 
         Assert.Equal(BattingGridService.ColumnMessage,
-            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "K", column: column));
+            await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("K"), column: column));
         Assert.Empty(await _grid.ListNotesAsync(g.Id));
     }
 
@@ -556,8 +556,8 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
-            wildPitchBases: wildPitches, passedBallBases: passedBalls));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, bases,
+            WildPitchBases: wildPitches, PassedBallBases: passedBalls)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal((code, bases), (note.Note, note.BasesReached));
@@ -570,9 +570,9 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     {
         var g = await NewGameAsync();
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "1B", 3,
-            caughtStealingBase: 4, caughtStealingFieldersText: "12", stolenBases: [2],
-            wildPitchBases: [3]));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("1B", 3,
+            CaughtStealingBase: 4, CaughtStealingFielders: "12", StolenBases: [2],
+            WildPitchBases: [3])));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(4, note.CaughtStealingBase);
@@ -602,11 +602,11 @@ public class BattingGridServiceTests(PostgresFixture fixture)
         int bases, int[] wildPitches, int[] passedBalls, int[] stolen, int csBase, string message)
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, "BB", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new("BB", 1)));
 
-        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, code, bases,
-            caughtStealingBase: csBase, caughtStealingFieldersText: csBase == 0 ? null : "26", stolenBases: stolen,
-            wildPitchBases: wildPitches, passedBallBases: passedBalls));
+        Assert.Equal(message, await _grid.SaveNoteAsync(g.Id, g.AwayRosterId, 1, 1, new(code, bases,
+            CaughtStealingBase: csBase, CaughtStealingFielders: csBase == 0 ? null : "26", StolenBases: stolen,
+            WildPitchBases: wildPitches, PassedBallBases: passedBalls)));
 
         var note = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Equal(("BB", 1), (note.Note, note.BasesReached));
@@ -618,19 +618,19 @@ public class BattingGridServiceTests(PostgresFixture fixture)
     public async Task Wild_pitches_and_passed_balls_default_to_none_and_saving_without_them_or_clearing_removes_them()
     {
         var g = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 2, 1, new("1B", 1)));
         var plain = Assert.Single(await _grid.ListNotesAsync(g.Id));
         Assert.Empty(plain.WildPitchBases);
         Assert.Empty(plain.PassedBallBases);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, wildPitchBases: [2], passedBallBases: [3]));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3, WildPitchBases: [2], PassedBallBases: [3])));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3)));
         var resaved = (await _grid.ListNotesAsync(g.Id)).Single(n => n.BattingOrder == 1);
         Assert.Empty(resaved.WildPitchBases);
         Assert.Empty(resaved.PassedBallBases);
 
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, "1B", 3, wildPitchBases: [2], passedBallBases: [3]));
-        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, null));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new("1B", 3, WildPitchBases: [2], PassedBallBases: [3])));
+        Assert.Null(await _grid.SaveNoteAsync(g.Id, g.HomeRosterId, 1, 1, new(null)));
         Assert.DoesNotContain(await _grid.ListNotesAsync(g.Id), n => n.BattingOrder == 1);
     }
 

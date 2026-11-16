@@ -672,9 +672,10 @@
         var entry = AtBatResult.Find(code ?? "")?.Fielders ?? FielderEntry.None;
         var fielders = entry == FielderEntry.None ? null : fieldersChoice;
         var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
-        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
-            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice, d.Column,
-            wpChoice, pbChoice);
+        var input = new BattingNoteInput(code, bases, fielders, multiOut,
+            CaughtStealingBase: csBaseChoice, CaughtStealingFielders: csBaseChoice == 0 ? null : csFieldersChoice,
+            StolenBases: sbChoice, WildPitchBases: wpChoice, PassedBallBases: pbChoice);
+        dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, input, d.Column);
         if (dialogError is not null)
         {
             return;

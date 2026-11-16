@@ -154,7 +154,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Filled_cell_opens_with_its_result_selected_and_can_be_changed_or_cleared()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 1, "BB"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 1, new("BB")));
         var cut = RenderGame(game.Id);
 
         Open(cut, "home", 5, 1);
@@ -180,7 +180,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Cancelling_or_closing_leaves_the_saved_result_unchanged(string how)
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, "K"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, new("K")));
         var cut = RenderGame(game.Id);
 
         Open(cut, "away", 1, 1);
@@ -203,7 +203,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Older_free_text_still_shows_opens_with_nothing_selected_and_is_replaced_on_save()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 3, "6-3"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 3, new("6-3")));
         var cut = RenderGame(game.Id);
         Assert.Equal("6-3", Cell(cut, "away-slot-2-inning-3-note"));
 
@@ -305,7 +305,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Clear_resets_bases_reached_to_none()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 4, 5, "2B", 2));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 4, 5, new("2B", 2)));
         var cut = RenderGame(game.Id);
         Assert.Equal(Diamond[..2], Segments(cut, "away-slot-4-inning-5-note"));
 
@@ -324,8 +324,8 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Cells_with_no_bases_reached_draw_no_segments_and_older_notes_still_show()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, "K"));
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 1, "6-3"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, new("K")));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 1, new("6-3")));
         var cut = RenderGame(game.Id);
 
         Assert.Equal("K", Cell(cut, "away-slot-1-inning-1-note"));
@@ -456,7 +456,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Switching_to_a_result_without_fielders_removes_saved_fielders()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, "GO", 0, "4-6-3", "DP"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 1, new("GO", 0, "4-6-3", "DP")));
         var cut = RenderGame(game.Id);
         Assert.Equal("GO 4-6-3 DP", Cell(cut, "away-slot-1-inning-1-note"));
 
@@ -478,7 +478,7 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Clear_removes_saved_fielders_and_double_play()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 3, 2, "FC", 0, "6-4", "DP"));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 3, 2, new("FC", 0, "6-4", "DP")));
         var cut = RenderGame(game.Id);
 
         Open(cut, "home", 3, 2);
@@ -575,8 +575,8 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Clear_removes_a_caught_stealing_and_older_at_bats_show_unchanged()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, "2B", 2, caughtStealingBase: 3, caughtStealingFieldersText: "25"));
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, new("2B", 2, CaughtStealingBase: 3, CaughtStealingFielders: "25")));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, new("1B", 1)));
         var cut = RenderGame(game.Id);
         Assert.Equal("CS 2-5", CellPart(cut, "home-slot-4-inning-5-note", "at-bat-cs"));
         Assert.Empty(cut.FindAll("#home-slot-5-inning-5-note .at-bat-cs"));
@@ -697,8 +697,8 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Clear_removes_stolen_bases_and_older_at_bats_show_unchanged()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, "1B", 3, stolenBases: [2, 3]));
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, "1B", 2));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, new("1B", 3, StolenBases: [2, 3])));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, new("1B", 2)));
         var cut = RenderGame(game.Id);
         Assert.Equal("SB 2,3", CellPart(cut, "home-slot-4-inning-5-note", "at-bat-sb"));
         Assert.Empty(cut.FindAll("#home-slot-5-inning-5-note .at-bat-sb"));
@@ -874,9 +874,9 @@ public class AtBatDialogFormDbTests : BunitContext
     public async Task Clear_removes_wild_pitches_and_passed_balls_and_older_at_bats_show_unchanged()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, "K", 3,
-            wildPitchBases: [1, 2], passedBallBases: [3]));
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, "1B", 2, stolenBases: [2]));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, new("K", 3,
+            WildPitchBases: [1, 2], PassedBallBases: [3])));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, new("1B", 2, StolenBases: [2])));
         var cut = RenderGame(game.Id);
         const string cell = "home-slot-4-inning-5-note";
         Assert.Equal(("K WP", "WP 2", "PB 3"),

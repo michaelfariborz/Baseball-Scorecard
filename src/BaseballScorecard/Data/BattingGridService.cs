@@ -6,6 +6,15 @@ using Npgsql;
 namespace BaseballScorecard.Data;
 
 /// <summary>
+/// What the at-bat dialog saves into one batting grid cell: the result code (blank or null clears the cell), bases
+/// reached (0–4), fielders, DP / TP, the caught stealing target base (2–4, 0 none) and its fielders, and the stolen,
+/// wild pitch and passed ball bases. <see cref="BattingGridService.SaveNoteAsync"/> validates and trims it.
+/// </summary>
+public sealed record BattingNoteInput(string? Note, int BasesReached = 0, string? Fielders = null, string? MultiOut = null,
+    int CaughtStealingBase = 0, string? CaughtStealingFielders = null, IEnumerable<int>? StolenBases = null,
+    IEnumerable<int>? WildPitchBases = null, IEnumerable<int>? PassedBallBases = null);
+
+/// <summary>
 /// Loads and saves the batting grid: a note per batting slot per inning, and HITS and LOB per team per inning.
 /// Each save returns a validation message, or null on success; a rejected save changes nothing.
 /// </summary>
@@ -70,7 +79,8 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     }
 
     /// <summary>
-    /// Saves the note, bases reached (0–4), fielders, DP / TP and caught stealing for one slot's inning, text trimmed.
+    /// Saves the <paramref name="input"/> (note, bases reached 0–4, fielders, DP / TP, caught stealing, stolen, wild pitch
+    /// and passed ball bases) into one slot's inning, text trimmed.
     /// Fielders go only with a result that records them (<see cref="AtBatResult.Fielders"/>); leaving them out
     /// saves them blank. A caught stealing (target base 2–4, 0 none) needs the batter on base short of home and is
     /// at the next base; its fielders are saved only with a target base. Stolen bases (2–4) are saved as a sorted set,
@@ -80,18 +90,16 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     /// Blank (or null) note clears the cell, everything else included. <paramref name="column"/> is the inning's column
     /// (1 the first, 2 or more an extra one), each saved apart.
     /// </summary>
-    public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
-        int basesReached = 0, string? fieldersText = null, string? multiOutText = null,
-        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null, int column = 1,
-        IEnumerable<int>? wildPitchBases = null, IEnumerable<int>? passedBallBases = null)
+    public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, BattingNoteInput input,
+        int column = 1)
     {
-        var note = noteText?.Trim() ?? "";
+        var note = input.Note?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
         {
             return NoteTooLongMessage;
         }
-        var fielders = fieldersText?.Trim() ?? "";
-        var multiOut = multiOutText?.Trim() ?? "";
+        var fielders = input.Fielders?.Trim() ?? "";
+        var multiOut = input.MultiOut?.Trim() ?? "";
         if (note != "" && AtBatResult.Find(note)?.Fielders == FielderEntry.Sequence)
         {
             fielders = HyphenateFielders(fielders);
@@ -100,23 +108,25 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         {
             return fieldersError;
         }
-        if (basesReached < 0 || basesReached > MaxBasesReached)
+        if (input.BasesReached < 0 || input.BasesReached > MaxBasesReached)
         {
             return BasesReachedMessage;
         }
-        var csFielders = caughtStealingBase == 0 ? "" : HyphenateFielders(caughtStealingFieldersText?.Trim() ?? "");
-        if (note != "" && caughtStealingBase != 0 && CheckCaughtStealing(basesReached, caughtStealingBase, csFielders) is { } csError)
+        var csFielders = input.CaughtStealingBase == 0 ? "" : HyphenateFielders(input.CaughtStealingFielders?.Trim() ?? "");
+        if (note != "" && input.CaughtStealingBase != 0
+            && CheckCaughtStealing(input.BasesReached, input.CaughtStealingBase, csFielders) is { } csError)
         {
             return csError;
         }
-        int[] steals = [.. (stolenBases ?? []).Distinct().Order()];
-        if (note != "" && CheckStolenBases(note, basesReached, caughtStealingBase, steals) is { } sbError)
+        int[] steals = [.. (input.StolenBases ?? []).Distinct().Order()];
+        if (note != "" && CheckStolenBases(note, input.BasesReached, input.CaughtStealingBase, steals) is { } sbError)
         {
             return sbError;
         }
-        int[] wildPitches = [.. (wildPitchBases ?? []).Distinct().Order()];
-        int[] passedBalls = [.. (passedBallBases ?? []).Distinct().Order()];
-        if (note != "" && CheckWildPitchesAndPassedBalls(note, basesReached, caughtStealingBase, steals, wildPitches, passedBalls) is { } wpError)
+        int[] wildPitches = [.. (input.WildPitchBases ?? []).Distinct().Order()];
+        int[] passedBalls = [.. (input.PassedBallBases ?? []).Distinct().Order()];
+        if (note != "" && CheckWildPitchesAndPassedBalls(note, input.BasesReached, input.CaughtStealingBase, steals,
+                wildPitches, passedBalls) is { } wpError)
         {
             return wpError;
         }
@@ -150,10 +160,10 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
                 GameId = gameId, RosterId = rosterId, BattingOrder = battingOrder, Inning = inning, Column = column,
             }).Entity;
             row.Note = note;
-            row.BasesReached = basesReached;
+            row.BasesReached = input.BasesReached;
             row.Fielders = fielders;
             row.MultiOut = multiOut;
-            row.CaughtStealingBase = caughtStealingBase;
+            row.CaughtStealingBase = input.CaughtStealingBase;
             row.CaughtStealingFielders = csFielders;
             row.StolenBases = steals;
             row.WildPitchBases = wildPitches;

@@ -166,7 +166,7 @@ public class SubstitutionsFormDbTests : BunitContext
     {
         var s = await NewGameAsync();
         var f = new FixtureDbFactory(_fixture);
-        Assert.Null(await new BattingGridService(f).SaveNoteAsync(s.Game.Id, s.Game.AwayRosterId, 5, 7, "1B", 1));
+        Assert.Null(await new BattingGridService(f).SaveNoteAsync(s.Game.Id, s.Game.AwayRosterId, 5, 7, new("1B", 1)));
         Assert.Null(await new SubstitutionService(f).AddAsync(s.Game.Id, s.Game.AwayRosterId, 5, s.Bench(1).Id, SubstitutionKind.PinchHitter, 7));
 
         var cut = RenderGame(s.Game.Id);

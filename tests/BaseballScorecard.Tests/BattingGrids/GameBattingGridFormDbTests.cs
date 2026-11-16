@@ -210,7 +210,7 @@ public class GameBattingGridFormDbTests : BunitContext
     public async Task A_note_stays_with_its_batting_slot_when_the_lineup_changes()
     {
         var s = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(s.Game.Id, s.Game.AwayRosterId, 1, 2, "6-3"));
+        Assert.Null(await _grid.SaveNoteAsync(s.Game.Id, s.Game.AwayRosterId, 1, 2, new("6-3")));
         var newOrder = Enumerable.Reverse(s.Away).ToList();
         Assert.Null(await new LineupService(new FixtureDbFactory(_fixture)).SaveAsync(new Lineup
         {
