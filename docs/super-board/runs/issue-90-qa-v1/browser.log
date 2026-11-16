@@ -1,0 +1,31 @@
+PASS AC5 pre-migration at bats show unchanged with no WP / PB line K/null/null/null/null/0|1B/SB 2,3/null/null/null/3|GO 6-3/null/null/null/null/0|BB/null/null/null/CS 2-6/1|HR/null/null/null/null/4|ꓘ/null/null/null/null/0
+PASS AC5 old 1B / SB 2,3 cell reopens with steals ticked and no WP / PB ticked 2,3||
+PASS AC1 dialog has "Wild pitch" and "Passed ball" choices of 1st, 2nd, 3rd, home, none ticked Wild pitch:1st,2nd,3rd,home / Passed ball:1st,2nd,3rd,home
+PASS AC1 reopen ticks: WP 2; SB 2 + PB 3,4; WP 2 + PB 3; ticked-then-unticked none |2| ; 2||3,4 ; |2|3 ; ||
+PASS AC3 reopen ticks: K WP 1st; ꓘ PB 1st; K PB 1st + WP 2nd |1| ; ||1 ; |2|1
+PASS AC2 cells: 1B+WP 2; 1B+SB 2+PB 3,4; BB+WP 2+PB 3; 1B+WP 2+CS; 1B alone; diamonds still to bases reached 1B/null/WP 2/null/null/2|1B/SB 2/null/PB 3,4/null/4|BB/null/WP 2/PB 3/null/3|1B/null/WP 2/null/CS 2-5/2|1B/null/null/null/null/1
+PASS AC3 cells: K WP; ꓘ PB; K PB + WP 2; ꓘ WP K WP/null/null/null/null/1|ꓘ PB/null/null/null/null/1|K PB/null/WP 2/null/null/2|ꓘ WP/null/null/null/null/1
+PASS AC2 cell order is result, SB, WP/PB, CS at-bat-note,at-bat-sb,at-bat-pb / at-bat-note,at-bat-wp,at-bat-cs
+PASS AC2 cell accessible name names the wild pitch and passed ball aria="Batting slot 6, inning 2: BB, reached 3rd, wild pitch 2nd, passed ball 3rd"
+PASS AC2 after reload cells show the same WP / PB / K WP text and diamonds 1B/null/WP 2/null/null/2|1B/SB 2/null/PB 3,4/null/4|BB/null/WP 2/PB 3/null/3|1B/null/WP 2/null/CS 2-5/2|1B/null/null/null/null/1|K WP/null/null/null/null/1|ꓘ PB/null/null/null/null/1|K PB/null/WP 2/null/null/2|ꓘ WP/null/null/null/null/1
+PASS AC4 {"code":"1B","b":1,"wp":[2]} (WP above bases reached) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must be at or below bases reached: the runner never got there." cell=""
+PASS AC4 {"code":"1B","b":2,"pb":[3]} (PB 3rd above bases reached 2nd) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must be at or below bases reached: the runner never got there." cell=""
+PASS AC4 {"code":"K","b":0,"wp":[1]} (K WP 1st but bases reached 0) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must be at or below bases reached: the runner never got there." cell=""
+PASS AC4 {"code":"1B","b":1,"wp":[1]} (1st on a single) refused, dialog stays open, cell blank msg="Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"BB","b":1,"pb":[1]} (1st on a walk) refused, dialog stays open, cell blank msg="Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"1B","b":2,"pb":[1]} (PB 1st on a single) refused, dialog stays open, cell blank msg="Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"2B","b":2,"wp":[2]} (2nd on a double) refused, dialog stays open, cell blank msg="The batter reached that base on the hit itself, not on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"3B","b":4,"pb":[3]} (3rd on a triple) refused, dialog stays open, cell blank msg="The batter reached that base on the hit itself, not on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"HR","b":4,"wp":[4]} (home on a home run) refused, dialog stays open, cell blank msg="The batter reached that base on the hit itself, not on a wild pitch or passed ball." cell=""
+PASS AC4 {"code":"1B","b":2,"wp":[3],"cs":3} (WP at the CS base) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must come before the caught-stealing base." cell=""
+PASS AC4 {"code":"1B","b":3,"pb":[4],"cs":4} (PB home at CS home) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must come before the caught-stealing base." cell=""
+PASS AC4 {"code":"1B","b":2,"wp":[4],"cs":3} (WP past the CS base) refused, dialog stays open, cell blank msg="A wild pitch or passed ball base must come before the caught-stealing base." cell=""
+PASS AC4 {"code":"1B","b":3,"sb":[2],"wp":[2]} (stolen and WP on 2nd) refused, dialog stays open, cell blank msg="A base is taken one way only: stolen, on a wild pitch or on a passed ball." cell=""
+PASS AC4 {"code":"1B","b":3,"sb":[3],"pb":[3]} (stolen and PB on 3rd) refused, dialog stays open, cell blank msg="A base is taken one way only: stolen, on a wild pitch or on a passed ball." cell=""
+PASS AC4 {"code":"1B","b":3,"wp":[3],"pb":[3]} (WP and PB on 3rd) refused, dialog stays open, cell blank msg="A base is taken one way only: stolen, on a wild pitch or on a passed ball." cell=""
+PASS AC4 {"code":"K","b":1,"wp":[1],"pb":[1]} (K WP and PB on 1st) refused, dialog stays open, cell blank msg="A base is taken one way only: stolen, on a wild pitch or on a passed ball." cell=""
+PASS AC4 lowering bases reached below a saved PB 4 is refused and keeps 1B / SB 2 / PB 3,4 msg="A wild pitch or passed ball base must be at or below bases reached: the runner never got there."
+PASS AC4 changing a saved K WP to 1B with WP 1st still ticked is refused and keeps K WP msg="Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball."
+PASS AC5 Clear on BB/WP 2/PB 3 and K PB/WP 2: blank cells, no WP/PB, no diamond after reload; reopen with nothing ticked /null/null/null/null/0|/null/null/null/null/0 reopen="|" "|"
+PASS AC5 pre-migration at bats still unchanged after all edits and reloads K/null/null/null/null/0|1B/SB 2,3/null/null/null/3|GO 6-3/null/null/null/null/0|BB/null/null/null/CS 2-6/1|HR/null/null/null/null/4|ꓘ/null/null/null/null/0
+PASS green no console errors / page errors / 5xx / 401 / 403 {"consoleErrors":[],"pageErrors":[],"bad":[]}
