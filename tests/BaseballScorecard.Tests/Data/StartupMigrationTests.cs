@@ -19,7 +19,7 @@ namespace BaseballScorecard.Tests.Data;
 [Collection(PostgresCollection.Name)]
 public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifetime
 {
-    private static readonly string[] AllMigrations = ["20261024210657_AddRosters", "20261024213132_AddGames", "20261024223539_AddPlayers", "20261025014635_AddLineups", "20261028222906_AddInningRuns", "20261102011800_AddBattingGrid", "20261104032438_AddGamePitchers", "20261104144257_AddPitchingLines", "20261111020427_AddBasesReached", "20261111030303_AddFielders", "20261114024603_AddCaughtStealing", "20261114032255_AddSubstitutions", "20261114155814_AddPositionChanges", "20261116002642_AddStolenBases", "20261116005054_AddInningColumns"];
+    private static readonly string[] AllMigrations = ["20261024210657_AddRosters", "20261024213132_AddGames", "20261024223539_AddPlayers", "20261025014635_AddLineups", "20261028222906_AddInningRuns", "20261102011800_AddBattingGrid", "20261104032438_AddGamePitchers", "20261104144257_AddPitchingLines", "20261111020427_AddBasesReached", "20261111030303_AddFielders", "20261114024603_AddCaughtStealing", "20261114032255_AddSubstitutions", "20261114155814_AddPositionChanges", "20261116002642_AddStolenBases", "20261116005054_AddInningColumns", "20261116012716_AddWildPitchesPassedBalls"];
 
     private readonly string _emptyDb = new NpgsqlConnectionStringBuilder(
         PostgresFixture.ReadConnectionString(Environment.GetEnvironmentVariable))
@@ -152,7 +152,7 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         await using (var db = ContextOn(_emptyDb))
         {
             await db.GetService<IMigrator>().MigrateAsync("20261114155814_AddPositionChanges");
-            Assert.Equal(["20261116002642_AddStolenBases", "20261116005054_AddInningColumns"], await db.Database.GetPendingMigrationsAsync());
+            Assert.Equal(["20261116002642_AddStolenBases", "20261116005054_AddInningColumns", "20261116012716_AddWildPitchesPassedBalls"], await db.Database.GetPendingMigrationsAsync());
         }
 
         await services.MigrateScorecardDbAsync();
@@ -183,7 +183,7 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         await using (var db = ContextOn(_emptyDb))
         {
             await db.GetService<IMigrator>().MigrateAsync("20261116002642_AddStolenBases");
-            Assert.Equal(["20261116005054_AddInningColumns"], await db.Database.GetPendingMigrationsAsync());
+            Assert.Equal(["20261116005054_AddInningColumns", "20261116012716_AddWildPitchesPassedBalls"], await db.Database.GetPendingMigrationsAsync());
         }
 
         await services.MigrateScorecardDbAsync();
@@ -194,6 +194,38 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, "GO", column: 2));
         Assert.Equal([(1, "2B"), (2, "GO")],
             (await grid.ListNotesAsync(game.Id)).Where(n => n.BattingOrder == 1).OrderBy(n => n.Column).Select(n => (n.Column, n.Note)));
+    }
+
+    [Fact]
+    public async Task At_bats_saved_before_AddWildPitchesPassedBalls_load_unchanged_with_no_marks_after_it_applies()
+    {
+        await using var services = Services(_emptyDb);
+        await services.MigrateScorecardDbAsync();
+        var factory = services.GetRequiredService<IDbContextFactory<ScorecardDbContext>>();
+        var away = new Roster { TeamName = "Cubs", Year = 2026 };
+        var home = new Roster { TeamName = "Sox", Year = 2026 };
+        Assert.Null(await new RosterService(factory).SaveAsync(away));
+        Assert.Null(await new RosterService(factory).SaveAsync(home));
+        var game = new Game { Year = 2026, Date = new DateOnly(2026, 4, 2), AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9 };
+        Assert.Null(await new GameService(factory).CreateAsync(game));
+        var grid = new BattingGridService(factory);
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, "1B", 3, stolenBases: [2, 3]));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, "K"));
+        // Back to the schema before this change: the rows now have no WildPitchBases or PassedBallBases columns.
+        await using (var db = ContextOn(_emptyDb))
+        {
+            await db.GetService<IMigrator>().MigrateAsync("20261116005054_AddInningColumns");
+            Assert.Equal(["20261116012716_AddWildPitchesPassedBalls"], await db.Database.GetPendingMigrationsAsync());
+        }
+
+        await services.MigrateScorecardDbAsync();
+
+        var notes = (await grid.ListNotesAsync(game.Id)).OrderBy(n => n.BattingOrder).ToList();
+        Assert.Equal([("1B", 3, "SB 2,3"), ("K", 0, "")],
+            notes.Select(n => (AtBatResult.CellText(n), n.BasesReached, AtBatResult.StolenBasesText(n))));
+        Assert.All(notes, n => Assert.Empty(n.WildPitchBases));
+        Assert.All(notes, n => Assert.Empty(n.PassedBallBases));
+        Assert.All(notes, n => Assert.Equal("", AtBatResult.WildPitchText(n) + AtBatResult.PassedBallText(n)));
     }
 
     [Fact]

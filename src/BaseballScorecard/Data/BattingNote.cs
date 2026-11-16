@@ -59,4 +59,14 @@ public class BattingNote
     /// past the base the hit itself reached, and short of any <see cref="CaughtStealingBase"/>. Empty with no steals.
     /// </summary>
     public int[] StolenBases { get; set; } = [];
+
+    /// <summary>
+    /// The bases the runner took on a wild pitch, sorted: 2 second, 3 third, 4 home, and 1 only for a strikeout
+    /// (<c>K</c> or <c>ꓘ</c>) where the third strike got away. Same limits as <see cref="StolenBases"/>, and never a
+    /// base that is also stolen or in <see cref="PassedBallBases"/>. Empty with none.
+    /// </summary>
+    public int[] WildPitchBases { get; set; } = [];
+
+    /// <summary>The bases the runner took on a passed ball; the same rules as <see cref="WildPitchBases"/>.</summary>
+    public int[] PassedBallBases { get; set; } = [];
 }

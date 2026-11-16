@@ -715,4 +715,186 @@ public class AtBatDialogFormDbTests : BunitContext
         Open(cut, "home", 4, 5);
         Assert.Empty(CheckedSteals(cut, "home"));
     }
+
+    // "wp" for the wild-pitch boxes, "pb" for the passed-ball boxes.
+    private static string[] CheckedMarks(IRenderedComponent<GamePage> cut, string side, string kind) =>
+        [.. cut.FindAll($"#{side}-at-bat-{kind} input[type=checkbox]").Where(c => c.HasAttribute("checked")).Select(c => c.GetAttribute("value")!)];
+
+    private static void ToggleMark(IRenderedComponent<GamePage> cut, string side, string kind, int target)
+    {
+        var box = cut.FindAll($"#{side}-at-bat-{kind} input[type=checkbox]").Single(c => c.GetAttribute("value") == $"{target}");
+        var wasChecked = box.HasAttribute("checked");
+        box.Change(!wasChecked);
+        cut.WaitForAssertion(() => Assert.Equal(!wasChecked, CheckedMarks(cut, side, kind).Contains($"{target}")));
+    }
+
+    [Fact]
+    public async Task Dialog_offers_wild_pitch_and_passed_ball_bases_1st_to_home_none_checked()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+
+        Open(cut, "away", 1, 1);
+
+        Assert.Equal(["1", "2", "3", "4"], cut.FindAll("#away-at-bat-wp input[type=checkbox]").Select(c => c.GetAttribute("value")));
+        Assert.Equal(["1", "2", "3", "4"], cut.FindAll("#away-at-bat-pb input[type=checkbox]").Select(c => c.GetAttribute("value")));
+        Assert.Contains("Wild pitch", cut.Find("#away-at-bat-wp").TextContent);
+        Assert.Contains("Passed ball", cut.Find("#away-at-bat-pb").TextContent);
+        Assert.Empty(CheckedMarks(cut, "away", "wp"));
+        Assert.Empty(CheckedMarks(cut, "away", "pb"));
+    }
+
+    [Fact]
+    public async Task A_single_a_steal_of_2nd_and_a_passed_ball_to_3rd_show_after_reload_and_on_reopen()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 3, 2);
+        Pick(cut, "away", "1B");
+        PickBases(cut, "away", 3);
+        ToggleSteal(cut, "away", 2);
+        ToggleMark(cut, "away", "pb", 3);
+
+        cut.Find("#away-at-bat-save").Click();
+
+        WaitClosed(cut, "away");
+        const string cell = "away-slot-3-inning-2-note";
+        cut.WaitForAssertion(() => Assert.Equal("PB 3", CellPart(cut, cell, "at-bat-pb")));
+        Assert.Equal(["at-bat-note", "at-bat-sb", "at-bat-pb"], cut.FindAll($"#{cell} span").Select(e => e.ClassName));
+        Assert.Equal(("1B", "SB 2"), (CellPart(cut, cell, "at-bat-note"), CellPart(cut, cell, "at-bat-sb")));
+        Assert.Equal(Diamond[..3], Segments(cut, cell));
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal(("1B", "PB 3"), (CellPart(reloaded, cell, "at-bat-note"), CellPart(reloaded, cell, "at-bat-pb")));
+        Assert.Contains("passed ball 3rd", reloaded.Find($"#{cell}").GetAttribute("aria-label"));
+        Open(reloaded, "away", 3, 2);
+        Assert.Equal(["2"], CheckedSteals(reloaded, "away"));
+        Assert.Equal(["3"], CheckedMarks(reloaded, "away", "pb"));
+        Assert.Empty(CheckedMarks(reloaded, "away", "wp"));
+    }
+
+    [Fact]
+    public async Task A_single_with_a_wild_pitch_to_2nd_and_a_passed_ball_to_3rd_shows_both()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 1, 1);
+        Pick(cut, "home", "1B");
+        PickBases(cut, "home", 3);
+        ToggleMark(cut, "home", "wp", 2);
+        ToggleMark(cut, "home", "pb", 3);
+
+        cut.Find("#home-at-bat-save").Click();
+
+        WaitClosed(cut, "home");
+        const string cell = "home-slot-1-inning-1-note";
+        cut.WaitForAssertion(() => Assert.Equal("WP 2", CellPart(cut, cell, "at-bat-wp")));
+        Assert.Equal(("1B", "PB 3"), (CellPart(cut, cell, "at-bat-note"), CellPart(cut, cell, "at-bat-pb")));
+        Assert.Contains("wild pitch 2nd", cut.Find($"#{cell}").GetAttribute("aria-label"));
+    }
+
+    [Theory]
+    [InlineData("K", "wp", "K WP")]
+    [InlineData("K", "pb", "K PB")]
+    [InlineData("ꓘ", "wp", "ꓘ WP")]
+    [InlineData("ꓘ", "pb", "ꓘ PB")]
+    public async Task A_strikeout_that_reached_1st_on_a_wild_pitch_or_passed_ball_shows_next_to_the_K(string code,
+        string kind, string expected)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "away", 2, 4);
+        Pick(cut, "away", code);
+        PickBases(cut, "away", 1);
+        ToggleMark(cut, "away", kind, 1);
+
+        cut.Find("#away-at-bat-save").Click();
+
+        WaitClosed(cut, "away");
+        const string cell = "away-slot-2-inning-4-note";
+        cut.WaitForAssertion(() => Assert.Equal(expected, CellPart(cut, cell, "at-bat-note")));
+        Assert.Empty(cut.FindAll($"#{cell} .at-bat-wp"));
+        Assert.Empty(cut.FindAll($"#{cell} .at-bat-pb"));
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal(expected, CellPart(reloaded, cell, "at-bat-note"));
+        Open(reloaded, "away", 2, 4);
+        Assert.Equal(["1"], CheckedMarks(reloaded, "away", kind));
+    }
+
+    [Theory]
+    [InlineData("1B", 1, "wp", 2, 0, 0, BattingGridService.WildPitchPassedBallNotReachedMessage)]
+    [InlineData("1B", 1, "pb", 1, 0, 0, BattingGridService.WildPitchPassedBallFirstMessage)]
+    [InlineData("2B", 2, "wp", 2, 0, 0, BattingGridService.WildPitchPassedBallOnHitMessage)]
+    [InlineData("1B", 2, "pb", 3, 0, 3, BattingGridService.WildPitchPassedBallCaughtMessage)]
+    [InlineData("1B", 2, "wp", 2, 2, 0, BattingGridService.WildPitchPassedBallTwiceMessage)]
+    public async Task Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(
+        string code, int bases, string kind, int target, int steal, int csBase, string message)
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 1, 1);
+        Pick(cut, "home", code);
+        PickBases(cut, "home", bases);
+        ToggleMark(cut, "home", kind, target);
+        if (steal != 0)
+        {
+            ToggleSteal(cut, "home", steal);
+        }
+        if (csBase != 0)
+        {
+            PickCaughtStealing(cut, "home", csBase);
+            cut.WaitForElement("#home-at-bat-cs-fielders").Change("25");
+        }
+
+        cut.Find("#home-at-bat-save").Click();
+
+        cut.WaitForAssertion(() => Assert.Equal(message, cut.Find("#home-at-bat-error").TextContent));
+        Assert.NotEmpty(cut.FindAll("#home-at-bat-dialog"));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+    }
+
+    [Fact]
+    public async Task A_wild_pitch_and_a_passed_ball_on_the_same_base_are_not_saved()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        Open(cut, "home", 1, 1);
+        Pick(cut, "home", "K");
+        PickBases(cut, "home", 1);
+        ToggleMark(cut, "home", "wp", 1);
+        ToggleMark(cut, "home", "pb", 1);
+
+        cut.Find("#home-at-bat-save").Click();
+
+        cut.WaitForAssertion(() => Assert.Equal(BattingGridService.WildPitchPassedBallTwiceMessage,
+            cut.Find("#home-at-bat-error").TextContent));
+        Assert.Empty(await _grid.ListNotesAsync(game.Id));
+    }
+
+    [Fact]
+    public async Task Clear_removes_wild_pitches_and_passed_balls_and_older_at_bats_show_unchanged()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 4, 5, "K", 3,
+            wildPitchBases: [1, 2], passedBallBases: [3]));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.HomeRosterId, 5, 5, "1B", 2, stolenBases: [2]));
+        var cut = RenderGame(game.Id);
+        const string cell = "home-slot-4-inning-5-note";
+        Assert.Equal(("K WP", "WP 2", "PB 3"),
+            (CellPart(cut, cell, "at-bat-note"), CellPart(cut, cell, "at-bat-wp"), CellPart(cut, cell, "at-bat-pb")));
+        Assert.Equal(["at-bat-note", "at-bat-sb"], cut.FindAll("#home-slot-5-inning-5-note span").Select(e => e.ClassName));
+
+        Open(cut, "home", 4, 5);
+        Assert.Equal(["1", "2"], CheckedMarks(cut, "home", "wp"));
+        Assert.Equal(["3"], CheckedMarks(cut, "home", "pb"));
+        cut.Find("#home-at-bat-clear").Click();
+
+        WaitClosed(cut, "home");
+        cut.WaitForAssertion(() => Assert.Equal("", Cell(cut, cell)));
+        Assert.Empty(cut.FindAll($"#{cell} .at-bat-wp"));
+        Assert.Empty(cut.FindAll($"#{cell} .at-bat-pb"));
+        Assert.Equal("1B", Assert.Single(await _grid.ListNotesAsync(game.Id)).Note);
+        Open(cut, "home", 4, 5);
+        Assert.Empty(CheckedMarks(cut, "home", "wp"));
+        Assert.Empty(CheckedMarks(cut, "home", "pb"));
+    }
 }

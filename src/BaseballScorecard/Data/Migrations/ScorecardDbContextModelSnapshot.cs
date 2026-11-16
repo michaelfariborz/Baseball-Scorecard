@@ -68,10 +68,18 @@ namespace BaseballScorecard.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.PrimitiveCollection<int[]>("PassedBallBases")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
                     b.Property<int>("RosterId")
                         .HasColumnType("integer");
 
                     b.PrimitiveCollection<int[]>("StolenBases")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
+                    b.PrimitiveCollection<int[]>("WildPitchBases")
                         .IsRequired()
                         .HasColumnType("integer[]");
 

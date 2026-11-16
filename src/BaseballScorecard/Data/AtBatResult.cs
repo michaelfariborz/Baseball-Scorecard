@@ -35,11 +35,18 @@ public sealed record AtBatResult(string Code, string Label, FielderEntry Fielder
     /// <summary>The result a saved note holds, or null when the note is blank or older free text.</summary>
     public static AtBatResult? Find(string note) => All.FirstOrDefault(r => r.Code == note);
 
-    /// <summary>What the grid cell shows: <c>GO 4-6-3 DP</c>, <c>FO 8</c>, <c>E6</c>, or the note alone.</summary>
+    /// <summary>
+    /// What the grid cell shows: <c>GO 4-6-3 DP</c>, <c>FO 8</c>, <c>E6</c>, a strikeout that reached 1st on a wild
+    /// pitch or passed ball as <c>K WP</c> or <c>ꓘ PB</c>, or the note alone.
+    /// </summary>
     public static string CellText(BattingNote note) =>
         Find(note.Note)?.Fielders == FielderEntry.Single
             ? note.Note + note.Fielders
-            : string.Join(' ', new[] { note.Note, note.Fielders, note.MultiOut }.Where(s => s != ""));
+            : string.Join(' ', new[]
+            {
+                note.Note, note.Fielders, note.MultiOut,
+                note.WildPitchBases.Contains(1) ? "WP" : "", note.PassedBallBases.Contains(1) ? "PB" : "",
+            }.Where(s => s != ""));
 
     /// <summary>What the cell shows under the result for a caught stealing: <c>CS 2-6</c>, or blank when there is none.</summary>
     public static string CaughtStealingText(BattingNote note) =>
@@ -48,6 +55,19 @@ public sealed record AtBatResult(string Code, string Label, FielderEntry Fielder
     /// <summary>What the cell shows for stolen bases: <c>SB 2</c> or <c>SB 2,3</c>, or blank when there are none.</summary>
     public static string StolenBasesText(BattingNote note) =>
         note.StolenBases.Length == 0 ? "" : $"SB {string.Join(',', note.StolenBases)}";
+
+    /// <summary>What the cell shows for bases taken on a wild pitch past 1st: <c>WP 2</c> or <c>WP 2,3</c>, or blank.</summary>
+    public static string WildPitchText(BattingNote note) => MarkText("WP", note.WildPitchBases);
+
+    /// <summary>What the cell shows for bases taken on a passed ball past 1st: <c>PB 3</c> or <c>PB 3,4</c>, or blank.</summary>
+    public static string PassedBallText(BattingNote note) => MarkText("PB", note.PassedBallBases);
+
+    // 1st is shown next to the strikeout instead (CellText).
+    private static string MarkText(string mark, int[] bases) =>
+        bases.Any(b => b > 1) ? $"{mark} {string.Join(',', bases.Where(b => b > 1))}" : "";
+
+    /// <summary>True for a strikeout, swinging or looking: the only results where the batter can reach 1st on a wild pitch or passed ball.</summary>
+    public static bool IsStrikeout(string note) => note is "K" or "ꓘ";
 
     /// <summary>The base the batter reached on the play itself: 2 on a double, 3 on a triple, 4 on a home run, else 1.</summary>
     public static int BaseOnPlay(string note) => note switch { "2B" => 2, "3B" => 3, "HR" => 4, _ => 1 };

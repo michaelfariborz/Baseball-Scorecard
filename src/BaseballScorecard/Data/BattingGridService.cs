@@ -36,6 +36,17 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         "A stolen base must come before the caught-stealing base.";
     public const string StolenBaseNotReachedMessage =
         "A stolen base must be at or below bases reached: the runner cannot steal a base he never got to.";
+    public const string WildPitchPassedBallRangeMessage = "Wild pitch and passed ball bases must be 1st, 2nd, 3rd or home.";
+    public const string WildPitchPassedBallFirstMessage =
+        "Only a strikeout (K or ꓘ) can reach 1st on a wild pitch or passed ball.";
+    public const string WildPitchPassedBallOnHitMessage =
+        "The batter reached that base on the hit itself, not on a wild pitch or passed ball.";
+    public const string WildPitchPassedBallCaughtMessage =
+        "A wild pitch or passed ball base must come before the caught-stealing base.";
+    public const string WildPitchPassedBallNotReachedMessage =
+        "A wild pitch or passed ball base must be at or below bases reached: the runner never got there.";
+    public const string WildPitchPassedBallTwiceMessage =
+        "A base is taken one way only: stolen, on a wild pitch or on a passed ball.";
     public const string HitsLobMessage = "HITS and LOB must be whole numbers of 0 or more.";
     public const string SlotMessage = "That batting slot is not part of the lineup.";
     public const string InningMessage = "That inning is not part of this game.";
@@ -64,12 +75,15 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
     /// saves them blank. A caught stealing (target base 2–4, 0 none) needs the batter on base short of home and is
     /// at the next base; its fielders are saved only with a target base. Stolen bases (2–4) are saved as a sorted set,
     /// each past the base the play reached, short of the caught-stealing base and at or below bases reached.
+    /// Wild pitch and passed ball bases follow the same rules, except 1st is allowed after a strikeout, and no base
+    /// may be in more than one of the stolen, wild pitch and passed ball sets.
     /// Blank (or null) note clears the cell, everything else included. <paramref name="column"/> is the inning's column
     /// (1 the first, 2 or more an extra one), each saved apart.
     /// </summary>
     public async Task<string?> SaveNoteAsync(int gameId, int rosterId, int battingOrder, int inning, string? noteText,
         int basesReached = 0, string? fieldersText = null, string? multiOutText = null,
-        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null, int column = 1)
+        int caughtStealingBase = 0, string? caughtStealingFieldersText = null, IEnumerable<int>? stolenBases = null, int column = 1,
+        IEnumerable<int>? wildPitchBases = null, IEnumerable<int>? passedBallBases = null)
     {
         var note = noteText?.Trim() ?? "";
         if (note.Length > NoteMaxLength)
@@ -99,6 +113,12 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
         if (note != "" && CheckStolenBases(note, basesReached, caughtStealingBase, steals) is { } sbError)
         {
             return sbError;
+        }
+        int[] wildPitches = [.. (wildPitchBases ?? []).Distinct().Order()];
+        int[] passedBalls = [.. (passedBallBases ?? []).Distinct().Order()];
+        if (note != "" && CheckWildPitchesAndPassedBalls(note, basesReached, caughtStealingBase, steals, wildPitches, passedBalls) is { } wpError)
+        {
+            return wpError;
         }
         if (battingOrder < 1 || battingOrder > LineupService.SlotCount)
         {
@@ -136,6 +156,8 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
             row.CaughtStealingBase = caughtStealingBase;
             row.CaughtStealingFielders = csFielders;
             row.StolenBases = steals;
+            row.WildPitchBases = wildPitches;
+            row.PassedBallBases = passedBalls;
         }
         return await SaveAsync(db);
     }
@@ -241,6 +263,37 @@ public partial class BattingGridService(IDbContextFactory<ScorecardDbContext> db
             return StolenBaseCaughtMessage;
         }
         return steals.Any(b => b > basesReached) ? StolenBaseNotReachedMessage : null;
+    }
+
+    /// <summary>
+    /// The message when a wild pitch or passed ball base does not fit the play, the caught stealing, bases reached or
+    /// the other marks; null when all fit. 1st needs a strikeout; the base the play itself reached never counts.
+    /// </summary>
+    private static string? CheckWildPitchesAndPassedBalls(string note, int basesReached, int caughtStealingBase,
+        int[] steals, int[] wildPitches, int[] passedBalls)
+    {
+        int[] marks = [.. wildPitches, .. passedBalls];
+        if (marks.Any(b => b < 1 || b > MaxBasesReached))
+        {
+            return WildPitchPassedBallRangeMessage;
+        }
+        if (marks.Contains(1) && !AtBatResult.IsStrikeout(note))
+        {
+            return WildPitchPassedBallFirstMessage;
+        }
+        if (marks.Any(b => b > 1 && b <= AtBatResult.BaseOnPlay(note)))
+        {
+            return WildPitchPassedBallOnHitMessage;
+        }
+        if (caughtStealingBase != 0 && marks.Any(b => b >= caughtStealingBase))
+        {
+            return WildPitchPassedBallCaughtMessage;
+        }
+        if (marks.Any(b => b > basesReached))
+        {
+            return WildPitchPassedBallNotReachedMessage;
+        }
+        return wildPitches.Intersect(passedBalls).Any() || steals.Intersect(marks).Any() ? WildPitchPassedBallTwiceMessage : null;
     }
 
     /// <summary>"463" and "46-3" become "4-6-3". Anything that is not digits 1–9 in hyphen-separated groups is left as typed, for the check to refuse.</summary>

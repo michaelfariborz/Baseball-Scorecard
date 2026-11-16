@@ -61,9 +61,11 @@
                                 var bases = Bases(key);
                                 var cs = CaughtStealing(key);
                                 var sb = StolenBases(key);
+                                var wp = Saved(key)?.WildPitchBases ?? [];
+                                var pb = Saved(key)?.PassedBallBases ?? [];
                                 <td rowspan="@row.Players.Count">
                                     <button id="@id" type="button" class="at-bat-cell" aria-haspopup="dialog"
-                                            aria-label="@($"Batting slot {slot}, inning {n}{ColumnText(pos)}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(sb.Length == 0 ? "" : $", stole {string.Join(", ", sb.Select(b => BaseNames[b]))}")}{(cs is { } x ? $", caught stealing {BaseNames[x.CaughtStealingBase]} {x.CaughtStealingFielders}" : "")}")"
+                                            aria-label="@($"Batting slot {slot}, inning {n}{ColumnText(pos)}{(note == "" ? "" : $": {note}")}{(bases == 0 ? "" : $", reached {BaseNames[bases]}")}{(sb.Length == 0 ? "" : $", stole {string.Join(", ", sb.Select(b => BaseNames[b]))}")}{(wp.Length == 0 ? "" : $", wild pitch {string.Join(", ", wp.Select(b => BaseNames[b]))}")}{(pb.Length == 0 ? "" : $", passed ball {string.Join(", ", pb.Select(b => BaseNames[b]))}")}{(cs is { } x ? $", caught stealing {BaseNames[x.CaughtStealingBase]} {x.CaughtStealingFielders}" : "")}")"
                                             @ref="cellRefs[id]" @onclick="() => Open(id, row, n, c, pos)">
                                         @if (bases > 0)
                                         {
@@ -79,6 +81,14 @@
                                         @if (sb.Length > 0)
                                         {
                                             <span class="at-bat-sb">@AtBatResult.StolenBasesText(notes[key])</span>
+                                        }
+                                        @if (wp.Any(b => b > 1))
+                                        {
+                                            <span class="at-bat-wp">@AtBatResult.WildPitchText(notes[key])</span>
+                                        }
+                                        @if (pb.Any(b => b > 1))
+                                        {
+                                            <span class="at-bat-pb">@AtBatResult.PassedBallText(notes[key])</span>
                                         }
                                         @if (cs is not null)
                                         {
@@ -272,7 +282,31 @@
                     var b = stolen;
                     <label>
                         <input type="checkbox" name="@Side-at-bat-sb" value="@b"
-                               checked="@sbChoice.Contains(b)" @onchange="() => ToggleSteal(b)" />
+                               checked="@sbChoice.Contains(b)" @onchange="() => Toggle(sbChoice, b)" />
+                        @BaseNames[b]
+                    </label>
+                }
+            </fieldset>
+            <fieldset id="@Side-at-bat-wp" class="at-bat-bases">
+                <legend>Wild pitch</legend>
+                @foreach (var taken in PitchAdvanceBases)
+                {
+                    var b = taken;
+                    <label>
+                        <input type="checkbox" name="@Side-at-bat-wp" value="@b"
+                               checked="@wpChoice.Contains(b)" @onchange="() => Toggle(wpChoice, b)" />
+                        @BaseNames[b]
+                    </label>
+                }
+            </fieldset>
+            <fieldset id="@Side-at-bat-pb" class="at-bat-bases">
+                <legend>Passed ball</legend>
+                @foreach (var taken in PitchAdvanceBases)
+                {
+                    var b = taken;
+                    <label>
+                        <input type="checkbox" name="@Side-at-bat-pb" value="@b"
+                               checked="@pbChoice.Contains(b)" @onchange="() => Toggle(pbChoice, b)" />
                         @BaseNames[b]
                     </label>
                 }
@@ -362,6 +396,9 @@
     private string csFieldersChoice = "";
     // The bases ticked as stolen (2–4).
     private SortedSet<int> sbChoice = [];
+    // The bases ticked as taken on a wild pitch and on a passed ball (1–4; 1st only after a strikeout).
+    private SortedSet<int> wpChoice = [];
+    private SortedSet<int> pbChoice = [];
     private string? dialogError;
     private ElementReference dialogRef;
     private readonly Dictionary<string, ElementReference> cellRefs = [];
@@ -377,6 +414,9 @@
 
     // The bases a runner can steal: 2nd, 3rd, home (indexes into BaseNames).
     private static readonly int[] StealableBases = [2, 3, 4];
+
+    // The bases a runner can take on a wild pitch or passed ball: 1st (a strikeout's batter), 2nd, 3rd, home.
+    private static readonly int[] PitchAdvanceBases = [1, 2, 3, 4];
 
     // The positions a player can move to: 1–9 and DH, never PH or PR.
     private static readonly Position[] FieldingPositions =
@@ -426,6 +466,8 @@
 
     private int[] StolenBases((int, int, int) key) => notes.TryGetValue(key, out var note) ? note.StolenBases : [];
 
+    private BattingNote? Saved((int, int, int) key) => notes.GetValueOrDefault(key);
+
     // Shows one more column for the inning picked in the batted-around form.
     private void AddColumn()
     {
@@ -462,11 +504,11 @@
         shownColumns[n].Remove(empty);
     }
 
-    private void ToggleSteal(int b)
+    private static void Toggle(SortedSet<int> set, int b)
     {
-        if (!sbChoice.Remove(b))
+        if (!set.Remove(b))
         {
-            sbChoice.Add(b);
+            set.Add(b);
         }
     }
 
@@ -575,6 +617,8 @@
         csBaseChoice = saved?.CaughtStealingBase ?? 0;
         csFieldersChoice = saved?.CaughtStealingFielders ?? "";
         sbChoice = [.. saved?.StolenBases ?? []];
+        wpChoice = [.. saved?.WildPitchBases ?? []];
+        pbChoice = [.. saved?.PassedBallBases ?? []];
         dialogError = null;
         focusDialog = true;
     }
@@ -611,12 +655,14 @@
         csBaseChoice = 0;
         csFieldersChoice = "";
         sbChoice = [];
+        wpChoice = [];
+        pbChoice = [];
         dialogError = null;
     }
 
     // Saves the picked result's code, bases reached, (when the result records them) fielders and DP / TP, the
-    // stolen bases and the caught stealing, or clears the cell when code is null. A refused save keeps the dialog open
-    // with the message.
+    // stolen, wild pitch and passed ball bases and the caught stealing, or clears the cell when code is null. A refused
+    // save keeps the dialog open with the message.
     private async Task SaveResultAsync(string? code, int bases)
     {
         if (dialog is not { } d)
@@ -627,7 +673,8 @@
         var fielders = entry == FielderEntry.None ? null : fieldersChoice;
         var multiOut = entry == FielderEntry.Sequence ? multiOutChoice : null;
         dialogError = await BattingGridService.SaveNoteAsync(Game.Id, RosterId, d.Slot, d.Inning, code, bases,
-            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice, d.Column);
+            fielders, multiOut, csBaseChoice, csBaseChoice == 0 ? null : csFieldersChoice, sbChoice, d.Column,
+            wpChoice, pbChoice);
         if (dialogError is not null)
         {
             return;
