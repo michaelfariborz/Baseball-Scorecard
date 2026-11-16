@@ -169,6 +169,66 @@ public class ExtraColumnsFormDbTests : BunitContext
     }
 
     [Fact]
+    public async Task An_empty_extra_column_before_a_scored_one_can_be_removed_and_is_gone_after_a_reload()
+    {
+        var game = await NewGameAsync();
+        var cut = RenderGame(game.Id);
+        AddColumn(cut, "away", 4);
+        AddColumn(cut, "away", 4);
+        cut.WaitForElement("#away-slot-1-inning-4-col-3-note").Click();
+        cut.WaitForElement("#away-at-bat-dialog");
+        Assert.Contains("inning 4, column 3", cut.Find("#away-at-bat-title").TextContent);
+        cut.FindAll("#away-at-bat-dialog .at-bat-results input[type=radio]").Single(r => r.GetAttribute("value") == "K").Change("K");
+        cut.Find("#away-at-bat-save").Click();
+        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#away-at-bat-dialog")));
+
+        RemoveColumn(cut, "away", 4);
+
+        cut.WaitForAssertion(() => Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "4", "4", "5"], Headers(cut, "away")));
+        Assert.Empty(cut.FindAll("#away-batting-grid-error"));
+        Assert.Equal("K", cut.Find("#away-slot-1-inning-4-col-2-note .at-bat-note").TextContent.Trim());
+        Assert.Empty(cut.FindAll("#away-slot-1-inning-4-col-3-note"));
+
+        AddColumn(cut, "away", 4);
+        cut.WaitForElement("#away-slot-1-inning-4-col-3-note");
+        var reloaded = RenderGame(game.Id);
+        Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "4", "4", "5"], Headers(reloaded, "away"));
+        Assert.Equal("K", reloaded.Find("#away-slot-1-inning-4-col-2-note .at-bat-note").TextContent.Trim());
+        Assert.Contains("column 2", reloaded.Find("#away-slot-1-inning-4-col-2-note").GetAttribute("aria-label"));
+    }
+
+    [Fact]
+    public async Task A_saved_gap_in_columns_shows_packed_after_a_reload()
+    {
+        var game = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 3, "BB", 1, column: 3));
+        var cut = RenderGame(game.Id);
+
+        Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "3", "4", "5"], Headers(cut, "away"));
+        Assert.Equal("BB", cut.Find("#away-slot-2-inning-3-col-2-note .at-bat-note").TextContent.Trim());
+
+        cut.Find("#away-slot-2-inning-3-col-2-note").Click();
+        cut.WaitForElement("#away-at-bat-dialog");
+        cut.FindAll("#away-at-bat-dialog .at-bat-results input[type=radio]").Single(r => r.GetAttribute("value") == "HBP").Change("HBP");
+        cut.Find("#away-at-bat-save").Click();
+        cut.WaitForAssertion(() => Assert.Empty(cut.FindAll("#away-at-bat-dialog")));
+        Assert.True(await _grid.ListNotesAsync(game.Id) is [{ Column: 3, Note: "HBP" }]);
+    }
+
+    [Fact]
+    public async Task An_extra_column_in_one_game_does_not_show_in_another_game()
+    {
+        var game = await NewGameAsync();
+        var other = await NewGameAsync();
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 2, "1B", 1, column: 2));
+
+        var cut = RenderGame(other.Id);
+
+        Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "4", "5"], Headers(cut, "away"));
+        Assert.Empty(cut.FindAll("#away-slot-1-inning-2-col-2-note"));
+    }
+
+    [Fact]
     public async Task Removing_from_an_inning_with_no_extra_column_shows_a_message()
     {
         var game = await NewGameAsync();
