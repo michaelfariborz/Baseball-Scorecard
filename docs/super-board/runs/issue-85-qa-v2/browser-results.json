@@ -1,0 +1,140 @@
+[
+  {
+    "ac": "AC5",
+    "name": "pre-migration at bats show unchanged in their cells",
+    "ok": true,
+    "detail": "K/0|GO 4-6-3 DP/0|1B/3|BB/1|HR/4"
+  },
+  {
+    "ac": "AC5",
+    "name": "pre-migration game shows one column per inning on both grids",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC5",
+    "name": "old at bat edits in place (K to BB) and survives a reload",
+    "ok": true,
+    "detail": "BB"
+  },
+  {
+    "ac": "AC1",
+    "name": "away headers gain a second \"3\" right after inning 3",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC1",
+    "name": "every slot gets an inning-3 column-2 cell",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "ac": "AC1",
+    "name": "any inning works: inning 7 also gains a column",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,3,4,5,6,7,7,8,9"
+  },
+  {
+    "ac": "AC3",
+    "name": "home grid of the same game keeps one column per inning",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC2",
+    "name": "extra-column dialog opens empty and names inning 3, column 2",
+    "ok": true,
+    "detail": "title=\"Cub Batter1, inning 3, column 2\" ticked=0"
+  },
+  {
+    "ac": "AC2",
+    "name": "slot 1 shows 2B in column 1 and GO 6-3 in column 2; slot 2 shows 1B in column 2",
+    "ok": true,
+    "detail": "2B|GO 6-3|1B"
+  },
+  {
+    "ac": "AC5",
+    "name": "HITS and LOB for inning 3 are one box spanning 2 columns; inning 4 spans 1; 9 HITS boxes",
+    "ok": true,
+    "detail": "hits3=2 lob3=2 hits4=1 boxes=9"
+  },
+  {
+    "ac": "AC4",
+    "name": "empty extra column in inning 5 is removed",
+    "ok": true,
+    "detail": "added=true"
+  },
+  {
+    "ac": "AC4",
+    "name": "removing inning 3 column 2 (holds at bats) is refused with a message, column stays",
+    "ok": true,
+    "detail": "msg=\"That column holds at-bats. Clear them before removing it.\""
+  },
+  {
+    "ac": "AC2",
+    "name": "after a reload both inning-3 at bats show in their own columns",
+    "ok": true,
+    "detail": "2B|GO 6-3|1B"
+  },
+  {
+    "ac": "AC4",
+    "name": "after a reload the column holding at bats still shows and the empty inning-5 one is gone",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC5",
+    "name": "inning 3 HITS 4 / LOB 2 kept after reload as one value each",
+    "ok": true,
+    "detail": "4/2"
+  },
+  {
+    "ac": "AC3",
+    "name": "home grid still one column per inning after reload",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC3",
+    "name": "game 1 away and home grids keep one column per inning",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,4,5,6,7,8,9"
+  },
+  {
+    "ac": "AC4",
+    "name": "empty column 2 before a scored column 3 is removed, no error, K now in the second inning-6 column",
+    "ok": true,
+    "detail": "headers=#,Name,Pos,Inn,1,2,3,3,4,5,6,6,7,8,9 err=null k=K"
+  },
+  {
+    "ac": "AC4",
+    "name": "after a reload inning 6 shows two columns with K kept",
+    "ok": true,
+    "detail": "#,Name,Pos,Inn,1,2,3,3,4,5,6,6,7,8,9"
+  },
+  {
+    "ac": "AC4",
+    "name": "empty column 2 before a scored column 3 is gone after a reload (inning 8 shows two columns)",
+    "ok": true,
+    "detail": "headers=#,Name,Pos,Inn,1,2,3,3,4,5,6,6,7,8,8,9"
+  },
+  {
+    "ac": "AC4",
+    "name": "the remaining inning-8 extra column holds an at bat, so remove is refused",
+    "ok": true,
+    "detail": "msg=\"That column holds at-bats. Clear them before removing it.\""
+  },
+  {
+    "ac": "AC2",
+    "name": "both packed at bats still open their own saved data",
+    "ok": true,
+    "detail": "{\"k\":\"K\",\"bb\":\"BB\"}"
+  },
+  {
+    "ac": "ALL",
+    "name": "no page errors, no console errors, no 5xx",
+    "ok": true,
+    "detail": "{\"pageErrors\":[],\"consoleErrors\":[],\"bad\":[]}"
+  }
+]
