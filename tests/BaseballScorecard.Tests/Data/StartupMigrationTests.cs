@@ -146,8 +146,8 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         var game = new Game { Year = 2026, Date = new DateOnly(2026, 4, 2), AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9 };
         Assert.Null(await new GameService(factory).CreateAsync(game));
         var grid = new BattingGridService(factory);
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, "1B", 1, caughtStealingBase: 2, caughtStealingFieldersText: "26"));
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, "2B", 2));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, new("1B", 1, CaughtStealingBase: 2, CaughtStealingFielders: "26")));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, new("2B", 2)));
         // Back to the schema before this change: the rows now have no StolenBases column at all.
         await using (var db = ContextOn(_emptyDb))
         {
@@ -177,8 +177,8 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         var game = new Game { Year = 2026, Date = new DateOnly(2026, 4, 2), AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9 };
         Assert.Null(await new GameService(factory).CreateAsync(game));
         var grid = new BattingGridService(factory);
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, "1B", 1));
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 3, "K"));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, new("1B", 1)));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 3, new("K")));
         // Back to the schema before this change: the rows now have no Column column at all.
         await using (var db = ContextOn(_emptyDb))
         {
@@ -190,8 +190,8 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
 
         var notes = (await grid.ListNotesAsync(game.Id)).OrderBy(n => n.BattingOrder).ToList();
         Assert.Equal([("1B", 1, 1), ("K", 2, 1)], notes.Select(n => (n.Note, n.BattingOrder, n.Column)));
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, "2B", 2));
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, "GO", column: 2));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, new("2B", 2)));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 3, new("GO"), column: 2));
         Assert.Equal([(1, "2B"), (2, "GO")],
             (await grid.ListNotesAsync(game.Id)).Where(n => n.BattingOrder == 1).OrderBy(n => n.Column).Select(n => (n.Column, n.Note)));
     }
@@ -209,8 +209,8 @@ public sealed class StartupMigrationTests(PostgresFixture fixture) : IAsyncLifet
         var game = new Game { Year = 2026, Date = new DateOnly(2026, 4, 2), AwayRosterId = away.Id, HomeRosterId = home.Id, Innings = 9 };
         Assert.Null(await new GameService(factory).CreateAsync(game));
         var grid = new BattingGridService(factory);
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, "1B", 3, stolenBases: [2, 3]));
-        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, "K"));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 1, 1, new("1B", 3, StolenBases: [2, 3])));
+        Assert.Null(await grid.SaveNoteAsync(game.Id, away.Id, 2, 1, new("K")));
         // Back to the schema before this change: the rows now have no WildPitchBases or PassedBallBases columns.
         await using (var db = ContextOn(_emptyDb))
         {

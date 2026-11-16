@@ -1,0 +1,572 @@
+BaseballScorecard.Tests.AppStyleTests.At_bat_dialog_uses_the_surface_token_so_it_follows_dark_mode
+BaseballScorecard.Tests.AppStyleTests.Body_uses_the_font_token_and_an_explicit_background
+BaseballScorecard.Tests.AppStyleTests.Controls_take_their_colors_from_the_tokens(selector: "body")
+BaseballScorecard.Tests.AppStyleTests.Controls_take_their_colors_from_the_tokens(selector: "button")
+BaseballScorecard.Tests.AppStyleTests.Controls_take_their_colors_from_the_tokens(selector: "input")
+BaseballScorecard.Tests.AppStyleTests.Controls_take_their_colors_from_the_tokens(selector: "select")
+BaseballScorecard.Tests.AppStyleTests.Controls_take_their_colors_from_the_tokens(selector: "table")
+BaseballScorecard.Tests.AppStyleTests.Current_nav_link_is_marked_by_aria_current
+BaseballScorecard.Tests.AppStyleTests.Dark_set_swaps_the_page_colors
+BaseballScorecard.Tests.AppStyleTests.Every_focusable_element_shows_a_focus_outline
+BaseballScorecard.Tests.AppStyleTests.Field_validation_outlines_take_their_colors_from_the_tokens
+BaseballScorecard.Tests.AppStyleTests.Forced_dark_theme_has_the_same_tokens_as_the_OS_dark_set
+BaseballScorecard.Tests.AppStyleTests.Forced_light_theme_pins_the_light_color_scheme
+BaseballScorecard.Tests.AppStyleTests.Header_focus_outline_uses_the_header_text_color
+BaseballScorecard.Tests.AppStyleTests.Light_and_dark_sets_define_every_color_token_as_a_hex_color
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-accent", bg: "--color-bg", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-accent", bg: "--color-surface", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-border", bg: "--color-bg", min: 3)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-border", bg: "--color-surface", min: 3)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-focus", bg: "--color-bg", min: 3)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-focus", bg: "--color-surface", min: 3)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-link", bg: "--color-bg", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-link", bg: "--color-surface", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-muted", bg: "--color-bg", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-muted", bg: "--color-surface", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-nav-current", bg: "--color-header", min: 3)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-on-header", bg: "--color-header", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-on-primary", bg: "--color-primary", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-text", bg: "--color-bg", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Pairs_meet_wcag_aa_in_light_and_dark(fg: "--color-text", bg: "--color-surface", min: 4.5)
+BaseballScorecard.Tests.AppStyleTests.Root_defines_spacing_and_font_tokens
+BaseballScorecard.Tests.AppStyleTests.Rules_that_set_an_outline_keep_the_focus_ring_when_focused
+BaseballScorecard.Tests.AppStyleTests.Theme_toggle_hover_inverts_the_header_colors
+BaseballScorecard.Tests.AppStyleTests.Theme_toggle_takes_its_colors_from_the_header_tokens
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.An_error_shows_one_fielder_input_and_no_DP_TP_choice
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_single_a_steal_of_2nd_and_a_passed_ball_to_3rd_show_after_reload_and_on_reopen
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_single_with_a_wild_pitch_to_2nd_and_a_passed_ball_to_3rd_shows_both
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_steal_of_2nd_then_caught_stealing_3rd_shows_the_result_SB_and_CS_in_that_order
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_strikeout_that_reached_1st_on_a_wild_pitch_or_passed_ball_shows_next_to_the_K(code: "K", kind: "pb", expected: "K PB")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_strikeout_that_reached_1st_on_a_wild_pitch_or_passed_ball_shows_next_to_the_K(code: "K", kind: "wp", expected: "K WP")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_strikeout_that_reached_1st_on_a_wild_pitch_or_passed_ball_shows_next_to_the_K(code: "ꓘ", kind: "pb", expected: "ꓘ PB")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_strikeout_that_reached_1st_on_a_wild_pitch_or_passed_ball_shows_next_to_the_K(code: "ꓘ", kind: "wp", expected: "ꓘ WP")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.A_wild_pitch_and_a_passed_ball_on_the_same_base_are_not_saved
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Bad_fielders_are_not_saved_and_the_dialog_says_why(code: "E", input: "error-by", typed: "0", message: "An error is charged to one fielder: a position num"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Bad_fielders_are_not_saved_and_the_dialog_says_why(code: "FO", input: "fielders", typed: "88-", message: "Fielders must be position numbers 1–9, like 8, 63 "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Bad_fielders_are_not_saved_and_the_dialog_says_why(code: "GO", input: "fielders", typed: "6/3", message: "Fielders must be position numbers 1–9, like 8, 63 "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Cancelling_or_closing_leaves_the_saved_result_unchanged(how: "cancel")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Cancelling_or_closing_leaves_the_saved_result_unchanged(how: "close")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Cancelling_or_closing_leaves_the_saved_result_unchanged(how: "escape")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Caught_stealing_that_does_not_fit_is_not_saved_and_the_dialog_says_why(code: "1B", bases: 1, target: 2, fielders: "2-0", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Caught_stealing_that_does_not_fit_is_not_saved_and_the_dialog_says_why(code: "1B", bases: 1, target: 3, fielders: "26", message: "Caught stealing must be the next base after bases "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Caught_stealing_that_does_not_fit_is_not_saved_and_the_dialog_says_why(code: "HR", bases: 4, target: 2, fielders: "26", message: "A runner who scored cannot be caught stealing.")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Caught_stealing_that_does_not_fit_is_not_saved_and_the_dialog_says_why(code: "K", bases: 0, target: 2, fielders: "26", message: "A caught stealing needs the batter on base: pick 1"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Cells_with_no_bases_reached_draw_no_segments_and_older_notes_still_show
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clear_removes_a_caught_stealing_and_older_at_bats_show_unchanged
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clear_removes_saved_fielders_and_double_play
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clear_removes_stolen_bases_and_older_at_bats_show_unchanged
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clear_removes_wild_pitches_and_passed_balls_and_older_at_bats_show_unchanged
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clear_resets_bases_reached_to_none
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clicking_a_cell_opens_a_dialog_naming_the_batter_and_inning(side: "away", last: "Cub")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Clicking_a_cell_opens_a_dialog_naming_the_batter_and_inning(side: "home", last: "Sox")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Dialog_offers_bases_reached_none_to_home_with_none_picked_for_an_empty_cell
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Dialog_offers_caught_stealing_none_2nd_3rd_home_and_fielders_only_once_a_base_is_picked
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Dialog_offers_exactly_the_thirteen_results_in_order
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Dialog_offers_stolen_bases_2nd_3rd_home_none_checked
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Dialog_offers_wild_pitch_and_passed_ball_bases_1st_to_home_none_checked
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Filled_cell_opens_with_its_result_selected_and_can_be_changed_or_cleared
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Older_free_text_still_shows_opens_with_nothing_selected_and_is_replaced_on_save
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Opening_focuses_the_dialog_and_escape_returns_focus_to_the_cell
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Other_results_show_no_fielder_inputs(code: "1B")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Other_results_show_no_fielder_inputs(code: "BB")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Other_results_show_no_fielder_inputs(code: "K")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Outs_in_play_show_a_fielders_input_and_a_none_DP_TP_choice(code: "FC")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Outs_in_play_show_a_fielders_input_and_a_none_DP_TP_choice(code: "FO")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Outs_in_play_show_a_fielders_input_and_a_none_DP_TP_choice(code: "GO")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Outs_in_play_show_a_fielders_input_and_a_none_DP_TP_choice(code: "SF")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Picking_a_result_and_saving_shows_it_in_the_cell_and_after_a_reload(code: "2B")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Picking_a_result_and_saving_shows_it_in_the_cell_and_after_a_reload(code: "ꓘ")
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_a_ground_out_double_play_shows_it_in_the_cell_after_reload_and_on_reopen
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_an_error_by_the_shortstop_shows_E6_after_reload_and_on_reopen
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_a_single_and_a_steal_of_2nd_shows_SB_2_after_reload_and_on_reopen
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_a_single_caught_stealing_2_6_shows_CS_with_the_diamond_at_1st_after_reload_and_on_reopen
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_bases_reached_draws_that_many_segments_in_order_and_survives_a_reload(bases: 1)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_bases_reached_draws_that_many_segments_in_order_and_survives_a_reload(bases: 2)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_bases_reached_draws_that_many_segments_in_order_and_survives_a_reload(bases: 3)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Saving_bases_reached_draws_that_many_segments_in_order_and_survives_a_reload(bases: 4)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Stolen_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 1, steals: [2], csBase: 0, message: "A stolen base must be at or below bases reached: t"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Stolen_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 2, steals: [2, 3], csBase: 3, message: "A stolen base must come before the caught-stealing"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Stolen_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "2B", bases: 2, steals: [2], csBase: 0, message: "The batter reached that base on the hit itself, so"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Switching_to_a_result_without_fielders_removes_saved_fielders
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 1, kind: "pb", target: 1, steal: 0, csBase: 0, message: "Only a strikeout (K or ꓘ) can reach 1st on a wild "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 1, kind: "wp", target: 2, steal: 0, csBase: 0, message: "A wild pitch or passed ball base must be at or bel"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 2, kind: "pb", target: 3, steal: 0, csBase: 3, message: "A wild pitch or passed ball base must come before "···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "1B", bases: 2, kind: "wp", target: 2, steal: 2, csBase: 0, message: "A base is taken one way only: stolen, on a wild pi"···)
+BaseballScorecard.Tests.BattingGrids.AtBatDialogFormDbTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_not_saved_and_the_dialog_says_why(code: "2B", bases: 2, kind: "wp", target: 2, steal: 0, csBase: 0, message: "The batter reached that base on the hit itself, no"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridBorderStyleTests.Grid_table_carries_the_batting_grid_class
+BaseballScorecard.Tests.BattingGrids.BattingGridBorderStyleTests.Header_and_body_cells_draw_a_solid_border
+BaseballScorecard.Tests.BattingGrids.BattingGridBorderStyleTests.Table_collapses_borders_and_draws_one
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.A_column_below_1_is_refused(column: 0)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.A_column_below_1_is_refused(column: -1)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.An_error_takes_one_fielder_1_to_9(fielder: "0")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.An_error_takes_one_fielder_1_to_9(fielder: "6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.An_error_takes_one_fielder_1_to_9(fielder: "66")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.An_error_takes_one_fielder_1_to_9(fielder: "x")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.A_note_saved_without_a_column_goes_in_the_first_column
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.A_second_at_bat_in_an_extra_column_saves_apart_from_the_first
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bad_hits_or_lob_is_refused_and_changes_nothing(bad: "+2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bad_hits_or_lob_is_refused_and_changes_nothing(bad: "-1")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bad_hits_or_lob_is_refused_and_changes_nothing(bad: "1.5")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bad_hits_or_lob_is_refused_and_changes_nothing(bad: "two")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_defaults_to_none_when_not_given
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_outside_0_to_4_is_refused(bases: -1)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_outside_0_to_4_is_refused(bases: 5)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_saves_with_the_note_and_reloads(bases: 0)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_saves_with_the_note_and_reloads(bases: 1)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Bases_reached_saves_with_the_note_and_reloads(bases: 4)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Blank_note_clears_the_cell(blank: "  ")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Blank_note_clears_the_cell(blank: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Blank_note_clears_the_cell(blank: null)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_defaults_to_none_and_its_fielders_are_dropped_without_a_base
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_saves_the_target_base_and_hyphenated_fielders_and_reloads(bases: 1, target: 2, typed: "26", saved: "2-6")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_saves_the_target_base_and_hyphenated_fielders_and_reloads(bases: 1, target: 2, typed: "2", saved: "2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_saves_the_target_base_and_hyphenated_fielders_and_reloads(bases: 2, target: 3, typed: "2-5", saved: "2-5")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_saves_the_target_base_and_hyphenated_fielders_and_reloads(bases: 3, target: 4, typed: " 12 ", saved: "1-2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_text_shows_CS_and_the_hyphenated_fielders(target: 0, fielders: "", expected: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_text_shows_CS_and_the_hyphenated_fielders(target: 2, fielders: "2-6", expected: "CS 2-6")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_text_shows_CS_and_the_hyphenated_fielders(target: 4, fielders: "1-2", expected: "CS 1-2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 1, fielders: "26", message: "Caught stealing must be the next base after bases "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 2, fielders: "12345678912", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 2, fielders: "20", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 2, fielders: "2/6", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 2, fielders: "C-SS", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 2, fielders: "", message: "Caught stealing fielders must be position numbers "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 3, fielders: "26", message: "Caught stealing must be the next base after bases "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "1B", bases: 1, target: 5, fielders: "26", message: "Caught stealing must be the next base after bases "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "2B", bases: 2, target: 2, fielders: "26", message: "Caught stealing must be the next base after bases "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "HR", bases: 4, target: 2, fielders: "26", message: "A runner who scored cannot be caught stealing.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Caught_stealing_that_does_not_fit_the_at_bat_is_refused_and_changes_nothing(code: "K", bases: 0, target: 2, fielders: "26", message: "A caught stealing needs the batter on base: pick 1"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cells_outside_the_innings_or_for_another_team_are_refused
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "1B", fielders: "", multiOut: "", expected: "1B")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "6-3", fielders: "", multiOut: "", expected: "6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "E", fielders: "6", multiOut: "", expected: "E6")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "E", fielders: "", multiOut: "", expected: "E")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "FO", fielders: "8", multiOut: "", expected: "FO 8")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "GO", fielders: "4-6-3", multiOut: "DP", expected: "GO 4-6-3 DP")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Cell_text_puts_fielders_and_double_or_triple_play_after_the_result(code: "GO", fielders: "", multiOut: "TP", expected: "GO TP")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Double_or_triple_play_is_refused_where_it_does_not_apply(code: "1B", multiOut: "DP", message: "Only GO, FO, SF, FC and E record fielders.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Double_or_triple_play_is_refused_where_it_does_not_apply(code: "E", multiOut: "DP", message: "An error is never a DP or TP.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Double_or_triple_play_is_refused_where_it_does_not_apply(code: "GO", multiOut: "dp", message: "Double or triple play must be none, DP or TP.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Double_or_triple_play_is_refused_where_it_does_not_apply(code: "GO", multiOut: "XP", message: "Double or triple play must be none, DP or TP.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "E", fielders: "6", multiOut: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "FC", fielders: "6-4", multiOut: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "FO", fielders: "8", multiOut: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "GO", fielders: "4-6-3", multiOut: "DP")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "GO", fielders: "5-4-3", multiOut: "TP")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "GO", fielders: "", multiOut: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_and_double_or_triple_play_save_with_the_result_and_reload(code: "SF", fielders: "9", multiOut: null)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "FC", fielders: "6/4")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "FO", fielders: "SS")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "0")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "10")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "12345678912")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "4a3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "6-")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "6 3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "GO", fielders: "6--3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_other_than_positions_1_to_9_joined_by_hyphens_are_refused(code: "SF", fielders: "1-2-3-4-5-6-7-8-9-1-2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "FC", typed: " 63 ", saved: "6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "FO", typed: "46-3", saved: "4-6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "GO", typed: "1234567891", saved: "1-2-3-4-5-6-7-8-9-1")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "GO", typed: "4-6-3", saved: "4-6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "GO", typed: "463", saved: "4-6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Fielders_typed_with_or_without_hyphens_save_hyphen_joined(code: "SF", typed: "8", saved: "8")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Hits_and_lob_save_per_team_and_inning_and_blank_clears
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Note_of_20_characters_saves_and_21_is_refused
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Note_outside_the_slots_or_innings_is_refused(slot: 0, inning: 1)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Note_outside_the_slots_or_innings_is_refused(slot: 10, inning: 1)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Note_outside_the_slots_or_innings_is_refused(slot: 1, inning: 0)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Note_outside_the_slots_or_innings_is_refused(slot: 1, inning: 8)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Notes_save_per_team_slot_and_inning_and_reload
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Results_without_fielders_refuse_fielders(code: "1B")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Results_without_fielders_refuse_fielders(code: "6-3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Results_without_fielders_refuse_fielders(code: "K")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Saving_a_cell_again_replaces_its_note
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Saving_again_replaces_bases_reached_and_clearing_removes_it
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Saving_a_result_without_fielders_or_clearing_removes_saved_fielders
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Saving_without_caught_stealing_or_clearing_removes_it
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_default_to_none_and_saving_without_them_or_clearing_removes_them
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_go_with_a_caught_stealing_at_a_later_base
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_save_as_a_sorted_set_and_reload(code: "1B", bases: 2, stolen: [2], saved: [2])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_save_as_a_sorted_set_and_reload(code: "1B", bases: 3, stolen: [3, 2], saved: [2, 3])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_save_as_a_sorted_set_and_reload(code: "2B", bases: 3, stolen: [3], saved: [3])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_save_as_a_sorted_set_and_reload(code: "3B", bases: 4, stolen: [4], saved: [4])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_save_as_a_sorted_set_and_reload(code: "BB", bases: 4, stolen: [2, 3, 4, 3], saved: [2, 3, 4])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_text_shows_SB_and_the_bases(stolen: [2, 3, 4], expected: "SB 2,3,4")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_text_shows_SB_and_the_bases(stolen: [2, 3], expected: "SB 2,3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_text_shows_SB_and_the_bases(stolen: [2], expected: "SB 2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_text_shows_SB_and_the_bases(stolen: [], expected: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 1, stolen: [1], csBase: 0, message: "Stolen bases must be 2nd, 3rd or home.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 1, stolen: [2], csBase: 0, message: "A stolen base must be at or below bases reached: t"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 2, stolen: [2, 3], csBase: 0, message: "A stolen base must be at or below bases reached: t"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 2, stolen: [2, 3], csBase: 3, message: "A stolen base must come before the caught-stealing"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 3, stolen: [4], csBase: 4, message: "A stolen base must come before the caught-stealing"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "1B", bases: 4, stolen: [5], csBase: 0, message: "Stolen bases must be 2nd, 3rd or home.")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "2B", bases: 2, stolen: [2], csBase: 0, message: "The batter reached that base on the hit itself, so"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "3B", bases: 4, stolen: [3], csBase: 0, message: "The batter reached that base on the hit itself, so"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "HR", bases: 4, stolen: [4], csBase: 0, message: "The batter reached that base on the hit itself, so"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Stolen_bases_that_do_not_fit_the_at_bat_are_refused_and_change_nothing(code: "K", bases: 0, stolen: [2], csBase: 0, message: "A stolen base must be at or below bases reached: t"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "1B", bases: 3, wildPitches: [2], passedBalls: [3], savedWp: [2], savedPb: [3])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "1B", bases: 3, wildPitches: [3, 2], passedBalls: [], savedWp: [2, 3], savedPb: [])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "2B", bases: 3, wildPitches: [3], passedBalls: [], savedWp: [3], savedPb: [])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "BB", bases: 4, wildPitches: [], passedBalls: [4, 2, 2], savedWp: [], savedPb: [2, 4])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "K", bases: 1, wildPitches: [1], passedBalls: [], savedWp: [1], savedPb: [])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "K", bases: 3, wildPitches: [1, 3], passedBalls: [2], savedWp: [1, 3], savedPb: [2])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_save_as_sorted_sets_and_reload(code: "ꓘ", bases: 2, wildPitches: [], passedBalls: [1], savedWp: [], savedPb: [1])
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 1, wildPitches: [1], passedBalls: [], stolen: [], csBase: 0, message: "Only a strikeout (K or ꓘ) can reach 1st on a wild "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 1, wildPitches: [2], passedBalls: [], stolen: [], csBase: 0, message: "A wild pitch or passed ball base must be at or bel"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 2, wildPitches: [0], passedBalls: [], stolen: [], csBase: 0, message: "Wild pitch and passed ball bases must be 1st, 2nd,"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 2, wildPitches: [2, 3], passedBalls: [], stolen: [], csBase: 3, message: "A wild pitch or passed ball base must come before "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 3, wildPitches: [2], passedBalls: [2], stolen: [], csBase: 0, message: "A base is taken one way only: stolen, on a wild pi"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 3, wildPitches: [2], passedBalls: [], stolen: [2], csBase: 0, message: "A base is taken one way only: stolen, on a wild pi"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 3, wildPitches: [], passedBalls: [3], stolen: [3], csBase: 0, message: "A base is taken one way only: stolen, on a wild pi"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 3, wildPitches: [], passedBalls: [4], stolen: [], csBase: 4, message: "A wild pitch or passed ball base must come before "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "1B", bases: 4, wildPitches: [], passedBalls: [5], stolen: [], csBase: 0, message: "Wild pitch and passed ball bases must be 1st, 2nd,"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "2B", bases: 2, wildPitches: [2], passedBalls: [], stolen: [], csBase: 0, message: "The batter reached that base on the hit itself, no"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "3B", bases: 4, wildPitches: [], passedBalls: [3], stolen: [], csBase: 0, message: "The batter reached that base on the hit itself, no"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "BB", bases: 1, wildPitches: [], passedBalls: [1], stolen: [], csBase: 0, message: "Only a strikeout (K or ꓘ) can reach 1st on a wild "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "GO", bases: 1, wildPitches: [1], passedBalls: [], stolen: [], csBase: 0, message: "Only a strikeout (K or ꓘ) can reach 1st on a wild "···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "K", bases: 0, wildPitches: [1], passedBalls: [], stolen: [], csBase: 0, message: "A wild pitch or passed ball base must be at or bel"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "K", bases: 1, wildPitches: [1], passedBalls: [1], stolen: [], csBase: 0, message: "A base is taken one way only: stolen, on a wild pi"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_bases_that_do_not_fit_are_refused_and_change_nothing(code: "ꓘ", bases: 1, wildPitches: [], passedBalls: [1, 2], stolen: [], csBase: 0, message: "A wild pitch or passed ball base must be at or bel"···)
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "1B", wildPitches: [2], passedBalls: [3], cell: "1B", wp: "WP 2", pb: "PB 3")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "1B", wildPitches: [2], passedBalls: [], cell: "1B", wp: "WP 2", pb: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "1B", wildPitches: [], passedBalls: [3, 4], cell: "1B", wp: "", pb: "PB 3,4")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "1B", wildPitches: [], passedBalls: [], cell: "1B", wp: "", pb: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "K", wildPitches: [1, 3], passedBalls: [2], cell: "K WP", wp: "WP 3", pb: "PB 2")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "K", wildPitches: [1], passedBalls: [], cell: "K WP", wp: "", pb: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitch_and_passed_ball_text_shows_the_marks(code: "ꓘ", wildPitches: [], passedBalls: [1], cell: "ꓘ PB", wp: "", pb: "")
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitches_and_passed_balls_default_to_none_and_saving_without_them_or_clearing_removes_them
+BaseballScorecard.Tests.BattingGrids.BattingGridServiceTests.Wild_pitches_and_passed_balls_go_with_a_steal_and_a_later_caught_stealing
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.Adding_a_column_puts_a_second_header_for_the_inning_right_after_it_on_that_team_only
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.An_at_bat_in_an_extra_column_saves_on_its_own_and_both_show_after_a_reload
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.An_empty_extra_column_before_a_scored_one_can_be_removed_and_is_gone_after_a_reload
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.An_empty_extra_column_can_be_removed_and_is_not_kept_after_a_reload
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.An_extra_column_holding_an_at_bat_cannot_be_removed_and_shows_after_a_reload
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.An_extra_column_in_one_game_does_not_show_in_another_game
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.A_saved_gap_in_columns_shows_packed_after_a_reload
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.Hits_and_lob_stay_one_box_each_spanning_all_of_the_innings_columns
+BaseballScorecard.Tests.BattingGrids.ExtraColumnsFormDbTests.Removing_from_an_inning_with_no_extra_column_shows_a_message
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.A_good_save_elsewhere_clears_the_message_and_shows_what_is_saved_in_the_refused_box
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.A_note_stays_with_its_batting_slot_when_the_lineup_changes
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Bad_hits_or_lob_is_not_saved_and_shows_the_message(box: "hits", bad: "-1")
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Bad_hits_or_lob_is_not_saved_and_shows_the_message(box: "lob", bad: "two")
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.First_save_of_one_lineup_keeps_the_other_teams_unsaved_picks
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Grid_shows_abbreviations_including_a_pinch_runner_saved_in_the_lineup
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Hits_and_lob_boxes_per_inning_save_and_reload
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Saved_lineup_shows_nine_rows_in_batting_order_then_inning_columns
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Saving_a_lineup_on_the_page_shows_its_grid
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Saving_one_lineup_keeps_the_other_teams_unsaved_picks
+BaseballScorecard.Tests.BattingGrids.GameBattingGridFormDbTests.Team_without_a_saved_lineup_shows_the_message_instead_of_a_grid
+BaseballScorecard.Tests.BattingGrids.PositionChangesFormDbTests.A_pinch_hitter_who_stays_in_at_CF_and_the_CF_who_moves_to_RF_show_both_positions
+BaseballScorecard.Tests.BattingGrids.PositionChangesFormDbTests.A_refused_change_shows_its_message_and_changes_nothing
+BaseballScorecard.Tests.BattingGrids.PositionChangesFormDbTests.Only_players_in_the_game_and_fielding_positions_can_be_picked
+BaseballScorecard.Tests.BattingGrids.PositionChangesFormDbTests.Saved_changes_reload_and_removing_one_puts_the_player_back
+BaseballScorecard.Tests.BattingGrids.SubstitutionsFormDbTests.Adding_a_pinch_hitter_then_a_pinch_runner_lists_them_under_the_starter_and_moves_the_at_bats
+BaseballScorecard.Tests.BattingGrids.SubstitutionsFormDbTests.A_defensive_sub_shows_the_position_of_the_player_he_replaced
+BaseballScorecard.Tests.BattingGrids.SubstitutionsFormDbTests.Grid_has_an_Inn_column_left_blank_for_starters
+BaseballScorecard.Tests.BattingGrids.SubstitutionsFormDbTests.Players_already_in_the_game_cannot_be_picked_and_a_bad_inning_shows_a_message
+BaseballScorecard.Tests.BattingGrids.SubstitutionsFormDbTests.Saved_at_bats_and_substitutes_reload_and_removing_a_sub_gives_the_slot_back
+BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.Development.json")
+BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_file_has_no_connection_strings(relativePath: "src/BaseballScorecard/appsettings.json")
+BaseballScorecard.Tests.Data.AppSettingsSecretsTests.Appsettings_files_are_found
+BaseballScorecard.Tests.Data.AppStartupDatabaseTests.App_host_registers_ScorecardDbContext_on_Npgsql_from_the_Scorecard_connection_string
+BaseballScorecard.Tests.Data.DatabaseConnectionTests.Test_database_is_reachable_after_migrations
+BaseballScorecard.Tests.Data.DatabaseRegistrationTests.App_project_has_a_user_secrets_id
+BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_is_also_resolvable_directly_from_a_scope
+BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Context_uses_Npgsql_with_the_Scorecard_connection_string
+BaseballScorecard.Tests.Data.DatabaseRegistrationTests.Missing_connection_string_fails_with_a_message_naming_the_key
+BaseballScorecard.Tests.Data.PostgresFixtureIsolationTests.Run_database_is_named_off_the_variable_with_a_unique_suffix
+BaseballScorecard.Tests.Data.PostgresFixtureIsolationTests.Two_runs_at_the_same_time_each_get_their_own_migrated_database_and_drop_it
+BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "   ")
+BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: "")
+BaseballScorecard.Tests.Data.PostgresFixtureTests.Missing_test_db_variable_fails_with_a_message_naming_it(value: null)
+BaseballScorecard.Tests.Data.PostgresFixtureTests.Set_test_db_variable_is_returned
+BaseballScorecard.Tests.Data.StartupMigrationTests.A_failing_later_migration_is_named_and_earlier_ones_stay_applied_and_logged
+BaseballScorecard.Tests.Data.StartupMigrationTests.A_failing_migration_stops_with_an_error_naming_it
+BaseballScorecard.Tests.Data.StartupMigrationTests.At_bats_saved_before_AddInningColumns_land_in_the_first_column_after_it_applies
+BaseballScorecard.Tests.Data.StartupMigrationTests.At_bats_saved_before_AddStolenBases_load_unchanged_with_no_steals_after_it_applies
+BaseballScorecard.Tests.Data.StartupMigrationTests.At_bats_saved_before_AddWildPitchesPassedBalls_load_unchanged_with_no_marks_after_it_applies
+BaseballScorecard.Tests.Data.StartupMigrationTests.Current_database_logs_that_there_is_nothing_to_apply
+BaseballScorecard.Tests.Data.StartupMigrationTests.Empty_database_gets_every_migration_and_each_is_logged
+BaseballScorecard.Tests.Data.StartupMigrationTests.MigrateOnStartup_false_applies_nothing
+BaseballScorecard.Tests.Data.StartupMigrationTests.Starting_the_app_host_migrates_an_empty_database
+BaseballScorecard.Tests.FaviconTests.Favicon_ico_is_served_as_an_icon
+BaseballScorecard.Tests.FaviconTests.Head_links_a_local_svg_icon_that_is_served
+BaseballScorecard.Tests.FaviconTests.Ico_fallback_link_does_not_claim_any_size_so_browsers_prefer_the_svg
+BaseballScorecard.Tests.Games.GamePageTests.Missing_game_says_it_was_not_found
+BaseballScorecard.Tests.Games.GamePageTests.Puts_the_away_pitchers_right_after_the_away_batting_table_and_home_pitchers_after_home_batting
+BaseballScorecard.Tests.Games.GamePageTests.Shows_the_matchup_and_puts_the_date_in_the_line_score_corner
+BaseballScorecard.Tests.Games.GameServiceRegistrationTests.App_host_registers_the_game_page_services
+BaseballScorecard.Tests.Games.GameServiceTests.Batters_is_always_saved_as_nine
+BaseballScorecard.Tests.Games.GameServiceTests.Create_saves_the_game_with_both_teams
+BaseballScorecard.Tests.Games.GameServiceTests.Create_sets_Year_from_the_Date_and_ignores_the_passed_Year
+BaseballScorecard.Tests.Games.GameServiceTests.Filter_options_list_only_years_and_team_names_that_have_games
+BaseballScorecard.Tests.Games.GameServiceTests.Innings_below_one_is_rejected_and_nothing_is_saved(innings: 0)
+BaseballScorecard.Tests.Games.GameServiceTests.Innings_below_one_is_rejected_and_nothing_is_saved(innings: -1)
+BaseballScorecard.Tests.Games.GameServiceTests.List_by_team_matches_the_team_name_home_or_away_in_any_year_and_combines_with_year
+BaseballScorecard.Tests.Games.GameServiceTests.List_by_year_keeps_only_that_year
+BaseballScorecard.Tests.Games.GameServiceTests.List_returns_games_newest_date_first_with_both_teams
+BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: False, pickHome: False)
+BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: False, pickHome: True)
+BaseballScorecard.Tests.Games.GameServiceTests.Missing_team_is_rejected_and_nothing_is_saved(pickAway: True, pickHome: False)
+BaseballScorecard.Tests.Games.GameServiceTests.One_inning_is_the_smallest_game_that_saves
+BaseballScorecard.Tests.Games.GameServiceTests.Rosters_are_checked_against_the_Date_year_not_the_passed_Year
+BaseballScorecard.Tests.Games.GameServiceTests.Rosters_for_year_lists_only_that_year_ordered_by_name
+BaseballScorecard.Tests.Games.GameServiceTests.Same_away_and_home_team_is_rejected_and_nothing_is_saved
+BaseballScorecard.Tests.Games.GameServiceTests.Team_from_another_year_is_rejected_and_nothing_is_saved
+BaseballScorecard.Tests.Games.NewGamePageTests.A_date_inside_the_same_year_keeps_the_pick_and_a_date_in_2026_lists_only_2026_and_clears_it
+BaseballScorecard.Tests.Games.NewGamePageTests.A_slow_first_load_that_finishes_after_a_date_change_does_not_replace_the_new_years_teams
+BaseballScorecard.Tests.Games.NewGamePageTests.A_valid_save_creates_the_game_and_opens_its_page
+BaseballScorecard.Tests.Games.NewGamePageTests.Changing_the_date_to_another_year_clears_a_team_picked_from_the_old_year
+BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "0")
+BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "2.5")
+BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "-3")
+BaseballScorecard.Tests.Games.NewGamePageTests.Innings_that_is_not_a_whole_number_of_at_least_one_shows_a_message_and_saves_nothing(innings: "abc")
+BaseballScorecard.Tests.Games.NewGamePageTests.No_team_picked_shows_a_message_and_saves_nothing
+BaseballScorecard.Tests.Games.NewGamePageTests.Same_away_and_home_shows_a_message_and_saves_nothing
+BaseballScorecard.Tests.Games.NewGamePageTests.Save_is_disabled_while_a_save_is_running
+BaseballScorecard.Tests.Games.NewGamePageTests.Save_is_enabled_again_after_a_save_fails_validation
+BaseballScorecard.Tests.Games.NewGamePageTests.Saving_with_a_date_in_2025_stores_year_2025
+BaseballScorecard.Tests.Games.NewGamePageTests.Shows_the_defaults_and_batters_is_nine_and_read_only
+BaseballScorecard.Tests.Games.NewGamePageTests.Submitting_twice_while_the_first_save_is_running_creates_exactly_one_game
+BaseballScorecard.Tests.Games.NewGamePageTests.Team_dropdowns_list_only_rosters_for_the_dates_year_and_follow_date_changes
+BaseballScorecard.Tests.HomePageTests.A_slow_first_load_that_finishes_after_a_year_pick_does_not_replace_the_picked_years_games
+BaseballScorecard.Tests.HomePageTests.Dropdowns_list_only_years_and_team_names_that_have_saved_games
+BaseballScorecard.Tests.HomePageTests.Home_shows_the_app_heading_and_the_rosters_and_new_game_links
+BaseballScorecard.Tests.HomePageTests.Lists_games_newest_date_first_showing_date_and_away_at_home_linking_to_the_game
+BaseballScorecard.Tests.HomePageTests.Team_filter_matches_home_or_away_in_any_year_and_combines_with_year
+BaseballScorecard.Tests.HomePageTests.With_no_games_home_says_no_games_yet
+BaseballScorecard.Tests.HomePageTests.Year_filter_shows_only_that_year_and_all_shows_every_year
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Final_is_the_sum_and_blank_innings_stay_blank
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Line_score_has_innings_then_final_and_away_row_first
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Negative_or_non_number_is_not_saved_and_shows_the_message(bad: "-1")
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Negative_or_non_number_is_not_saved_and_shows_the_message(bad: "two")
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Seven_inning_game_shows_exactly_seven_inning_columns
+BaseballScorecard.Tests.LineScores.GameLineScoreFormDbTests.Typed_runs_save_and_are_still_there_after_a_reload
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Blank_clears_the_inning(blank: "  ")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Blank_clears_the_inning(blank: "")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Blank_clears_the_inning(blank: null)
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Inning_outside_the_game_is_rejected(inning: 0)
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Inning_outside_the_game_is_rejected(inning: 8)
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Negative_or_non_number_is_rejected_and_keeps_the_saved_runs(bad: "+2")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Negative_or_non_number_is_rejected_and_keeps_the_saved_runs(bad: "-1")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Negative_or_non_number_is_rejected_and_keeps_the_saved_runs(bad: "1.5")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Negative_or_non_number_is_rejected_and_keeps_the_saved_runs(bad: "99999999999")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Negative_or_non_number_is_rejected_and_keeps_the_saved_runs(bad: "abc")
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Runs_of_another_game_are_not_listed
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Runs_save_per_team_and_inning_and_reload
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Saving_an_inning_again_replaces_its_runs
+BaseballScorecard.Tests.LineScores.LineScoreServiceTests.Team_not_in_the_game_is_rejected
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Dh_disables_pitcher_and_requires_a_non_batting_starting_pitcher
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Each_team_has_nine_slots_picking_its_own_players_and_numbered_positions
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Edit_lineup_brings_back_the_picker_with_saved_values_and_saving_hides_it_again
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Empty_slot_shows_a_message_naming_it_and_saves_nothing
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Game_with_both_lineups_saved_opens_with_only_the_two_Edit_lineup_buttons
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Game_with_no_saved_lineups_shows_both_pickers_and_no_edit_button
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Same_player_or_position_twice_shows_a_message_naming_the_slot_and_saves_nothing
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Saved_lineup_reloads_in_batting_order
+BaseballScorecard.Tests.Lineups.GameLineupFormDbTests.Saving_a_lineup_hides_that_teams_picker_and_shows_Edit_lineup_while_the_other_stays
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Dh_lineup_saves_its_starting_pitcher
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Dh_lineup_with_a_pitcher_batting_is_rejected_naming_the_slot
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Dh_lineup_with_a_starting_pitcher_from_another_roster_is_rejected
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Dh_lineup_with_a_starting_pitcher_in_the_batting_order_is_rejected
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Dh_lineup_without_a_starting_pitcher_is_rejected
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Empty_slot_is_rejected_naming_the_slot_and_nothing_is_saved(slot: 1, emptyPlayer: True)
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Empty_slot_is_rejected_naming_the_slot_and_nothing_is_saved(slot: 4, emptyPlayer: False)
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Empty_slot_is_rejected_naming_the_slot_and_nothing_is_saved(slot: 9, emptyPlayer: True)
+BaseballScorecard.Tests.Lineups.LineupServiceTests.First_save_that_loses_a_race_returns_a_message_instead_of_throwing
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Lineup_for_a_team_not_in_the_game_is_rejected_and_nothing_is_saved
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Lineup_without_dh_drops_a_starting_pitcher_choice
+BaseballScorecard.Tests.Lineups.LineupServiceTests.No_lineup_yet_finds_nothing
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Player_from_another_roster_is_rejected_naming_the_slot
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Rejected_save_keeps_the_previous_lineup
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Same_player_twice_is_rejected_naming_the_slot_and_nothing_is_saved
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Same_position_twice_is_rejected_naming_the_slot_and_nothing_is_saved
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Saving_again_replaces_the_lineup
+BaseballScorecard.Tests.Lineups.LineupServiceTests.Valid_lineup_saves_and_reloads_in_batting_order
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.A_change_before_the_player_came_in_is_refused
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.An_inning_outside_the_game_is_refused(inning: 0)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.An_inning_outside_the_game_is_refused(inning: 10)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.A_pinch_hitter_who_stays_in_and_a_starter_who_moves_are_both_saved
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.A_player_not_in_the_game_in_that_inning_is_refused
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.A_second_change_for_the_same_player_in_the_same_inning_is_refused
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.A_substitute_before_the_replaced_players_later_change_is_refused
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Pinch_hitter_pinch_runner_or_no_position_is_refused(position: 0)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Pinch_hitter_pinch_runner_or_no_position_is_refused(position: 13)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Pinch_hitter_pinch_runner_or_no_position_is_refused(position: PinchHitter)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Pinch_hitter_pinch_runner_or_no_position_is_refused(position: PinchRunner)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Removing_a_change_deletes_only_that_row_of_that_game
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.Removing_a_substitute_removes_his_position_changes
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.The_first_and_last_inning_of_the_game_are_allowed(inning: 1)
+BaseballScorecard.Tests.Lineups.PositionChangeServiceTests.The_first_and_last_inning_of_the_game_are_allowed(inning: 9)
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: Catcher, abbreviation: "C")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: CenterField, abbreviation: "CF")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: DesignatedHitter, abbreviation: "DH")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: FirstBase, abbreviation: "1B")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: LeftField, abbreviation: "LF")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: PinchHitter, abbreviation: "PH")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: PinchRunner, abbreviation: "PR")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: Pitcher, abbreviation: "P")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: RightField, abbreviation: "RF")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: SecondBase, abbreviation: "2B")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: Shortstop, abbreviation: "SS")
+BaseballScorecard.Tests.Lineups.PositionTests.Each_position_has_its_scorecard_abbreviation(position: ThirdBase, abbreviation: "3B")
+BaseballScorecard.Tests.Lineups.PositionTests.Positions_are_numbered_one_to_twelve_with_their_labels
+BaseballScorecard.Tests.Lineups.PositionTextTests.A_player_with_no_changes_shows_his_first_position
+BaseballScorecard.Tests.Lineups.PositionTextTests.A_slot_with_no_position_picked_yet_shows_only_its_changes
+BaseballScorecard.Tests.Lineups.PositionTextTests.Changes_follow_in_inning_order_and_other_players_changes_are_ignored
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_defensive_sub_for_a_pinch_hitter_in_his_inning_leaves_that_at_bat_with_the_pinch_hitter
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_defensive_sub_for_a_pinch_runner_in_his_inning_owns_the_next_inning
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_defensive_sub_takes_the_position_the_player_he_replaces_holds_in_his_inning
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_defensive_sub_takes_the_starters_position
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_pinch_hitter_owns_his_inning_and_later
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_pinch_runner_leaves_his_inning_with_the_batter_and_owns_the_next
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_slot_with_no_substitutes_is_its_starter_in_every_inning
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.A_third_sub_in_the_same_inning_never_takes_back_an_at_bat_the_slot_already_had
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.Substitutes_list_in_the_order_they_took_the_slot_whatever_order_they_were_added
+BaseballScorecard.Tests.Lineups.SlotPlayersTests.Substitutes_order_by_the_inning_they_came_in_even_when_a_later_one_was_added_first
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.Added_substitutes_list_in_the_order_they_were_added
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.A_designated_hitter_lineups_starting_pitcher_cannot_be_added
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.An_inning_outside_the_game_is_refused(inning: 0)
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.An_inning_outside_the_game_is_refused(inning: 10)
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.A_starter_or_an_earlier_substitute_cannot_be_added_again
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.Other_bad_input_is_refused_and_saves_nothing
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.Removing_a_substitution_deletes_only_that_row_of_that_game
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.The_first_and_last_innings_of_the_game_are_accepted(inning: 1)
+BaseballScorecard.Tests.Lineups.SubstitutionServiceTests.The_first_and_last_innings_of_the_game_are_accepted(inning: 9)
+BaseballScorecard.Tests.MainLayoutTests.Document_applies_a_saved_theme_before_first_paint_and_loads_theme_js
+BaseballScorecard.Tests.MainLayoutTests.Header_has_a_theme_toggle_button_named_for_the_mode_it_switches_to
+BaseballScorecard.Tests.MainLayoutTests.Header_shows_the_app_name_and_nav_links_to_home_rosters_and_new_game
+BaseballScorecard.Tests.MainLayoutTests.Layout_shows_a_Home_link_to_root_above_the_page_body
+BaseballScorecard.Tests.MainLayoutTests.No_nav_link_is_marked_on_a_game_page
+BaseballScorecard.Tests.MainLayoutTests.Only_the_current_page_link_is_marked_aria_current(uri: "/", current: "/")
+BaseballScorecard.Tests.MainLayoutTests.Only_the_current_page_link_is_marked_aria_current(uri: "games/new", current: "games/new")
+BaseballScorecard.Tests.MainLayoutTests.Only_the_current_page_link_is_marked_aria_current(uri: "rosters/3/edit", current: "rosters")
+BaseballScorecard.Tests.MainLayoutTests.Only_the_current_page_link_is_marked_aria_current(uri: "rosters", current: "rosters")
+BaseballScorecard.Tests.MainLayoutTests.Only_the_current_page_link_is_marked_aria_current(uri: "rosters/new", current: "rosters")
+BaseballScorecard.Tests.MainLayoutTests.Page_body_sits_in_a_main_landmark
+BaseballScorecard.Tests.MainLayoutTests.Pages_use_the_shared_layout(page: typeof(BaseballScorecard.Components.Pages.GamePage))
+BaseballScorecard.Tests.MainLayoutTests.Pages_use_the_shared_layout(page: typeof(BaseballScorecard.Components.Pages.NewGame))
+BaseballScorecard.Tests.MainLayoutTests.Pages_use_the_shared_layout(page: typeof(BaseballScorecard.Components.Pages.RosterEdit))
+BaseballScorecard.Tests.MainLayoutTests.Pages_use_the_shared_layout(page: typeof(BaseballScorecard.Components.Pages.Rosters))
+BaseballScorecard.Tests.MainLayoutTests.Routed_page_is_wrapped_in_the_layout
+BaseballScorecard.Tests.MainLayoutTests.Theme_js_loads_after_blazor_and_reapplies_the_theme_on_enhanced_navigation
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_bad_count_is_not_saved_and_shows_the_message_until_a_good_save
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_bad_IP_is_not_saved_and_shows_the_message(bad: "-1")
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_bad_IP_is_not_saved_and_shows_the_message(bad: "6.3")
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Added_pitchers_list_in_the_order_they_were_added_and_after_a_reload
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Adding_a_pitcher_already_added_elsewhere_shows_the_message_and_keeps_one_row
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_new_pitcher_row_has_empty_IP_BF_BB_SO_H_R_ER_boxes_after_Decision
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_player_already_in_the_table_cannot_be_picked_again_even_after_a_reload
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.A_removed_pitcher_can_be_picked_again_and_the_picker_resets_each_time
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Clearing_a_box_saves_it_as_empty
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Decision_offers_blank_W_L_H_S_and_saves_and_reloads
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Each_team_has_a_pitchers_table_and_a_picker_listing_its_roster
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Removing_a_row_drops_it_and_it_stays_gone_after_a_reload
+BaseballScorecard.Tests.Pitchers.GamePitchersFormDbTests.Typed_stats_save_and_are_still_there_after_a_reload
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: BattersFaced)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: EarnedRuns)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: Hits)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: Runs)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: Strikeouts)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_count_is_not_saved_and_shows_the_message(stat: Walks)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "-0.1")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "-1")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: ".1")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "6.")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "6.12")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "6.3")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "6.5")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "99999999999")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_bad_IP_is_not_saved_and_shows_the_message(typed: "six")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: BattersFaced)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: EarnedRuns)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: Hits)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: InningsPitched)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: Runs)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: Strikeouts)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_blank_box_is_saved_as_empty(stat: Walks)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_new_pitcher_starts_with_every_stat_empty
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.An_unknown_decision_or_a_removed_row_is_refused
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_player_already_in_the_table_is_refused
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_player_from_another_roster_or_a_team_not_in_the_game_is_refused
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.A_stat_for_a_removed_row_or_another_game_is_refused
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_labels_are_the_scorecard_letters(decision: Hold, label: "H")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_labels_are_the_scorecard_letters(decision: Loss, label: "L")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_labels_are_the_scorecard_letters(decision: None, label: "")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_labels_are_the_scorecard_letters(decision: Save, label: "S")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_labels_are_the_scorecard_letters(decision: Win, label: "W")
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_saves_and_reloads(decision: Hold)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_saves_and_reloads(decision: Loss)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_saves_and_reloads(decision: None)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_saves_and_reloads(decision: Save)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Decision_saves_and_reloads(decision: Win)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: BattersFaced)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: EarnedRuns)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: Hits)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: Runs)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: Strikeouts)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Each_count_takes_a_whole_number_of_0_or_more_and_reloads(stat: Walks)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: "0.1", shown: "0.1", outs: 1)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: "0", shown: "0", outs: 0)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: "6.1", shown: "6.1", outs: 19)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: "6.2", shown: "6.2", outs: 20)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: "6", shown: "6", outs: 18)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.IP_takes_whole_innings_or_thirds_and_reloads(typed: " 7 ", shown: "7", outs: 21)
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Pitchers_are_listed_per_team_in_the_order_they_were_added
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Removing_a_row_drops_only_that_pitcher_and_lets_them_be_added_again
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Removing_a_row_of_another_game_changes_nothing
+BaseballScorecard.Tests.Pitchers.PitchingServiceTests.Stats_are_labelled_in_scorecard_order
+BaseballScorecard.Tests.Players.PlayerServiceTests.Add_saves_the_player_to_that_roster
+BaseballScorecard.Tests.Players.PlayerServiceTests.Add_trims_the_fields
+BaseballScorecard.Tests.Players.PlayerServiceTests.Blank_field_is_rejected_and_nothing_is_saved(number: "14", first: "Ernie", last: "")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Blank_field_is_rejected_and_nothing_is_saved(number: "14", first: " ", last: "Banks")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Blank_field_is_rejected_and_nothing_is_saved(number: "", first: "Ernie", last: "Banks")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Database_unique_index_rejects_a_duplicate_number_on_one_roster
+BaseballScorecard.Tests.Players.PlayerServiceTests.Editing_a_player_that_was_removed_returns_a_message_and_saves_nothing
+BaseballScorecard.Tests.Players.PlayerServiceTests.Edit_keeping_the_same_number_is_allowed
+BaseballScorecard.Tests.Players.PlayerServiceTests.Edit_saves_the_changed_fields
+BaseballScorecard.Tests.Players.PlayerServiceTests.List_sorts_by_number_value_then_by_text
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_already_used_on_the_same_roster_is_rejected_on_add
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_already_used_on_the_same_roster_is_rejected_on_edit
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_that_is_not_one_or_two_digits_is_rejected_and_nothing_is_saved(number: "-1")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_that_is_not_one_or_two_digits_is_rejected_and_nothing_is_saved(number: "１")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_that_is_not_one_or_two_digits_is_rejected_and_nothing_is_saved(number: "123")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Number_that_is_not_one_or_two_digits_is_rejected_and_nothing_is_saved(number: "1a")
+BaseballScorecard.Tests.Players.PlayerServiceTests.Remove_deletes_the_player
+BaseballScorecard.Tests.Players.PlayerServiceTests.Same_number_on_a_different_roster_is_allowed
+BaseballScorecard.Tests.Players.PlayerServiceTests.Zero_and_double_zero_are_different_numbers
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Adding_a_player_through_the_form_saves_it_and_lists_it
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Editing_a_player_through_the_form_saves_the_change
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "100", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.")
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "Ernie", last: " ", message: "Uniform Number, First Name and Last Name are requi"···)
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "14", first: "", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···)
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "1x", first: "Ernie", last: "Banks", message: "Uniform Number must be 1 or 2 digits.")
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Invalid_player_shows_a_validation_message_and_saves_nothing(number: "", first: "Ernie", last: "Banks", message: "Uniform Number, First Name and Last Name are requi"···)
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.New_roster_page_has_no_players_section
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Number_used_on_the_same_roster_shows_the_duplicate_message_and_saves_nothing
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Removing_a_player_deletes_it
+BaseballScorecard.Tests.Players.RosterPlayersFormDbTests.Roster_page_lists_its_players_as_number_first_last_sorted_by_number
+BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Creating_through_the_form_saves_the_roster_and_returns_to_the_list
+BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Editing_through_the_form_loads_the_roster_and_saves_the_change
+BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Edit_page_for_a_missing_id_says_the_roster_was_not_found
+BaseballScorecard.Tests.Rosters.RosterEditFormDbTests.Submitting_an_existing_team_name_and_year_shows_the_duplicate_message_and_saves_nothing
+BaseballScorecard.Tests.Rosters.RosterEditPageTests.New_roster_year_defaults_to_the_current_year
+BaseballScorecard.Tests.Rosters.RosterEditPageTests.Submitting_a_blank_team_name_shows_a_validation_message
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "   ")
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Blank_team_name_is_rejected_and_nothing_is_saved(name: "")
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Create_saves_the_roster_and_it_is_listed
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Database_unique_index_rejects_a_duplicate_pair
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_create
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Duplicate_team_name_and_year_is_rejected_on_edit
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Edit_saves_a_new_team_name_and_year
+BaseballScorecard.Tests.Rosters.RosterServiceTests.List_by_year_returns_only_that_year_sorted_by_team_name_and_years_lists_each_once_newest_first
+BaseballScorecard.Tests.Rosters.RosterServiceTests.List_orders_newest_year_first_then_by_name
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Same_team_name_in_another_year_is_a_separate_roster
+BaseballScorecard.Tests.Rosters.RosterServiceTests.Team_name_with_surrounding_spaces_is_trimmed_and_still_a_duplicate
+BaseballScorecard.Tests.Rosters.RostersPageTests.Lists_each_roster_as_year_dot_team_name_linking_to_its_edit_page
+BaseballScorecard.Tests.Rosters.RostersPageTests.Picking_a_year_shows_only_that_years_rosters_and_all_shows_every_roster
+BaseballScorecard.Tests.Rosters.RostersPageTests.With_no_rosters_at_all_the_page_says_so_and_the_select_has_only_all
+BaseballScorecard.Tests.Rosters.RostersPageTests.Year_select_is_labelled_starts_on_all_and_lists_roster_years_newest_first

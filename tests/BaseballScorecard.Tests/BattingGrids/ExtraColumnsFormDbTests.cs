@@ -107,7 +107,7 @@ public class ExtraColumnsFormDbTests : BunitContext
     public async Task An_at_bat_in_an_extra_column_saves_on_its_own_and_both_show_after_a_reload()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 3, "1B", 1));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 3, new("1B", 1)));
         var cut = RenderGame(game.Id);
         AddColumn(cut, "away", 3);
 
@@ -154,7 +154,7 @@ public class ExtraColumnsFormDbTests : BunitContext
     public async Task An_extra_column_holding_an_at_bat_cannot_be_removed_and_shows_after_a_reload()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 4, 2, "K", column: 2));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 4, 2, new("K"), column: 2));
         var cut = RenderGame(game.Id);
         Assert.Equal("K", cut.Find("#away-slot-4-inning-2-col-2-note .at-bat-note").TextContent.Trim());
 
@@ -201,7 +201,7 @@ public class ExtraColumnsFormDbTests : BunitContext
     public async Task A_saved_gap_in_columns_shows_packed_after_a_reload()
     {
         var game = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 3, "BB", 1, column: 3));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 2, 3, new("BB", 1), column: 3));
         var cut = RenderGame(game.Id);
 
         Assert.Equal(["#", "Name", "Pos", "Inn", "1", "2", "3", "3", "4", "5"], Headers(cut, "away"));
@@ -220,7 +220,7 @@ public class ExtraColumnsFormDbTests : BunitContext
     {
         var game = await NewGameAsync();
         var other = await NewGameAsync();
-        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 2, "1B", 1, column: 2));
+        Assert.Null(await _grid.SaveNoteAsync(game.Id, game.AwayRosterId, 1, 2, new("1B", 1), column: 2));
 
         var cut = RenderGame(other.Id);
 
